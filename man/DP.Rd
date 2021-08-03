@@ -4,12 +4,16 @@
 \alias{DP}
 \title{Dynamic programming for l0 change points detection}
 \usage{
-DP(y, gamma, ...)
+DP(gamma, delta, y, X = NULL, lambda = NULL, ...)
 }
 \arguments{
+\item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
+
+\item{delta}{A \code{numeric} scalar of minimum spacing.}
+
 \item{y}{A \code{numeric} vector of observations.}
 
-\item{gamma}{A \code{numeric} scalar corresponding to the tuning parameter associated with the l0 penalty.}
+\item{X}{A \code{numeric} matrix of covariates. If missing, then the mean change of y is considered.}
 
 \item{...}{Additional arguments.}
 }

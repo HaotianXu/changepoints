@@ -13,6 +13,9 @@ D_P(y, gamma, ...)
 
 \item{...}{Additional arguments.}
 }
+\value{
+TO DO.
+}
 \description{
 TO DO
 }

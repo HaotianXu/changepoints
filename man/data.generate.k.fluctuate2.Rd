@@ -22,7 +22,14 @@ data.generate.k.fluctuate2(d0, cpt.true, p, n, sigma, kappa)
 \item{...}{Additional arguments.}
 }
 \value{
-TO DO.
+A \code{list} with the structure:
+\itemize{
+ \item cpt.true    A vector of true changepoints (sorted in strictly increasing order).
+ \item X           A p-by-n matrix of (random) design matrix.
+ \item y           A n-dim vector of response variable.
+ \item betafullmat A p-by-n matrix of coefficients.
+ \item ...         Additional parameters.
+}
 }
 \description{
 TO DO

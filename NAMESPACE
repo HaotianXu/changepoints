@@ -3,6 +3,7 @@
 export(DP)
 export(D_P)
 export(data.generate.k.fluctuate2)
+export(distanceR)
 export(part2local)
 import(Rcpp)
 import(gglasso)

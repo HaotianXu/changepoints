@@ -15,8 +15,10 @@ D_P <- function(y, gamma, ...) {
 
 #' @title Dynamic programming for l0 change points detection
 #' @description TO DO
+#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
+#' @param delta     A \code{numeric} scalar of minimum spacing.
 #' @param y         A \code{numeric} vector of observations.
-#' @param gamma       A \code{numeric} scalar corresponding to the tuning parameter associated with the l0 penalty.
+#' @param X         A \code{numeric} matrix of covariates. If missing, then the mean change of y is considered.
 #' @param ...      Additional arguments.
 #' @return TO DO.
 #' @export
@@ -24,33 +26,64 @@ D_P <- function(y, gamma, ...) {
 #' @examples
 #' y = c(rep(0, 100), rep(1, 100))
 #' DP(y, 1)
-DP = function(y, gamma, ...){
+DP = function(gamma, delta, y, X = NULL, lambda = NULL, ...){
   N = length(y)
   bestvalue = rep(0,N+1)
-  partition = rep(NA,N)
+  partition = rep(0,N)
   yhat = rep(NA, N)
-  bestvalue[1] = -gamma
-  for(r in 1:N){
-    bestvalue[r+1] = Inf
-    for(l in 1:r){
-      b = bestvalue[l] + gamma + norm(y[l:r] - mean(y[l:r]), type = "2")
-      if(b <= bestvalue[r+1]){
-        bestvalue[r+1] = b
-        partition[r] = l-1
+  if(is.null(X) & is.null(lambda)){
+    bestvalue[1] = -gamma
+    for(r in 1:N){
+      bestvalue[r+1] = Inf
+      for(l in 1:r){
+        if(r - l > delta){
+          b = bestvalue[l] + gamma + (norm(y[l:r] - mean(y[l:r]), type = "2"))^2 
+        }else{
+          b = Inf
+        }
+        if(b < bestvalue[r+1]){
+          bestvalue[r+1] = b
+          partition[r] = l-1
+        }
       }
     }
-  }
-  localization = c()
-  r = N
-  l = partition[r]
-  while(r > 0){
-    for(t in (l+1):r){
-      yhat[t] = mean(y[(l+1):r])
-    }
-    r = l
+    r = N
     l = partition[r]
+    while(r > 0){
+      for(t in (l+1):r){
+        yhat[t] = mean(y[(l+1):r])
+      }
+      r = l
+      l = partition[r]
+    }
+    return(list(partition = partition, yhat = yhat))
+  }else{
+    if(is.null(X) + is.null(lambda) == 1){
+      stop("In regression settings, X and lambda should both be specified")
+    }
+    if(length(dim(X)) != 2 | dim(X)[2] != N){
+      stop("In regression settings, X should be a p-by-n design matrix")
+    }
+    p = dim(X)[1]
+    bestvalue[1] = -gamma*log(max(N,p))
+    for(r in 1:N){
+      bestvalue[r+1] = Inf
+      for(l in 1:r){
+        b = bestvalue[l] + gamma*log(max(N,p)) + distanceR(l, r, y, X, lambda, delta)
+        if(b < bestvalue[r+1]){
+          bestvalue[r+1] = b
+          partition[r] = l-1
+        }
+      }
+    }
+    r = N
+    l = partition[r]
+    while(r > 0){
+      r = l
+      l = partition[r]
+    }
+    return(list(partition = partition))
   }
-  return(list(partition = partition, yhat = yhat))
 }
 
 #' @title Partition to localization
@@ -136,4 +169,32 @@ data.generate.k.fluctuate2 = function(d0, cpt.true, p, n, sigma, kappa){
 }
 
 
-
+#' @title Prediction error in l2 norm for the lasso [10] 
+#' @description TO DO
+#' @param s         A \code{integer} scalar of starting index.
+#' @param e         A \code{integer} scalar of ending index.
+#' @param y         A \code{numeric} vector of response variable.
+#' @param X         A \code{numeric} matrix of covariates.
+#' @param lambda    A \code{numeric} scalar of lasso penalty.
+#' @param delta     A \code{integer} scalar of minimum spacing.
+#' @param ...        Additional arguments.
+#' @return  A \code{numeric} scalar of prediction error in l2 norm.
+#' @export
+#' @author 
+#' @examples
+#' TO DO
+distanceR = function(s, e, y, X, lambda, delta, ...){
+  n = ncol(X)
+  p = nrow(X)
+  if (abs(s-e) > delta){
+    fit = glmnet(x = t(X[,s:e]), y = y[s:e,], family = c("gaussian"),
+                 alpha = 1, lambda = lambda*sqrt(max(log(max(n,p)), e-s))*sqrt(log(max(n,p)))/(e-s),intercept=F)
+    coef_est = as.vector(fit$beta)
+    yhat = t(X[,s:e])%*%coef_est
+    d = norm(y[s:e] - yhat, type = "2")
+  }
+  else{
+    d = Inf
+  }
+  return(d^2)
+}
