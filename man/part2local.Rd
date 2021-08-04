@@ -18,7 +18,8 @@ TO DO.
 TO DO
 }
 \examples{
-TO DO
+y = c(rep(0, 100), rep(1, 100))
+part2local(DP.univar(1, 4, y)$partition)
 }
 \author{
 Haotian Xu

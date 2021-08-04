@@ -4,7 +4,7 @@
 \alias{distanceR}
 \title{Prediction error in l2 norm for the lasso [10]}
 \usage{
-distanceR(s, e, y, X, lambda, delta, ...)
+distanceR(s, e, y, X, lambda, delta)
 }
 \arguments{
 \item{s}{A \code{integer} scalar of starting index.}
@@ -18,18 +18,10 @@ distanceR(s, e, y, X, lambda, delta, ...)
 \item{lambda}{A \code{numeric} scalar of lasso penalty.}
 
 \item{delta}{A \code{integer} scalar of minimum spacing.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{numeric} scalar of prediction error in l2 norm.
 }
 \description{
-TO DO
-}
-\examples{
-TO DO
-}
-\author{
-
+Prediction error in l2 norm for the lasso [10]
 }

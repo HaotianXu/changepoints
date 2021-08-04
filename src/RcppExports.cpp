@@ -11,15 +11,16 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// rcpp_D_P
-Rcpp::List rcpp_D_P(const arma::vec& y, double gamma);
-RcppExport SEXP _changepoints_rcpp_D_P(SEXP ySEXP, SEXP gammaSEXP) {
+// rcpp_D_P_univar
+Rcpp::List rcpp_D_P_univar(double gamma, int delta, const arma::vec& y);
+RcppExport SEXP _changepoints_rcpp_D_P_univar(SEXP gammaSEXP, SEXP deltaSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
     Rcpp::traits::input_parameter< double >::type gamma(gammaSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_D_P(y, gamma));
+    Rcpp::traits::input_parameter< int >::type delta(deltaSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_D_P_univar(gamma, delta, y));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -35,7 +36,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_changepoints_rcpp_D_P", (DL_FUNC) &_changepoints_rcpp_D_P, 2},
+    {"_changepoints_rcpp_D_P_univar", (DL_FUNC) &_changepoints_rcpp_D_P_univar, 3},
     {"_changepoints_rcpp_hello_world", (DL_FUNC) &_changepoints_rcpp_hello_world, 0},
     {NULL, NULL, 0}
 };
