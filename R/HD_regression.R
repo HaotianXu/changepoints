@@ -4,6 +4,7 @@
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
 #' @param y         A \code{numeric} vector of observations.
 #' @param X         A \code{numeric} matrix of covariates. If missing, then the mean change of y is considered.
+#' @param lambda    A \code{numeric} scalar of tuning parameter for the lasso penalty.
 #' @param ...      Additional arguments.
 #' @return TO DO.
 #' @export
@@ -15,7 +16,7 @@ DP.regression = function(gamma, delta, y, X, lambda, ...){
   N = length(y)
   bestvalue = rep(0,N+1)
   partition = rep(0,N)
-  yhat = rep(NA, N)
+  #yhat = rep(NA, N)
   if(length(dim(X)) != 2 | dim(X)[2] != N){
     stop("X should be a p-by-n design matrix")
   }
@@ -105,7 +106,7 @@ simu.change.regression = function(d0, cpt.true, p, n, sigma, kappa){
 #' @param e         A \code{integer} scalar of ending index.
 #' @param y         A \code{numeric} vector of response variable.
 #' @param X         A \code{numeric} matrix of covariates.
-#' @param lambda    A \code{numeric} scalar of lasso penalty.
+#' @param lambda    A \code{numeric} scalar of tuning parameter for lasso penalty.
 #' @param delta     A \code{integer} scalar of minimum spacing.
 #' @return  A \code{numeric} scalar of prediction error in l2 norm.
 #' @noRd

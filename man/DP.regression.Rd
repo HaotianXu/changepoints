@@ -15,6 +15,8 @@ DP.regression(gamma, delta, y, X, lambda, ...)
 
 \item{X}{A \code{numeric} matrix of covariates. If missing, then the mean change of y is considered.}
 
+\item{lambda}{A \code{numeric} scalar of tuning parameter for the lasso penalty.}
+
 \item{...}{Additional arguments.}
 }
 \value{

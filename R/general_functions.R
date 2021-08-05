@@ -7,7 +7,7 @@
 #' @author Haotian Xu
 #' @examples
 #' y = c(rep(0, 100), rep(1, 100))
-#' part2local(DP.univar(1, 4, y)$partition)
+#' part2local(D_P_univar(1, 4, y)$partition)
 part2local = function(x){
   N = length(x)
   localization = c()

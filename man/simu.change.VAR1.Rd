@@ -30,7 +30,7 @@ p = 20
 sigma = 1
 n = 100
 A = matrix(rnorm(p*p), nrow = p)
-
+simu.change.VAR1(sigma, p, n, A)
 }
 \author{
 

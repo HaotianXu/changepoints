@@ -14,7 +14,7 @@
 #' sigma = 1
 #' n = 100
 #' A = matrix(rnorm(p*p), nrow = p)
-#' 
+#' simu.change.VAR1(sigma, p, n, A)
 simu.change.VAR1= function(sigma, p, n, A, vzero = NULL, ...){
   X = matrix(0, nrow = p, ncol = n)
   if(is.null(vzero)){
@@ -38,24 +38,91 @@ simu.change.VAR1= function(sigma, p, n, A, vzero = NULL, ...){
 #' @param X_curr    A \code{numeric} matrix of time series at current step.
 #' @param lambda    A \code{numeric} scalar of lasso penalty.
 #' @param delta     A \code{integer} scalar of minimum spacing.
-#' @return  A \code{numeric} scalar of prediction error in l2 norm.
+#' @return  A \code{numeric} scalar of prediction error in Frobenius norm.
 #' @noRd
-error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda){
-  options(warn = -1)
+error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
+  #options(warn = -1)
   n = ncol(X_curr)
   p = nrow(X_curr)
   if(e > n | s > e | s < 1){
     stop("s and e are not correctly specified.")
   }
-  estimate = matrix(0, nrow=p, ncol=p)
-  for(m in 1:p){
-    # obtain Lasso estimator of each row of transition matrix
-    out = glmnet(x=t(X_curr[,s:e]), y = X_curr[m,s:e], family=c("gaussian"),
-               alpha = 1, lambda = lambda/sqrt(e-s))#,intercept=F)
-    estimate[m,] = as.vector(out$beta)
+  if(e-s > delta){
+    estimate = matrix(0, nrow=p, ncol=p)
+    for(m in 1:p){
+      # obtain Lasso estimator of each row of transition matrix
+      out = glmnet(x = t(X_curr[,s:e]), y = X_curr[m,s:e], family=c("gaussian"),
+                   alpha = 1, lambda = lambda/sqrt(e-s))#,intercept=F)
+      estimate[m,] = as.vector(out$beta)
+    }
+    #norm(estimate-A1, type="F")
+    #norm(A1, type="F")
+    X_futu_hat = estimate%*%X_curr[,s:e]
+    d = norm(X_futu_hat - X_futu[,s:e], type="F")
+  }else{
+    d = Inf
   }
-  #norm(estimate-A1, type="F")
-  #norm(A1, type="F")
-  X_futu_hat = estimate%*%X_curr[,s:e]
-  return(norm(X_futu_hat - X_futu[,s:e], type="F")^2)
+  return(d^2)
+}
+
+
+# #dp matrix  function
+# dp.matrix.function=function(X.train, Y.train, lambda.lasso , delta){
+#   N = ncol(X.train)
+#   p = nrow(X.train)
+#   dp.matrix = matrix(Inf, N, N) 
+#   for (s in 1:N){
+#     for (e in 1:N){
+#       if (e-s > delta){
+#         #print(c(i,j))
+#         dp.matrix[s,e] = error.pred.seg.VAR1(s, e, X_futu = Y.train, X_curr = X.train, lambda.lasso)
+#       }
+#     }
+#   }
+#   return(dp.matrix)
+# }
+
+
+#' @title Dynamic programming for VAR1 change points detection by l0 penalty
+#' @description TO DO
+#' @param DATA      A \code{numeric} matrix of observations.
+#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
+#' @param delta     A strictly \code{integer} scalar of minimum spacing.
+#' @param lambda    A \code{numeric} scalar of tuning parameter for lasso penalty.
+#' @param ...      Additional arguments.
+#' @return TO DO.
+#' @export
+#' @author Haotian Xu
+#' @examples
+#' p = 20
+#' sigma = 1
+#' n = 100
+#' A = matrix(rnorm(p*p), nrow = p)
+#' DATA = simu.change.VAR1(sigma, p, n, A)
+#' DP.VAR1(DATA, gamma = 1, delta = 5, lambda = 1)
+DP.VAR1 = function(DATA, gamma, delta, lambda, ...){
+  N = ncol(DATA)
+  p = nrow(DATA)
+  X_curr = DATA[,1:(N-1)]
+  X_futu = DATA[,2:N]
+  bestvalue = rep(0,N)
+  partition = rep(0,N-1)
+  bestvalue[1] = -gamma
+  for(r in 1:(N-1)){
+    bestvalue[r+1] = Inf
+    for(l in 1:r){
+      b = bestvalue[l] + gamma + error.pred.seg.VAR1(l, r, X_futu, X_curr, lambda, delta)
+      if(b < bestvalue[r+1]){
+        bestvalue[r+1] = b
+        partition[r] = l-1
+      }
+    }
+  }
+  r = N-1
+  l = partition[r]
+  while(r > 0){
+    r = l
+    l = partition[r]
+  }
+  return(list(partition = partition + 1))
 }
