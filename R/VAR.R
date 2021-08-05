@@ -99,7 +99,8 @@ error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
 #' n = 100
 #' A = matrix(rnorm(p*p), nrow = p)
 #' DATA = simu.change.VAR1(sigma, p, n, A)
-#' DP.VAR1(DATA, gamma = 1, delta = 5, lambda = 1)
+#' parti = DP.VAR1(DATA, gamma = 1, delta = 5, lambda = 1)$partition
+#' part2local(parti)
 DP.VAR1 = function(DATA, gamma, delta, lambda, ...){
   N = ncol(DATA)
   p = nrow(DATA)
@@ -124,5 +125,5 @@ DP.VAR1 = function(DATA, gamma, delta, lambda, ...){
     r = l
     l = partition[r]
   }
-  return(list(partition = partition + 1))
+  return(list(partition = partition))
 }
