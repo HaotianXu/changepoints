@@ -58,7 +58,7 @@ error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
     #norm(estimate-A1, type="F")
     #norm(A1, type="F")
     X_futu_hat = estimate%*%X_curr[,s:e]
-    d = norm(X_futu_hat - X_futu[,s:e], type="F")
+    d = norm(X_futu_hat - X_futu[,s:e], type = "F")
   }else{
     d = Inf
   }
@@ -96,11 +96,18 @@ error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
 #' @examples
 #' p = 20
 #' sigma = 1
-#' n = 100
-#' A = matrix(rnorm(p*p), nrow = p)
-#' DATA = simu.change.VAR1(sigma, p, n, A)
-#' parti = DP.VAR1(DATA, gamma = 1, delta = 5, lambda = 1)$partition
-#' part2local(parti)
+#' n = 30
+#' v1 = 2*(seq(1,p,1)%%2) - 1
+#' v2 = -v1
+#' AA = matrix(0, nrow = p, ncol = p-2)
+#' A1=cbind(v1,v2,AA)
+#' A2=cbind(v2,v1,AA)
+#' A3=A1
+#' data = simu.change.VAR1(sigma, p, 2*n+1, A1)
+#' data = cbind(simu.change.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
+#' data = cbind(simu.change.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
+#' parti = DP.VAR1(data, gamma = 1, delta = 5, lambda = 1)$partition
+#' localization = part2local(parti)
 DP.VAR1 = function(DATA, gamma, delta, lambda, ...){
   N = ncol(DATA)
   p = nrow(DATA)
@@ -126,4 +133,83 @@ DP.VAR1 = function(DATA, gamma, delta, lambda, ...){
     l = partition[r]
   }
   return(list(partition = partition))
+}
+
+
+
+#' @title Local refinement for VAR1 change points detection [11] 
+#' @description TO DO
+#' @param cpt.init   A \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
+#' @param y          A \code{numeric} vector of response variable.
+#' @param X          A \code{numeric} matrix of covariates.
+#' @param zeta.group A \code{numeric} scalar of lasso penalty.
+#' @param w          A \code{numeric} scalar of weight for interpolation.
+#' @param ...       Additional arguments.
+#' @return  A \code{numeric} scalar of prediction error in l2 norm.
+#' @export
+#' @author 
+#' @examples
+#' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
+#' cpt.init = part2local(DP.regression(2, 5, data$y, X = data$X, lambda = 2)$partition)$cpt
+#' local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
+local.refine.VAR1 = function(cpt.init, DATA, zeta.group, w = 1/3){
+  N = ncol(DATA)
+  p = nrow(DATA)
+  X_curr = DATA[,1:(N-1)]
+  X_futu = DATA[,2:N]
+  cpt.init.ext = c(0, cpt.init, n)
+  cpt.init.numb = length(cpt.init)
+  cpt.refined = rep(0, cpt.init.numb+1)
+  for (k in 1:cpt.init.numb){
+    s.inter = w*cpt.refined[k] + (1-w)*cpt.init.ext[k+1]
+    e.inter = (1-w)*cpt.init.ext[k+1] + w*cpt.init.ext[k+2]
+    lower = ceiling(s.inter) + 1
+    upper = floor(e.inter) - 1
+    b = sapply(lower:upper, function(eta)obj.func.lr.VAR1(s.inter, e.inter, eta, X_futu, X_curr, zeta.group))
+    cpt.refined[k+1] = ceiling(s.inter) + which.min(b)
+  }
+  return(cpt.refined[-1])
+}
+
+
+#' @title Internal Function: An objective function to select the best splitting location in the local refinement
+#' @param s.inter    A \code{numeric} scalar of interpolated starting index.
+#' @param e.inter    A \code{numeric} scalar of ending index.
+#' @param y          A \code{numeric} vector of response variable.
+#' @param X          A \code{numeric} matrix of covariates.
+#' @param zeta.group A \code{numeric} scalar of tuning parameter for the group lasso.
+#' @noRd
+obj.func.lr.VAR1 = function(s.inter, e.inter, eta, X_futu, X_curr, zeta.group){
+  n = ncol(X_futu)
+  p = nrow(X_futu)
+  btemp = rep(NA, p)
+  group = rep(1:p, 2)
+  X.convert = X.glasso.converter.VAR1(X_curr[,(ceiling(s.inter)):(floor(e.inter))], eta, ceiling(s.inter))
+  for(m in 1:p){
+    y.convert = X_futu[m, (ceiling(s.inter)):(floor(e.inter))]
+    auxfit = gglasso(x = X.convert, y = y.convert, group = group, loss="ls",
+                     lambda = zeta.group/(floor(e.inter)-ceiling(s.inter)+1), intercept = FALSE, eps = 0.001)
+    coef = as.vector(auxfit$beta)
+    coef1 = coef[1:p]
+    coef2 = coef[(p+1):(2*p)]
+    btemp[m] = norm(y.convert - X.convert %*% coef, type = "2")^2 + zeta.group*sum(sqrt(coef1^2 + coef2^2))
+  }
+  return(sum(btemp))
+}
+
+
+#' @title Internal Function: Convert a p-by-n submatrix X with partial consecutive observations into a n-by-(2p) matrix, which fits the group lasso, see eq(7) in [11]
+#' @param  X         A \code{numeric} matrix of partial consecutive observations.
+#' @param  eta       A \code{integer} scalar of splitting index.
+#' @param  s_ceil    A \code{integer} scalar of starting index.
+#' @return   A n-by-(2p) matrix
+#' @noRd
+X.glasso.converter.VAR1 = function(X, eta, s_ceil){
+  n = ncol(X)
+  xx1 = xx2 = t(X)
+  t = eta - s_ceil + 1
+  xx1[(t+1):n,] = 0
+  xx2[1:t,] = 0
+  xx = cbind(xx1/sqrt(t-1), xx2/sqrt(n-t))
+  return(xx)
 }

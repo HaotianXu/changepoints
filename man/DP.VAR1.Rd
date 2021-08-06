@@ -29,7 +29,8 @@ sigma = 1
 n = 100
 A = matrix(rnorm(p*p), nrow = p)
 DATA = simu.change.VAR1(sigma, p, n, A)
-DP.VAR1(DATA, gamma = 1, delta = 5, lambda = 1)
+parti = DP.VAR1(DATA, gamma = 1, delta = 5, lambda = 1)$partition
+part2local(parti)
 }
 \author{
 Haotian Xu

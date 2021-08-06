@@ -130,7 +130,7 @@ error.pred.seg.regression = function(s, e, y, X, lambda, delta){
 }
 
 
-#' @title Local refinement [10] 
+#' @title Local refinement for regression change points detection [10] 
 #' @description TO DO
 #' @param cpt.init  A \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
 #' @param y         A \code{numeric} vector of response variable.
@@ -144,8 +144,8 @@ error.pred.seg.regression = function(s, e, y, X, lambda, delta){
 #' @examples
 #' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 #' cpt.init = part2local(DP.regression(2, 5, data$y, X = data$X, lambda = 2)$partition)$cpt
-#' local.refine(cpt.init, data$y, X = data$X, 1, 1/3)
-local.refine = function(cpt.init, y, X, zeta, w = 1/3){
+#' local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
+local.refine.regression = function(cpt.init, y, X, zeta, w = 1/3){
   n = ncol(X)
   cpt.init.ext = c(0, cpt.init, n)
   cpt.init.numb = length(cpt.init)
@@ -155,7 +155,7 @@ local.refine = function(cpt.init, y, X, zeta, w = 1/3){
     e = (1-w)*cpt.init.ext[k+1] + w*cpt.init.ext[k+2]
     lower = ceiling(s) + 1
     upper = floor(e) - 1
-    b = sapply(lower:upper, function(eta)obj.func.lr(s, e, eta, y, X, zeta))
+    b = sapply(lower:upper, function(eta)obj.func.lr.regression(s, e, eta, y, X, zeta))
     cpt.refined[k+1] = ceiling(s) + which.min(b)
   }
   return(cpt.refined[-1])
@@ -163,21 +163,21 @@ local.refine = function(cpt.init, y, X, zeta, w = 1/3){
 
 
 #' @title Internal Function: An objective function to select the best splitting location in the local refinement, see eq(4) in [10]
-#' @param s         A \code{integer} scalar of starting index.
-#' @param e         A \code{integer} scalar of ending index.
+#' @param s.inter   A \code{numeric} scalar of interpolated starting index.
+#' @param e.inter   A \code{numeric} scalar of interpolated ending index.
 #' @param y         A \code{numeric} vector of response variable.
 #' @param X         A \code{numeric} matrix of covariates.
 #' @param zeta      A \code{numeric} scalar of tuning parameter for the group lasso.
 #' @noRd
-obj.func.lr = function(s, e, eta, y, X, zeta){
+obj.func.lr.regression = function(s.inter, e.inter, eta, y, X, zeta){
   n = ncol(X)
   p = nrow(X)
   group = rep(1:p, 2)
-  X.convert = X.glasso.converter(X[,(ceiling(s)):(floor(e))], eta, ceiling(s))
-  y.convert = y[(ceiling(s)):(floor(e)),]
+  X.convert = X.glasso.converter.regression(X[,(ceiling(s.inter)):(floor(e.inter))], eta, ceiling(s.inter))
+  y.convert = y[(ceiling(s.inter)):(floor(e.inter))]
   lambda.LR = zeta*sqrt(log(max(n, p)))
   auxfit = gglasso(x = X.convert, y = y.convert, group = group, loss="ls",
-                   lambda = lambda.LR/(floor(e)-ceiling(s)+1), intercept = FALSE, eps = 0.001)
+                   lambda = lambda.LR/(floor(e.inter)-ceiling(s.inter)+1), intercept = FALSE, eps = 0.001)
   coef = as.vector(auxfit$beta)
   coef1 = coef[1:p]
   coef2 = coef[(p+1):(2*p)]
@@ -189,15 +189,15 @@ obj.func.lr = function(s, e, eta, y, X, zeta){
 #' @title Internal Function: Convert a p-by-n design submatrix X with partial consecutive observations into a n-by-(2p) matrix, which fits the group lasso, see eq(4) in [10]
 #' @param  X         A \code{numeric} matrix of covariates with partial consecutive observations.
 #' @param  eta       A \code{integer} scalar of splitting index.
-#' @param  s_ceil    A \code{numeric} matrix of covariates.
+#' @param  s_ceil    A \code{integer} scalar of starting index.
 #' @return A n-by-(2p) matrix
 #' @noRd
-X.glasso.converter=function(X, eta, s_ceil){
+X.glasso.converter.regression = function(X, eta, s_ceil){
   n = ncol(X)
   xx1 = xx2 = t(X)
   t = eta - s_ceil + 1
   xx1[(t+1):n,] = 0
   xx2[1:t,] = 0
-  xx = cbind(xx1/sqrt(t-1), xx2/sqrt(n-t+1))
+  xx = cbind(xx1/sqrt(t-1), xx2/sqrt(n-t))
   return(xx)
 }
