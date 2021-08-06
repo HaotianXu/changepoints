@@ -1,14 +1,14 @@
-#' @title Dynamic programming for regression change points detection by l0 penalty
+#' @title Dynamic programming algorithm for regression change points detection by l0 penalty
 #' @description TO DO
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
 #' @param y         A \code{numeric} vector of observations.
-#' @param X         A \code{numeric} matrix of covariates. If missing, then the mean change of y is considered.
+#' @param X         A \code{numeric} matrix of covariates.
 #' @param lambda    A \code{numeric} scalar of tuning parameter for the lasso penalty.
 #' @param ...      Additional arguments.
 #' @return TO DO.
 #' @export
-#' @author Haotian Xu
+#' @author
 #' @examples
 #' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 #' DP.regression(2, 5, data$y, X = data$X, lambda = 1)
@@ -25,7 +25,7 @@ DP.regression = function(gamma, delta, y, X, lambda, ...){
   for(r in 1:N){
     bestvalue[r+1] = Inf
     for(l in 1:r){
-      b = bestvalue[l] + gamma*log(max(N,p)) + error.pred.seg.regression(l, r, y, X, lambda, delta)
+      b = bestvalue[l] + gamma*log(max(N,p)) + error.pred.seg.regression(l, r, y, X, lambda, delta)$MSE
       if(b < bestvalue[r+1]){
         bestvalue[r+1] = b
         partition[r] = l-1
@@ -108,7 +108,12 @@ simu.change.regression = function(d0, cpt.true, p, n, sigma, kappa){
 #' @param X         A \code{numeric} matrix of covariates.
 #' @param lambda    A \code{numeric} scalar of tuning parameter for lasso penalty.
 #' @param delta     A \code{integer} scalar of minimum spacing.
-#' @return  A \code{numeric} scalar of prediction error in l2 norm.
+#' @return    A \code{list} with the structure:
+#' \itemize{
+#'  \item MSE       A \code{numeric} scalar of prediction error in l2 norm.
+#'  \item beta.hat  A p-dim vector of estimated coefficients.
+#'  \item ...         Additional parameters.
+#' }
 #' @noRd
 error.pred.seg.regression = function(s, e, y, X, lambda, delta){
   n = ncol(X)
@@ -124,9 +129,11 @@ error.pred.seg.regression = function(s, e, y, X, lambda, delta){
     d = norm(y[s:e] - yhat, type = "2")
   }
   else{
+    coef_est = NA
     d = Inf
   }
-  return(d^2)
+  result = list(MSE = d^2, beta.hat = coef_est)
+  return(result)
 }
 
 
@@ -143,7 +150,7 @@ error.pred.seg.regression = function(s, e, y, X, lambda, delta){
 #' @author 
 #' @examples
 #' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-#' cpt.init = part2local(DP.regression(2, 5, data$y, X = data$X, lambda = 2)$partition)$cpt
+#' cpt.init = part2local(DP.regression(2, 5, data$y, X = data$X, lambda = 2)$partition)
 #' local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
 local.refine.regression = function(cpt.init, y, X, zeta, w = 1/3){
   n = ncol(X)
@@ -200,4 +207,100 @@ X.glasso.converter.regression = function(X, eta, s_ceil){
   xx2[1:t,] = 0
   xx = cbind(xx1/sqrt(t-1), xx2/sqrt(n-t))
   return(xx)
+}
+
+
+
+#' @title Cross-Validation of Dynamic Programming algorithm for regression change points detection by l0 penalty
+#' @description TO DO
+#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
+#' @param delta     A strictly \code{integer} scalar of minimum spacing.
+#' @param y         A \code{numeric} vector of observations.
+#' @param X         A \code{numeric} matrix of covariates.
+#' @param lambda    A \code{numeric} scalar of tuning parameter for the lasso penalty.
+#' @param ...      Additional arguments.
+#' @return TO DO.
+#' @export
+#' @author
+#' @examples
+#' TO DO
+CV.DP.regression = function(gamma, delta, y, X, lambda, ...){
+  N = ncol(X)
+  even_indexes = seq(2, N, 2)
+  odd_indexes = seq(1, N, 2)
+  train.X = X[,odd_indexes]
+  train.y = y[odd_indexes]
+  validation.X = X[,even_indexes]
+  validation.y = y[even_indexes]
+  init_cpt_train = part2local(DP.regression(gamma, delta, train.y, train.X, lambda)$partition)
+  init_cpt_train.long = c(0, init_cpt_train, ncol(train.X))
+  diff.point = diff(init_cpt_train.long)
+  if (length(which(diff.point == 1)) > 0){
+    print(paste("gamma =", gamma,",", "lambda =", lambda, ".","Warning: Consecutive points detected. Try a larger gamma."))
+    init_cpt = odd_indexes[init_cpt_train]
+    len = length(init_cpt)
+    result = list(cpt_hat = init_cpt, K_hat = len, test_error = Inf, train_error = Inf)
+  }
+  else{
+    init_cpt = odd_indexes[init_cpt_train]
+    len = length(init_cpt)
+    init_cpt_long = c(init_cpt_train, N/2)
+    interval = matrix(0, nrow = len+1, ncol = 2)
+    interval[1,] = c(1, init_cpt_long[1])
+    if(len > 0){
+      for(j in 2:(1+len)){
+        interval[j,] = c(init_cpt_long[j-1]+1, init_cpt_long[j])
+      }
+    }
+    p = nrow(train.X)
+    trainmat = sapply(1:(len+1), function(index) error.pred.seg.regression(interval[index,1], interval[index,2], train.y, train.X, lambda, delta))
+    betamat = matrix(0, nrow = p, ncol = len+1)
+    training_loss = matrix(0, nrow = 1, ncol = len+1)
+    for(col in 1:(len+1)){
+      betamat[,col] = as.numeric(trainmat[2,col]$beta.hat)
+      training_loss[,col] = as.numeric(trainmat[1,col]$MSE)
+    }
+    validationmat = sapply(1:(len+1), function(index) error.test(interval[index,1], interval[index,2], validation.y, validation.X, betamat[,index]))
+    result = list(cpt_hat = init_cpt, K_hat = len, test_error = sum(validationmat), train_error = sum(training_loss))
+  }
+  return(result)
+}
+
+
+#' @title Internal Function: compute testing error
+#' @param  lower     A \code{integer} scalar of starting index.
+#' @param  upper     A \code{integer} scalar of ending index.
+#' @param y         A \code{numeric} vector of observations.
+#' @param X         A \code{numeric} matrix of covariates.
+#' @return A numeric scalar of testing error in squared l2 norm.
+#' @noRd
+error.test = function(lower, upper, y, X, beta.hat){
+  res = norm(y[lower:upper] - t(X[,lower:upper])%*%beta.hat, type = "2")^2
+  return(res)
+} 
+
+
+#' @title Perform grid search based on Cross-Validation of Dynamic Programming algorithm for regression change points detection by l0 penalty
+#' @description TO DO
+#' @param lambda.set    A \code{numeric} vector of candidate tuning parameter for the lasso penalty.
+#' @param gamma.set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
+#' @param y             A \code{numeric} vector of observations.
+#' @param X             A \code{numeric} matrix of covariates.
+#' @param delta         A strictly \code{integer} scalar of minimum spacing.
+#' @param ...           Additional arguments.
+#' @return TO DO.
+#' @export
+#' @author
+#' @examples
+#' TO DO
+CV.search.DP.regression = function(lambda.set, gamma.set, y, X, delta){
+  output = sapply(1:length(lambda.set), function(i) sapply(1:length(gamma.set), 
+                                                           function(j) CV.DP.regression(gamma.set[j], delta, y, X, lambda.set[i])))
+  print(output)
+  cpt_hat = output[seq(1,4*length(gamma.set),4),]## estimated change points
+  K_hat = output[seq(2,4*length(gamma.set),4),]## number of estimated change points
+  test_error = output[seq(3,4*length(gamma.set),4),]## validation loss
+  train_error = output[seq(4,4*length(gamma.set),4),]## training loss                                                      
+  result = list(cpt_hat = cpt_hat, K_hat = K_hat, test_error = test_error, train_error = train_error)
+  return(result)
 }

@@ -19,7 +19,7 @@ part2local = function(x){
     l = x[r]
     localization = c(l, localization)
   }
-  return(list(cpt = localization[-1], no.cpt = length(localization[-1])))
+  return(localization[-1])
 }
 
 

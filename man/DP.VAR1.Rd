@@ -26,11 +26,18 @@ TO DO
 \examples{
 p = 20
 sigma = 1
-n = 100
-A = matrix(rnorm(p*p), nrow = p)
-DATA = simu.change.VAR1(sigma, p, n, A)
-parti = DP.VAR1(DATA, gamma = 1, delta = 5, lambda = 1)$partition
-part2local(parti)
+n = 30
+v1 = 2*(seq(1,p,1)\%\%2) - 1
+v2 = -v1
+AA = matrix(0, nrow = p, ncol = p-2)
+A1=cbind(v1,v2,AA)
+A2=cbind(v2,v1,AA)
+A3=A1
+data = simu.change.VAR1(sigma, p, 2*n+1, A1)
+data = cbind(simu.change.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
+data = cbind(simu.change.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
+parti = DP.VAR1(data, gamma = 1, delta = 5, lambda = 1)$partition
+localization = part2local(parti)
 }
 \author{
 Haotian Xu
