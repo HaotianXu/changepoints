@@ -244,7 +244,7 @@ CV.DP.regression = function(gamma, delta, y, X, lambda, ...){
   else{
     init_cpt = odd_indexes[init_cpt_train]
     len = length(init_cpt)
-    init_cpt_long = c(init_cpt_train, N/2)
+    init_cpt_long = c(init_cpt_train, floor(N/2))
     interval = matrix(0, nrow = len+1, ncol = 2)
     interval[1,] = c(1, init_cpt_long[1])
     if(len > 0){
@@ -260,21 +260,21 @@ CV.DP.regression = function(gamma, delta, y, X, lambda, ...){
       betamat[,col] = as.numeric(trainmat[2,col]$beta.hat)
       training_loss[,col] = as.numeric(trainmat[1,col]$MSE)
     }
-    validationmat = sapply(1:(len+1), function(index) error.test(interval[index,1], interval[index,2], validation.y, validation.X, betamat[,index]))
+    validationmat = sapply(1:(len+1), function(index) error.test.regression(interval[index,1], interval[index,2], validation.y, validation.X, betamat[,index]))
     result = list(cpt_hat = init_cpt, K_hat = len, test_error = sum(validationmat), train_error = sum(training_loss))
   }
   return(result)
 }
 
 
-#' @title Internal Function: compute testing error
+#' @title Internal Function: compute testing error for regression
 #' @param  lower     A \code{integer} scalar of starting index.
 #' @param  upper     A \code{integer} scalar of ending index.
 #' @param y         A \code{numeric} vector of observations.
 #' @param X         A \code{numeric} matrix of covariates.
 #' @return A numeric scalar of testing error in squared l2 norm.
 #' @noRd
-error.test = function(lower, upper, y, X, beta.hat){
+error.test.regression = function(lower, upper, y, X, beta.hat){
   res = norm(y[lower:upper] - t(X[,lower:upper])%*%beta.hat, type = "2")^2
   return(res)
 } 

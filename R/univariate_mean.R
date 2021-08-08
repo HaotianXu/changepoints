@@ -114,7 +114,7 @@ CV.DP.univar = function(gamma, delta, y, ...){
 #' @author
 #' @examples
 #' TO DO
-CV.search.DP.regression = function(gamma.set, delta, y, ...){
+CV.search.DP.univar = function(gamma.set, delta, y, ...){
   output = sapply(1:length(gamma.set), function(j) CV.DP.univar(gamma.set[j], delta, y))
   print(output)
   cpt_hat = output[1,]## estimated change points

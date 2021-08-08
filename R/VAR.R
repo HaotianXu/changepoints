@@ -31,7 +31,7 @@ simu.change.VAR1= function(sigma, p, n, A, vzero = NULL, ...){
 }
 
 
-#' @title Internal Function: Prediction error in squared Frobenius norm for the lasso estimator of trasition matrix[11] 
+#' @title Internal Function: Prediction error in squared Frobenius norm for the lasso estimator of transition matrix[11] 
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
 #' @param X_futu    A \code{numeric} matrix of time series at one step ahead.
@@ -60,9 +60,11 @@ error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
     X_futu_hat = estimate%*%X_curr[,s:e]
     d = norm(X_futu_hat - X_futu[,s:e], type = "F")
   }else{
+    estimate = NA
     d = Inf
   }
-  return(d^2)
+  result = list(MSE = d^2, transition.hat = estimate)
+  return(result)
 }
 
 
@@ -106,20 +108,21 @@ error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
 #' data = simu.change.VAR1(sigma, p, 2*n+1, A1)
 #' data = cbind(simu.change.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
 #' data = cbind(simu.change.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
-#' parti = DP.VAR1(data, gamma = 1, delta = 5, lambda = 1)$partition
+#' N = ncol(data)
+#' X_curr = data[,1:(N-1)]
+#' X_futu = data[,2:N]
+#' parti = DP.VAR1(gamma = 1, delta = 5, X_futu, X_curr, lambda = 1)$partition
 #' localization = part2local(parti)
-DP.VAR1 = function(DATA, gamma, delta, lambda, ...){
-  N = ncol(DATA)
-  p = nrow(DATA)
-  X_curr = DATA[,1:(N-1)]
-  X_futu = DATA[,2:N]
+DP.VAR1 = function(gamma, delta, X_futu, X_curr, lambda, ...){
+  p = nrow(X_futu)
+  N = ncol(X_futu) + 1
   bestvalue = rep(0,N)
   partition = rep(0,N-1)
   bestvalue[1] = -gamma
   for(r in 1:(N-1)){
     bestvalue[r+1] = Inf
     for(l in 1:r){
-      b = bestvalue[l] + gamma + error.pred.seg.VAR1(l, r, X_futu, X_curr, lambda, delta)
+      b = bestvalue[l] + gamma + error.pred.seg.VAR1(l, r, X_futu, X_curr, lambda, delta)$MSE
       if(b < bestvalue[r+1]){
         bestvalue[r+1] = b
         partition[r] = l-1
@@ -213,3 +216,71 @@ X.glasso.converter.VAR1 = function(X, eta, s_ceil){
   xx = cbind(xx1/sqrt(t-1), xx2/sqrt(n-t))
   return(xx)
 }
+
+
+
+#' @title Cross-Validation of Dynamic Programming algorithm for regression change points detection by l0 penalty
+#' @description TO DO
+#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
+#' @param delta     A strictly \code{integer} scalar of minimum spacing.
+#' @param y         A \code{numeric} vector of observations.
+#' @param X         A \code{numeric} matrix of covariates.
+#' @param lambda    A \code{numeric} scalar of tuning parameter for the lasso penalty.
+#' @param ...      Additional arguments.
+#' @return TO DO.
+#' @export
+#' @author
+#' @examples
+#' TO DO
+CV.DP.VAR1 = function(DATA, gamma, delta, lambda, ...){
+  DATA.temp = DATA
+  if (ncol(DATA)%%2 == 0){
+    DATA.temp = DATA[,2:ncol(DATA)]
+  }
+  N = ncol(DATA.temp)
+  p = nrow(DATA.temp)
+  X_curr = DATA.temp[,1:(N-1)]
+  X_futu = DATA.temp[,2:N]
+  X_curr.train = X_curr[,seq(1,N-1,2)]
+  X_curr.test = X_curr[,seq(2,N-1,2)]
+  X_futu.train = X_futu[,seq(1,N-1,2)]
+  X_futu.test = X_futu[,seq(2,N-1,2)]
+  init_cpt_train = part2local(DP.VAR1(gamma, delta, X_futu.train, X_curr.train, lambda)$partition)
+
+
+  init_cpt = 2*init_cpt_train
+  len = length(init_cpt)
+  init_cpt_long = c(init_cpt_train, ncol(X_curr.train))
+  interval = matrix(0, nrow = len+1, ncol = 2)
+  interval[1,] = c(1, init_cpt_long[1])
+  if(len > 0){
+    for(j in 2:(1+len)){
+      interval[j,] = c(init_cpt_long[j-1]+1, init_cpt_long[j])
+    }
+  }
+
+  trainmat = sapply(1:(len+1), function(index) error.pred.seg.VAR1(interval[index,1], interval[index,2], X_futu.train, X_curr.train, lambda, delta))
+  transition.list = vector("list", len+1)
+  training_loss = matrix(0, nrow = 1, ncol = len+1)
+  for(col in 1:(len+1)){
+    transition.list[[col]] = as.numeric(trainmat[2,col]$transition.hat)
+    training_loss[,col] = as.numeric(trainmat[1,col]$MSE)
+  }
+  validationmat = sapply(1:(len+1), function(index) error.test.VAR1(interval[index,1], interval[index,2], X_futu.test, X_curr.test, transition.list[[index]]))
+  result = list(cpt_hat = init_cpt, K_hat = len, test_error = sum(validationmat), train_error = sum(training_loss))
+  return(result)
+}
+
+
+#' @title Internal Function: compute testing error for VAR1
+#' @param  lower     A \code{integer} scalar of starting index.
+#' @param  upper     A \code{integer} scalar of ending index.
+#' @param  X_futu    A \code{numeric} matrix of observations.
+#' @param  X_curr    A \code{numeric} matrix of covariates.
+#' @param  transition.hat A \code{numeric} matrix of transition matrix estimator.
+#' @return A numeric scalar of testing error in squared Frobenius norm.
+#' @noRd
+error.test.VAR1 = function(lower, upper, X_futu, X_curr, transition.hat){
+  res = norm(X_futu[lower:upper] - transition.hat%*%X_curr[,lower:upper], type = "F")^2
+  return(res)
+} 
