@@ -26,7 +26,7 @@ A \code{numeric} scalar of prediction error in l2 norm.
 TO DO
 }
 \examples{
-data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
+#TODO data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 cpt.init = part2local(DP.regression(2, 5, data$y, X = data$X, lambda = 2)$partition)$cpt
 local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
 }

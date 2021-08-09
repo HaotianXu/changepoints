@@ -33,9 +33,9 @@ AA = matrix(0, nrow = p, ncol = p-2)
 A1=cbind(v1,v2,AA)
 A2=cbind(v2,v1,AA)
 A3=A1
-data = simu.change.VAR1(sigma, p, 2*n+1, A1)
-data = cbind(simu.change.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
-data = cbind(simu.change.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
+data = simu.VAR1(sigma, p, 2*n+1, A1)
+data = cbind(simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
+data = cbind(simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
 N = ncol(data)
 X_curr = data[,1:(N-1)]
 X_futu = data[,2:N]

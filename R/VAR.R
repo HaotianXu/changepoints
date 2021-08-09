@@ -14,8 +14,8 @@
 #' sigma = 1
 #' n = 100
 #' A = matrix(rnorm(p*p), nrow = p)
-#' simu.change.VAR1(sigma, p, n, A)
-simu.change.VAR1= function(sigma, p, n, A, vzero = NULL, ...){
+#' simu.VAR1(sigma, p, n, A)
+simu.VAR1= function(sigma, p, n, A, vzero = NULL, ...){
   X = matrix(0, nrow = p, ncol = n)
   if(is.null(vzero)){
     X[,1] = rnorm(p, mean = 0, sd = sigma)
@@ -105,9 +105,9 @@ error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
 #' A1=cbind(v1,v2,AA)
 #' A2=cbind(v2,v1,AA)
 #' A3=A1
-#' data = simu.change.VAR1(sigma, p, 2*n+1, A1)
-#' data = cbind(simu.change.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
-#' data = cbind(simu.change.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
+#' data = simu.VAR1(sigma, p, 2*n+1, A1)
+#' data = cbind(simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
+#' data = cbind(simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
 #' N = ncol(data)
 #' X_curr = data[,1:(N-1)]
 #' X_futu = data[,2:N]
@@ -152,7 +152,7 @@ DP.VAR1 = function(gamma, delta, X_futu, X_curr, lambda, ...){
 #' @export
 #' @author 
 #' @examples
-#' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
+#' #TODO data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 #' cpt.init = part2local(DP.regression(2, 5, data$y, X = data$X, lambda = 2)$partition)$cpt
 #' local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
 local.refine.VAR1 = function(cpt.init, DATA, zeta.group, w = 1/3){
