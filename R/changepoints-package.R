@@ -4,7 +4,7 @@
 #'
 #' @docType package
 #' @author Haotian Xu <haotian.xu@warwick.ac.uk>
-#' @import Rcpp gglasso glmnet
+#' @import Rcpp gglasso glmnet penalized
 #' @importFrom Rcpp evalCpp
 #' @useDynLib changepoints
 #' @name changepoints

@@ -12,7 +12,8 @@ Imports:
     Rcpp, 
     RcppArmadillo,
     gglasso,
-    glmnet
+    glmnet,
+    penalized
 LinkingTo: Rcpp, RcppArmadillo
 License: AGPL-3
 RoxygenNote: 7.1.1

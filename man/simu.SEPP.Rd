@@ -28,11 +28,18 @@ A p-by-n matrix.
 TO DO
 }
 \examples{
-p = 20
-sigma = 1
-n = 100
-A = matrix(rnorm(p*p), nrow = p)
-simu.change.VAR1(sigma, p, n, A)
+M = 30
+n = 300
+threshold = 6 #thresholding makes the process stable
+intercept = 1/2 #intercept of the model. Assume to be known as in the existing literature
+v1 = (2*(seq(1,30,1)\%\%2)-1)*(0.05+0.05*6)
+v2 = -v1
+AA=matrix(0,nrow = 30,ncol=28)
+A=cbind(v1,v2,AA)
+A2=cbind(v2,v1,AA)
+DATA1 = simu.SEPP(intercept, M, A, threshold, n, vzero = NULL)
+DATA2 = simu.SEPP(intercept, M, A2, threshold, n, vzero = DATA1[,n])
+DATA = cbind(DATA1, DATA2)
 }
 \author{
 

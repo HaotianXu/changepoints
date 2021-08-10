@@ -68,23 +68,6 @@ error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
 }
 
 
-# #dp matrix  function
-# dp.matrix.function=function(X.train, Y.train, lambda.lasso , delta){
-#   N = ncol(X.train)
-#   p = nrow(X.train)
-#   dp.matrix = matrix(Inf, N, N) 
-#   for (s in 1:N){
-#     for (e in 1:N){
-#       if (e-s > delta){
-#         #print(c(i,j))
-#         dp.matrix[s,e] = error.pred.seg.VAR1(s, e, X_futu = Y.train, X_curr = X.train, lambda.lasso)
-#       }
-#     }
-#   }
-#   return(dp.matrix)
-# }
-
-
 #' @title Dynamic programming for VAR1 change points detection by l0 penalty
 #' @description TO DO
 #' @param DATA      A \code{numeric} matrix of observations.
