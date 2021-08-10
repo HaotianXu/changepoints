@@ -1,4 +1,23 @@
-NBS = function(Y, delta, s, e, N){
+#' @title Standard binary segmentation for univariate nonparametric change points detection
+#' @description TO DO
+#' @param Y         A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being multiple observations on each time point.
+#' @param delta     A strictly \code{integer} scalar of minimum spacing.
+#' @param s         A \code{integer} scalar of starting index.
+#' @param e         A \code{integer} scalar of ending index.
+#' @param N         A \code{integer} vector representing number of multiple observations on each time point.
+#' @param ...      Additional arguments.
+#' @return  A \code{list} with the structure:
+#' \itemize{
+#'  \item S           A vector of estimated changepoints (sorted in strictly increasing order).
+#'  \item Dval        A vector of values of CUSUM statistic based on KS distance.
+#'  \item ...         Additional parameters.
+#' } 
+#' @export
+#' @author Haotian Xu
+#' @examples
+#' plot.ts(t(Y))
+#' points(x = tail(temp$S[order(temp$Dval)],20), y =rep(0, 20), col = "red")
+NBS = function(Y, delta, s, e, N, ...){
   S = NULL
   Dval = NULL
   if(e-s <= delta){
@@ -23,9 +42,15 @@ NBS = function(Y, delta, s, e, N){
 }
 
 
-points(x = tail(temp$S[order(temp$Dval)],20), y =rep(0, 20), col = "red")
 
-
+#' @title Internal Function: Compute value of CUSUM statistic based on KS distance.
+#' @param Y         A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being multiple observations on each time point.
+#' @param s         A \code{integer} scalar of starting index.
+#' @param e         A \code{integer} scalar of ending index.
+#' @param t         A \code{integer} scalar of splitting index.
+#' @param N         A \code{integer} vector representing number of multiple observations on each time point.
+#' @return  A \code{numeric} scalar of value of CUSUM statistic based on KS distance.
+#' @noRd
 Delta_se_t = function(Y, s, e, t, N){
   T =  dim(Y)[2]
   n =  dim(Y)[1]
@@ -52,110 +77,110 @@ Delta_se_t = function(Y, s, e, t, N){
 
 
 
-NBS_full =  function(y, z, gam, N){
-  n = max(N)
-  T = dim(y)[1]
-  temp1 = new_BS(z, gam,1,T,0,NULL,NULL,1, N)  
-  Dval = temp1$Dval
-  p1 =  parent(temp1)
-  aux = sort(Dval,decreasing = TRUE)
-  tau_grid = rev(aux[1:min(20,length(Dval))]-10^{-5})
-  tau_grid =  tau_grid[which(is.na(tau_grid)==FALSE)] ### *
-  tau_grid = c(tau_grid,10)
-  
-  S =  c()
-  for( j in 1:length(tau_grid))
-  {
-    aux = new_BS_threshold(temp1,tau_grid[j],p1)
-    if(length(aux)==0)
-    {
-      break;
-    }
-    S[[j]] = sort(aux)
-  }
-  #}
-  T= dim(y)[1]
-  S = unique(S)
-  if(length(S)==0)
-  {
-    return(NULL)
-  }  
-  lamb =log(sum(N))/1.5#2.5#1.5#2#2.555#
-  for(j in 1:length(S))#)
-  {
-    if(length(S[[j]])==0)
-    {
-      j = j+1;
-      
-      if(j>length(S))
-        break;
-    }
-    
-    B2  =  S[[j]]
-    if(j==length(S))
-    {
-      B1 = NULL
-    }
-    if(j< length(S))
-    {
-      B1 = S[[j+1]]
-    }
-    temp = setdiff(B2,B1)
-    
-    st =  -10^15
-    #Delta_se_t(z,eta1,eta2,eta,N)^2 
-    for(l in 1:length(temp))
-    {
-      eta =  temp[l]
-      
-      if(j == length(S))
-      {
-        eta1 = 1
-        eta2 = T
-      }
-      if(j < length(S))
-      {
-        for(k in 1:length(S[[j+1]]))
-        {
-          if(S[[j+1]][k]> eta  )
-            break;
-        }
-        if(S[[j+1]][k]> eta )
-        {
-          eta2 = S[[j+1]][k]
-          
-          if(k ==1)
-            eta1 = 1
-          
-          if(k > 1)
-            eta1 = S[[j+1]][k-1]+1
-        }
-        if(S[[j+1]][k]< eta )
-        {
-          eta1 = S[[j+1]][k]+1
-          eta2 = T
-        }
-      }
-      st_aux = Delta_se_t(y,eta1,eta2,eta,N)^2
-      # print(st_au)
-      if(st_aux> st)
-      {
-        st = st_aux
-      }
-    }###  close for defining  eta1 and eta2
-    
-    
-    # print(c1 - c2 - Delta_se_t(z,eta1+1,eta2,eta,N)^2 + lamb)
-    if(st >   lamb)
-    {
-      #B1 = B2
-      return(B2)
-    }
-    # print(st)
-  }
-  #c1 - c2 - Delta_se_t(z,eta1+1,eta2,eta,N)^2 + lamb
-  
-  return(B1)
-  # 
-  
-}
+# NBS_full =  function(y, z, gam, N){
+#   n = max(N)
+#   T = dim(y)[1]
+#   temp1 = new_BS(z, gam,1,T,0,NULL,NULL,1, N)  
+#   Dval = temp1$Dval
+#   p1 =  parent(temp1)
+#   aux = sort(Dval,decreasing = TRUE)
+#   tau_grid = rev(aux[1:min(20,length(Dval))]-10^{-5})
+#   tau_grid =  tau_grid[which(is.na(tau_grid)==FALSE)] ### *
+#   tau_grid = c(tau_grid,10)
+#   
+#   S =  c()
+#   for( j in 1:length(tau_grid))
+#   {
+#     aux = new_BS_threshold(temp1,tau_grid[j],p1)
+#     if(length(aux)==0)
+#     {
+#       break;
+#     }
+#     S[[j]] = sort(aux)
+#   }
+#   #}
+#   T= dim(y)[1]
+#   S = unique(S)
+#   if(length(S)==0)
+#   {
+#     return(NULL)
+#   }  
+#   lamb =log(sum(N))/1.5#2.5#1.5#2#2.555#
+#   for(j in 1:length(S))#)
+#   {
+#     if(length(S[[j]])==0)
+#     {
+#       j = j+1;
+#       
+#       if(j>length(S))
+#         break;
+#     }
+#     
+#     B2  =  S[[j]]
+#     if(j==length(S))
+#     {
+#       B1 = NULL
+#     }
+#     if(j< length(S))
+#     {
+#       B1 = S[[j+1]]
+#     }
+#     temp = setdiff(B2,B1)
+#     
+#     st =  -10^15
+#     #Delta_se_t(z,eta1,eta2,eta,N)^2 
+#     for(l in 1:length(temp))
+#     {
+#       eta =  temp[l]
+#       
+#       if(j == length(S))
+#       {
+#         eta1 = 1
+#         eta2 = T
+#       }
+#       if(j < length(S))
+#       {
+#         for(k in 1:length(S[[j+1]]))
+#         {
+#           if(S[[j+1]][k]> eta  )
+#             break;
+#         }
+#         if(S[[j+1]][k]> eta )
+#         {
+#           eta2 = S[[j+1]][k]
+#           
+#           if(k ==1)
+#             eta1 = 1
+#           
+#           if(k > 1)
+#             eta1 = S[[j+1]][k-1]+1
+#         }
+#         if(S[[j+1]][k]< eta )
+#         {
+#           eta1 = S[[j+1]][k]+1
+#           eta2 = T
+#         }
+#       }
+#       st_aux = Delta_se_t(y,eta1,eta2,eta,N)^2
+#       # print(st_au)
+#       if(st_aux> st)
+#       {
+#         st = st_aux
+#       }
+#     }###  close for defining  eta1 and eta2
+#     
+#     
+#     # print(c1 - c2 - Delta_se_t(z,eta1+1,eta2,eta,N)^2 + lamb)
+#     if(st >   lamb)
+#     {
+#       #B1 = B2
+#       return(B2)
+#     }
+#     # print(st)
+#   }
+#   #c1 - c2 - Delta_se_t(z,eta1+1,eta2,eta,N)^2 + lamb
+#   
+#   return(B1)
+#   # 
+#   
+# }
