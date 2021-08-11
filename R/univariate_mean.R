@@ -147,7 +147,7 @@ CV.search.DP.univar = function(gamma.set, delta, y, ...){
 #' y = c(rnorm(100, 0, 1), rnorm(100, 10, 10), rnorm(100, 40, 10))
 #' temp = BS.univar(y, 1, 300, 5)
 #' plot.ts(y)
-#' points(x = tail(temp$S[order(temp$Dval)],20), y =rep(0, 20), col = "red")
+#' points(x = tail(temp$S[order(temp$Dval)],4), y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
 BS.univar = function(y, s, e, delta, level = 0, ...){
   S = NULL
   Dval = NULL
@@ -158,7 +158,7 @@ BS.univar = function(y, s, e, delta, level = 0, ...){
     level = level + 1
     a = rep(0, e-s-1)
     for(t in (s+1):(e-1)){
-      a[t-s] = sqrt((t-s+1) * (e-t) / (e-s+1)) * abs(mean(y[s:t]) - mean(y[(t+1):e]))
+      a[t-s] = sqrt((t-s) * (e-t) / (e-s)) * abs(mean(y[(s+1):t]) - mean(y[(t+1):e]))
     }
     best_value = max(a)
     best_t = which.max(a) + s

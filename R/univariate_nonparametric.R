@@ -24,6 +24,7 @@
 NBS = function(Y, delta, s, e, N, level = 0, ...){
   S = NULL
   Dval = NULL
+  Level = NULL
   if(e-s <= delta){
     return(list(S = S, Dval = Dval, Level = Level))
   }else{
@@ -34,8 +35,8 @@ NBS = function(Y, delta, s, e, N, level = 0, ...){
     }
     best_value = max(a)
     best_t = which.max(a) + s
-    temp1 = NBS(Y, delta, s, best_t-1, N)
-    temp2 = NBS(Y, delta, best_t, e, N)
+    temp1 = NBS(Y, delta, s, best_t-1, N, level)
+    temp2 = NBS(Y, delta, best_t, e, N, level)
     S = c(temp1$S, best_t, temp2$S)
     Dval = c(temp1$Dval, best_value, temp2$Dval)
     Level = c(temp1$Level, level, temp2$Level)
@@ -54,11 +55,11 @@ NBS = function(Y, delta, s, e, N, level = 0, ...){
 #' @return  A \code{numeric} scalar of value of CUSUM statistic based on KS distance.
 #' @noRd
 Delta_se_t = function(Y, s, e, t, N){
-  n_st = sum(N[s:t])  #n*(t-s+1)
-  n_se = sum(N[s:e])  #n*(e-s+1)
-  n_te = sum(N[(t+1):e]) #n*(e-(t+1) +1)
+  n_st = sum(N[(s+1):t])
+  n_se = sum(N[(s+1):e])
+  n_te = sum(N[(t+1):e])
   
-  aux = Y[, s:t]
+  aux = Y[, (s+1):t]
   aux = aux[which(is.na(aux)==FALSE)]
   temp = ecdf(aux)
   vec_y = Y[, s:e]
