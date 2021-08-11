@@ -4,10 +4,10 @@
 \alias{NBS}
 \title{Standard binary segmentation for univariate nonparametric change points detection}
 \usage{
-NBS(Y, delta, s, e, N, ...)
+NBS(Y, delta, s, e, N, level = 0, ...)
 }
 \arguments{
-\item{Y}{A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being multiple observations on each time point.}
+\item{Y}{A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being multiple observations on each time point.}
 
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
 
@@ -17,6 +17,8 @@ NBS(Y, delta, s, e, N, ...)
 
 \item{N}{A \code{integer} vector representing number of multiple observations on each time point.}
 
+\item{level}{Should be fixed as 0.}
+
 \item{...}{Additional arguments.}
 }
 \value{
@@ -24,6 +26,7 @@ A \code{list} with the structure:
 \itemize{
  \item S           A vector of estimated changepoints (sorted in strictly increasing order).
  \item Dval        A vector of values of CUSUM statistic based on KS distance.
+ \item Level       A vector representing the levels at which each change point is detected.
  \item ...         Additional parameters.
 }
 }
@@ -31,8 +34,10 @@ A \code{list} with the structure:
 TO DO
 }
 \examples{
+Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))
+temp = NBS(Y, 5, 1, 300, N)
 plot.ts(t(Y))
-points(x = tail(temp$S[order(temp$Dval)],20), y =rep(0, 20), col = "red")
+points(x = tail(temp$S[order(temp$Dval)],4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
 }
 \author{
 Haotian Xu

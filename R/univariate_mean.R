@@ -124,3 +124,49 @@ CV.search.DP.univar = function(gamma.set, delta, y, ...){
   result = list(cpt_hat = cpt_hat, K_hat = K_hat, test_error = test_error, train_error = train_error)
   return(result)
 }
+
+
+#' @title Standard binary segmentation for univariate mean change points detection
+#' @description TO DO
+#' @param y         A \code{numeric} vector of observations.
+#' @param s         A \code{integer} scalar of starting index.
+#' @param e         A \code{integer} scalar of ending index.
+#' @param delta     A strictly \code{integer} scalar of minimum spacing.
+#' @param level     Should be fixed as 0.
+#' @param ...      Additional arguments.
+#' @return  A \code{list} with the structure:
+#' \itemize{
+#'  \item S           A vector of estimated changepoints (sorted in strictly increasing order).
+#'  \item Dval        A vector of values of CUSUM statistic based on KS distance.
+#'  \item Level       A vector representing the levels at which each change point is detected.
+#'  \item ...         Additional parameters.
+#' } 
+#' @export
+#' @author Haotian Xu
+#' @examples
+#' y = c(rnorm(100, 0, 1), rnorm(100, 10, 10), rnorm(100, 40, 10))
+#' temp = BS.univar(y, 1, 300, 5)
+#' plot.ts(y)
+#' points(x = tail(temp$S[order(temp$Dval)],20), y =rep(0, 20), col = "red")
+BS.univar = function(y, s, e, delta, level = 0, ...){
+  S = NULL
+  Dval = NULL
+  Level = NULL
+  if(e-s <= delta){
+    return(list(S = S, Dval = Dval, Level = Level))
+  }else{
+    level = level + 1
+    a = rep(0, e-s-1)
+    for(t in (s+1):(e-1)){
+      a[t-s] = sqrt((t-s+1) * (e-t) / (e-s+1)) * abs(mean(y[s:t]) - mean(y[(t+1):e]))
+    }
+    best_value = max(a)
+    best_t = which.max(a) + s
+    temp1 = BS.univar(y, s, best_t-1, delta, level)
+    temp2 = BS.univar(y, best_t, e, delta, level)
+    S = c(temp1$S, best_t, temp2$S)
+    Dval = c(temp1$Dval, best_value, temp2$Dval)
+    Level = c(temp1$Level, level, temp2$Level)
+    return(list(S = S, Dval = Dval, Level = Level))
+  }
+}
