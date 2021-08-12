@@ -123,7 +123,7 @@ one.step.trim = function(idx_remove_parent, data_children){
   if(length(idx_remove_children) == 0){
     data_children_trimmed = data_children
   }else{
-    data_children_trimmed = data_children[!(data_children$current == idx_remove_children),]
+    data_children_trimmed = data_children[!(data_children$current %in% idx_remove_children),]
   }
   return(list(idx_remove_children = idx_remove_children, data_children_trimmed = data_children_trimmed))
 }
