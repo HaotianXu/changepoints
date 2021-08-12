@@ -139,6 +139,7 @@ CV.search.DP.univar = function(gamma.set, delta, y, ...){
 #'  \item S           A vector of estimated changepoints (sorted in strictly increasing order).
 #'  \item Dval        A vector of values of CUSUM statistic based on KS distance.
 #'  \item Level       A vector representing the levels at which each change point is detected.
+#'  \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
 #'  \item ...         Additional parameters.
 #' } 
 #' @export
@@ -152,10 +153,12 @@ BS.univar = function(y, s, e, delta, level = 0, ...){
   S = NULL
   Dval = NULL
   Level = NULL
+  Parent = NULL
   if(e-s <= delta){
-    return(list(S = S, Dval = Dval, Level = Level))
+    return(list(S = S, Dval = Dval, Level = Level, Parent = Parent))
   }else{
     level = level + 1
+    parent = matrix(c(s, e), nrow = 2)
     a = rep(0, e-s-1)
     for(t in (s+1):(e-1)){
       a[t-s] = sqrt((t-s) * (e-t) / (e-s)) * abs(mean(y[(s+1):t]) - mean(y[(t+1):e]))
@@ -167,6 +170,9 @@ BS.univar = function(y, s, e, delta, level = 0, ...){
     S = c(temp1$S, best_t, temp2$S)
     Dval = c(temp1$Dval, best_value, temp2$Dval)
     Level = c(temp1$Level, level, temp2$Level)
-    return(list(S = S, Dval = Dval, Level = Level))
+    Parent = cbind(temp1$Parent, parent, temp2$Parent)
+    return(list(S = S, Dval = Dval, Level = Level, Parent = Parent))
   }
 }
+
+

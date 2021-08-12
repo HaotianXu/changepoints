@@ -49,3 +49,80 @@ Hausdorff.dist = function(vec1, vec2, ...){
   dH = max(max(apply(dist, 2, function(x) min(x))), max(apply(dist, 1, function(x) min(x))))
   return(dH)
 }
+
+
+#' @title Thresholding the standard binary segmentation for univariate mean change points detection
+#' @description TO DO
+#' @param BS_result     A \code{numeric} vector of observations.
+#' @param tau           A \code{numeric} scalar of thresholding value.
+#' @param ...      Additional arguments.
+#' @return  A \code{list} with the structure:
+#' \itemize{
+#'  \item BS_tree             A list of data.frame containing "current" indices, "parent" indices, "location" indices and "value" of CUSUM at all steps.
+#'  \item BS_tree_trimmed     BS_tree with change points which do not satisfy the thresholding criteria removed.
+#'  \item ...         Additional parameters.
+#' } 
+#' @export
+#' @author Haotian Xu
+#' @examples
+#' y = c(rnorm(100, 0, 1), rnorm(100, 10, 10), rnorm(100, 40, 10))
+#' temp = BS.univar(y, 1, 300, 5)
+#' plot.ts(y)
+#' points(x = tail(temp$S[order(temp$Dval)],4), y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
+BS_threshold = function(BS_result, tau, ...){
+  level_unique = unique(BS_result$Level[order(BS_result$Level)])
+  level_length = length(level_unique)
+  BS_tree = vector("list", level_length)
+  BS_tree[[1]] = data.frame(current = 1, parent = 1, location = BS_result$S[order(BS_result$Level)][1], value = BS_result$Dval[order(BS_result$Level)][1])
+  for(i in 2:level_length){
+    idx_curr = cumsum(table(BS_result$Level))[i-1] + 1:table(BS_result$Level)[i]
+    idx_prev = cumsum(table(BS_result$Level))[i-1] + 1 - table(BS_result$Level)[i-1]:1
+    interval_prev = as.matrix(BS_result$Parent[,order(BS_result$Level)][,idx_prev])
+    e_curr = BS_result$Parent[,order(BS_result$Level)][2,idx_curr]
+    BS_tree[[i]] = data.frame(current = 1:length(idx_curr),
+                              parent = sapply(e_curr, function(x) which(rbind(interval_prev[1,] <= x & interval_prev[2,] >= x))), 
+                              location = BS_result$S[order(BS_result$Level)][idx_curr],
+                              value = BS_result$Dval[order(BS_result$Level)][idx_curr])
+  }
+  BS_tree_trimmed = BS_tree
+  for(i in 1:level_length){
+    idx_remove = BS_tree_trimmed[[i]]$current[BS_tree_trimmed[[i]]$value <= tau]
+    BS_tree_trimmed[[i]] = BS_tree_trimmed[[i]][BS_tree_trimmed[[i]]$value > tau,]
+    if(length(idx_remove) > 0){
+      idx_remove_parent = idx_remove
+      k = i+1
+      while(length(idx_remove_parent) > 0 & k <= level_length){
+        temp = one_step_trim(idx_remove_parent, BS_tree_trimmed[[k]])
+        BS_tree_trimmed[[k]] = temp$data_children_trimmed
+        idx_remove_parent = temp$idx_remove_children
+        k = k + 1
+      }
+    }
+  }
+  return(list(BS_tree = BS_tree, BS_tree_trimmed = BS_tree_trimmed))
+}
+
+
+
+#' @title Internal Function for BS thresholding: Given a set of indices in the current step, search for all indices of children in the next step.
+#' @param idx_remove_parent     A \code{integer} vector of indices in the current step.
+#' @param data_children         A \code{data.frame} including "current" indices, "parent" indices, "location" indices and "value" of CUSUM at the next step.
+#' @return  A \code{list} with the structure:
+#' \itemize{
+#'  \item idx_remove_children       A vector of indices of children in the next step.
+#'  \item data_children_trimmed     A data.frame being data_children with the observations (idx_remove_children) removed.
+#'  \item ...         Additional parameters.
+#' } 
+#' @noRd
+one_step_trim = function(idx_remove_parent, data_children){
+  idx_remove_children = NULL
+  for(j in idx_remove_parent){
+    idx_remove_children = c(idx_remove_children, data_children$current[data_children$parent == j])
+  }
+  if(length(idx_remove_children) == 0){
+    data_children_trimmed = data_children
+  }else{
+    data_children_trimmed = data_children[-idx_remove_children,]
+  }
+  return(list(idx_remove_children = idx_remove_children, data_children_trimmed = data_children_trimmed))
+}

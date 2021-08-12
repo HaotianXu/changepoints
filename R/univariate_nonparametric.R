@@ -12,6 +12,7 @@
 #'  \item S           A vector of estimated changepoints (sorted in strictly increasing order).
 #'  \item Dval        A vector of values of CUSUM statistic based on KS distance.
 #'  \item Level       A vector representing the levels at which each change point is detected.
+#'  \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
 #'  \item ...         Additional parameters.
 #' } 
 #' @export
@@ -25,10 +26,12 @@ NBS = function(Y, delta, s, e, N, level = 0, ...){
   S = NULL
   Dval = NULL
   Level = NULL
+  Parent = NULL
   if(e-s <= delta){
-    return(list(S = S, Dval = Dval, Level = Level))
+    return(list(S = S, Dval = Dval, Level = Level, Parent = Parent))
   }else{
     level = level + 1
+    parent = matrix(c(s, e), nrow = 2)
     a = rep(0, e-s-1)
     for(t in (s+1):(e-1)){
       a[t-s] = Delta_se_t(Y, s, e, t, N)
@@ -40,7 +43,8 @@ NBS = function(Y, delta, s, e, N, level = 0, ...){
     S = c(temp1$S, best_t, temp2$S)
     Dval = c(temp1$Dval, best_value, temp2$Dval)
     Level = c(temp1$Level, level, temp2$Level)
-    return(list(S = S, Dval = Dval, Level = Level))
+    Parent = cbind(temp1$Parent, parent, temp2$Parent)
+    return(list(S = S, Dval = Dval, Level = Level, Parent = Parent))
   }
 }
 
@@ -58,19 +62,16 @@ Delta_se_t = function(Y, s, e, t, N){
   n_st = sum(N[(s+1):t])
   n_se = sum(N[(s+1):e])
   n_te = sum(N[(t+1):e])
-  
   aux = Y[, (s+1):t]
   aux = aux[which(is.na(aux)==FALSE)]
   temp = ecdf(aux)
   vec_y = Y[, s:e]
   vec_y = vec_y[which(is.na(vec_y)==FALSE)]
   Fhat_st = temp(vec_y)# temp(grid)
-  
   aux = Y[, (t+1):e]
   aux = aux[which(is.na(aux)==FALSE)]
   temp = ecdf(aux)
   Fhat_te = temp(vec_y)# temp(grid)
-  
   temp = sqrt(n_st * n_te / n_se) * max(abs(Fhat_te - Fhat_st))
   return(temp)
 }

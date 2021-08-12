@@ -25,6 +25,7 @@ A \code{list} with the structure:
  \item S           A vector of estimated changepoints (sorted in strictly increasing order).
  \item Dval        A vector of values of CUSUM statistic based on KS distance.
  \item Level       A vector representing the levels at which each change point is detected.
+ \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
  \item ...         Additional parameters.
 }
 }
@@ -35,7 +36,7 @@ TO DO
 y = c(rnorm(100, 0, 1), rnorm(100, 10, 10), rnorm(100, 40, 10))
 temp = BS.univar(y, 1, 300, 5)
 plot.ts(y)
-points(x = tail(temp$S[order(temp$Dval)],20), y =rep(0, 20), col = "red")
+points(x = tail(temp$S[order(temp$Dval)],4), y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
 }
 \author{
 Haotian Xu

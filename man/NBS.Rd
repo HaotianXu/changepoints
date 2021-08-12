@@ -27,6 +27,7 @@ A \code{list} with the structure:
  \item S           A vector of estimated changepoints (sorted in strictly increasing order).
  \item Dval        A vector of values of CUSUM statistic based on KS distance.
  \item Level       A vector representing the levels at which each change point is detected.
+ \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
  \item ...         Additional parameters.
 }
 }
