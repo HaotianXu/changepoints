@@ -69,7 +69,8 @@ Hausdorff.dist = function(vec1, vec2, ...){
 #' temp = BS.univar(y, 1, 300, 5)
 #' plot.ts(y)
 #' points(x = tail(temp$S[order(temp$Dval)],4), y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-BS_threshold = function(BS_result, tau, ...){
+#' BS.threshold(temp, 10)
+BS.threshold = function(BS_result, tau, ...){
   level_unique = unique(BS_result$Level[order(BS_result$Level)])
   level_length = length(level_unique)
   BS_tree = vector("list", level_length)
@@ -92,7 +93,7 @@ BS_threshold = function(BS_result, tau, ...){
       idx_remove_parent = idx_remove
       k = i+1
       while(length(idx_remove_parent) > 0 & k <= level_length){
-        temp = one_step_trim(idx_remove_parent, BS_tree_trimmed[[k]])
+        temp = one.step.trim(idx_remove_parent, BS_tree_trimmed[[k]])
         BS_tree_trimmed[[k]] = temp$data_children_trimmed
         idx_remove_parent = temp$idx_remove_children
         k = k + 1
@@ -114,7 +115,7 @@ BS_threshold = function(BS_result, tau, ...){
 #'  \item ...         Additional parameters.
 #' } 
 #' @noRd
-one_step_trim = function(idx_remove_parent, data_children){
+one.step.trim = function(idx_remove_parent, data_children){
   idx_remove_children = NULL
   for(j in idx_remove_parent){
     idx_remove_children = c(idx_remove_children, data_children$current[data_children$parent == j])
@@ -122,7 +123,7 @@ one_step_trim = function(idx_remove_parent, data_children){
   if(length(idx_remove_children) == 0){
     data_children_trimmed = data_children
   }else{
-    data_children_trimmed = data_children[-idx_remove_children,]
+    data_children_trimmed = data_children[!(data_children$current == idx_remove_children),]
   }
   return(list(idx_remove_children = idx_remove_children, data_children_trimmed = data_children_trimmed))
 }
