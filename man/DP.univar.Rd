@@ -9,7 +9,7 @@ DP.univar(gamma, delta, y, ...)
 \arguments{
 \item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
 
-\item{delta}{A strictly \code{integer} scalar of minimum spacing.}
+\item{delta}{A positive \code{integer} scalar of minimum spacing.}
 
 \item{y}{A \code{numeric} vector of observations.}
 

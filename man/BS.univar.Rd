@@ -13,7 +13,7 @@ BS.univar(y, s, e, delta, level = 0, ...)
 
 \item{e}{A \code{integer} scalar of ending index.}
 
-\item{delta}{A strictly \code{integer} scalar of minimum spacing.}
+\item{delta}{A positive \code{integer} scalar of minimum spacing.}
 
 \item{level}{Should be fixed as 0.}
 

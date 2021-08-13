@@ -1,7 +1,7 @@
 #' @title Dynamic programming for univariate mean change points detection by l0 penalty (RCPP)
 #' @description TO DO
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
-#' @param delta     A strictly \code{integer} scalar of minimum spacing.
+#' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param y         A \code{numeric} vector of observations.
 #' @param ...      Additional arguments.
 #' @return TO DO.
@@ -17,7 +17,7 @@ D_P_univar <- function(gamma, delta, y, ...) {
 #' @title Dynamic programming for univariate mean change points detection by l0 penalty
 #' @description TO DO
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
-#' @param delta     A strictly \code{integer} scalar of minimum spacing.
+#' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param y         A \code{numeric} vector of observations.
 #' @param ...      Additional arguments.
 #' @return TO DO.
@@ -60,7 +60,7 @@ DP.univar = function(gamma, delta, y, ...){
 #' @title Internal Function: Cross-Validation of Dynamic Programming algorithm for univariate mean change points detection by l0 penalty
 #' @description TO DO
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
-#' @param delta     A strictly \code{integer} scalar of minimum spacing.
+#' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param y         A \code{numeric} vector of observations.
 #' @param ...      Additional arguments.
 #' @return TO DO.
@@ -131,7 +131,7 @@ CV.search.DP.univar = function(gamma.set, delta, y, ...){
 #' @param y         A \code{numeric} vector of observations.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
-#' @param delta     A strictly \code{integer} scalar of minimum spacing.
+#' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param level     Should be fixed as 0.
 #' @param ...      Additional arguments.
 #' @return  A \code{list} with the structure:

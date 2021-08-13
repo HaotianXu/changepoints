@@ -100,7 +100,12 @@ BS.threshold = function(BS_result, tau, ...){
       }
     }
   }
-  return(list(BS_tree = BS_tree, BS_tree_trimmed = BS_tree_trimmed))
+  points_at_level = sapply(BS_tree_trimmed, dim)[1,]
+  level = unlist(sapply(1:length(points_at_level), function(x) rep(x, points_at_level[x])))
+  change_points = do.call(rbind, BS_tree_trimmed)[,c(3,4)]
+  change_points$level = level
+  rownames(change_points) = c()
+  return(list(BS_tree = BS_tree, BS_tree_trimmed = BS_tree_trimmed, change_points = change_points))
 }
 
 
