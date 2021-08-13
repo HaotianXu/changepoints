@@ -176,3 +176,88 @@ BS.univar = function(y, s, e, delta, level = 0, ...){
 }
 
 
+#' @title Wild binary segmentation for univariate mean change points detection
+#' @description TO DO
+#' @param y         A \code{numeric} vector of observations.
+#' @param s         A \code{integer} scalar of starting index.
+#' @param e         A \code{integer} scalar of ending index.
+#' @param Alpha     A \code{integer} vector of starting indices of random intervals.
+#' @param Beta      A \code{integer} vector of ending indices of random intervals.
+#' @param delta     A positive \code{integer} scalar of minimum spacing.
+#' @param level     Should be fixed as 0.
+#' @param ...      Additional arguments.
+#' @return  A \code{list} with the structure:
+#' \itemize{
+#'  \item S           A vector of estimated changepoints (sorted in strictly increasing order).
+#'  \item Dval        A vector of values of CUSUM statistic based on KS distance.
+#'  \item Level       A vector representing the levels at which each change point is detected.
+#'  \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
+#'  \item ...         Additional parameters.
+#' } 
+#' @export
+#' @author Haotian Xu
+#' @examples
+#' y = c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))
+#' M = 120
+#' Alpha = sample.int(size = M, n = 300, replace = TRUE)
+#' Beta = sample.int(size = M, n = T, replace = TRUE)
+#' for(j in 1:M){
+#'   aux =  Alpha[j]
+#'   aux2 = Beta[j]
+#'   Alpha[j] = min(aux, aux2)
+#'   Beta[j] = max(aux, aux2)
+#' }
+#' temp = WBS.univar(y, 1, 300, Alpha, Beta, 5)
+#' plot.ts(y)
+#' points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
+#' BS.threshold(temp, 1.5)
+WBS.univar = function(y, s, e, Alpha, Beta, delta, level = 0){ 
+  Alpha_new = pmax(Alpha, s)
+  Beta_new = pmin(Beta, e)
+  idx = which(Beta_new - Alpha_new > delta)
+  Alpha_new = Alpha_new[idx]
+  Beta_new = Beta_new[idx]
+  M = length(Alpha_new)
+  # xi = 1/8
+  # Alpha_new2 = Alpha_new
+  # Beta_new2  = Beta_new
+  # Alpha_new = ceiling((1-xi)*Alpha_new2+  xi*Beta_new2)
+  # Beta_new = ceiling((1-xi)*Beta_new2 +  xi*Alpha_new2)
+  # idx = which(Beta_new - Alpha_new > delta)
+  # Alpha_new = Alpha_new[idx]
+  # Beta_new = Beta_new[idx]
+  # M = length(Alpha_new)
+  S = NULL
+  Dval = NULL
+  Level = NULL
+  Parent = NULL
+  if(M == 0){
+    return(list(S = S, Dval = Dval, Level = Level, Parent = Parent))
+  }else{
+    level = level + 1
+    parent = matrix(c(s, e), nrow = 2)
+    a = rep(0, M)
+    b = rep(0, M)
+    for(m in 1:M){
+      temp = rep(0, Beta_new[m] - Alpha_new[m] - 1)
+      for(t in (Alpha_new[m]+1):(Beta_new[m]-1)){
+        temp[t-(Alpha_new[m])] = sqrt((t-Alpha_new[m]) * (Beta_new[m]-t) / (Beta_new[m]-Alpha_new[m])) * abs(mean(y[(Alpha_new[m]+1):t]) - mean(y[(t+1):Beta_new[m]]))
+      }
+      best_value = max(temp)
+      best_t = which.max(temp) + Alpha_new[m]
+      a[m] = best_value
+      b[m] = best_t
+    }
+    m_star = which.max(a)
+  }
+  temp1 = NWBS(Y, s, b[m_star]-1, Alpha, Beta, N, delta, level)
+  temp2 = NWBS(Y, b[m_star], e, Alpha, Beta, N, delta, level)
+  S = c(temp1$S, b[m_star], temp2$S)
+  Dval = c(temp1$Dval, a[m_star], temp2$Dval)
+  Level = c(temp1$Level, level, temp2$Level)
+  Parent = cbind(temp1$Parent, parent, temp2$Parent)
+  return(list(S = S, Dval = Dval, Level = Level, Parent = Parent))
+}
+
+
+
