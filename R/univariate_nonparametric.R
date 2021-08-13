@@ -114,6 +114,7 @@ CUSUM.KS = function(Y, s, e, t, N){
 #' temp = NWBS(Y, 1, 300, Alpha, Beta, N, 5)
 #' plot.ts(t(Y))
 #' points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
+#' BS.threshold(temp, 1.5)
 NWBS = function(Y, s, e, Alpha, Beta, N, delta, level = 0){ 
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
