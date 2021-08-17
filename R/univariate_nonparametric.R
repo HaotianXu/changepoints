@@ -115,7 +115,7 @@ CUSUM.KS = function(Y, s, e, t, N){
 #' plot.ts(t(Y))
 #' points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
 #' BS.threshold(temp, 1.5)
-NWBS = function(Y, s, e, Alpha, Beta, N, delta, level = 0){ 
+NWBS = function(Y, s, e, Alpha, Beta, N, delta, level = 0, ...){ 
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
   idx = which(Beta_new - Alpha_new > delta)
