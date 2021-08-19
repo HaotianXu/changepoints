@@ -146,3 +146,30 @@ gen.lower.coordinate=function(p){
   mat=matrix(1:p^2, nrow = p)
   return(mat[lower.tri(mat, diag = F)])  
 }
+
+
+
+#' @title Generate population covariance matrix with dimension p.
+#' @param p       A \code{integer} scalar of dimensionality.
+#' @param sigma2  A positive \code{numeric} scalar representing the variance of each entry.
+#' @param type    3 types of covariance matrix are considered. 1: Diagonal structure; 2: Equal correlation structure; 3: Power decay structure.
+#' @return    A \code{numeric} p-by-p matrix.
+#' @export
+#' @author
+#' @examples
+#' TO DO
+gen.cov.mat = function(p, sigma2, type){
+  if(type == 1){
+    Sigma = diag(1, p)
+  }else if(type == 2){
+    Sigma = matrix(0.5, nrow = p, ncol = p) + diag(0.5, p)
+  }else if(type == 3){
+    Sigma = matrix(NA, nrow = p, ncol = p)
+    for(i in 1:p){
+      for(j in 1:p){
+        Sigma[i,j] = 0.5^(abs(i-j))
+      }
+    }
+  }
+  return(Sigma)
+}

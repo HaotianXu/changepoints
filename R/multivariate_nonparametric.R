@@ -1,10 +1,10 @@
-#' @title Internal Function: Compute value of CUSUM statistic based on KS distance (multivariate).
+#' @title Internal Function: Compute the CUSUM statistic based on KS distance (multivariate).
 #' @param Y         A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
 #' @param t         A \code{integer} scalar of splitting index.
 #' @param h         A \code{integer} scalar of bandwidth.
-#' @return  A \code{numeric} scalar of value of CUSUM statistic based on KS distance.
+#' @return  A \code{numeric} scalar of the CUSUM statistic based on KS distance.
 #' @noRd
 CUSUM.KS.multivariate = function(Y, s, e, t, h){
   p = dim(Y)[1]

@@ -51,13 +51,13 @@ NBS = function(Y, s, e, N, delta, level = 0, ...){
 
 
 
-#' @title Internal Function: Compute value of CUSUM statistic based on KS distance.
+#' @title Internal Function: Compute the CUSUM statistic based on KS distance.
 #' @param Y         A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being multiple observations on each time point.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
 #' @param t         A \code{integer} scalar of splitting index.
 #' @param N         A \code{integer} vector representing number of multiple observations on each time point.
-#' @return  A \code{numeric} scalar of value of CUSUM statistic based on KS distance.
+#' @return  A \code{numeric} scalar of the CUSUM statistic based on KS distance.
 #' @noRd
 CUSUM.KS = function(Y, s, e, t, N){
   n_st = sum(N[(s+1):t])
