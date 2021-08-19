@@ -143,11 +143,11 @@ local.refine.VAR1 = function(cpt.init, DATA, zeta.group, w = 1/3){
   p = nrow(DATA)
   X_curr = DATA[,1:(N-1)]
   X_futu = DATA[,2:N]
-  cpt.init.ext = c(0, cpt.init, n)
+  cpt.init.ext = c(0, cpt.init, N)
   cpt.init.numb = length(cpt.init)
   cpt.refined = rep(0, cpt.init.numb+1)
   for (k in 1:cpt.init.numb){
-    s.inter = w*cpt.refined[k] + (1-w)*cpt.init.ext[k+1]
+    s.inter = w*cpt.init.ext[k] + (1-w)*cpt.init.ext[k+1]
     e.inter = (1-w)*cpt.init.ext[k+1] + w*cpt.init.ext[k+2]
     lower = ceiling(s.inter) + 1
     upper = floor(e.inter) - 1

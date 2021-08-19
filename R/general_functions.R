@@ -132,3 +132,17 @@ one.step.trim = function(idx_remove_parent, data_children){
   }
   return(list(idx_remove_children = idx_remove_children, data_children_trimmed = data_children_trimmed))
 }
+
+
+
+#' @title Generate coordinates of lower triangular matrix of dimension p.
+#' @param p          A \code{integer} scalar of dimensionality.
+#' @return    A \code{integer} (p*(p-1)/2)-dim vector representing the indices of the lower triangular entries (indices correspond to the vectorization by stacking columns).
+#' @export
+#' @author
+#' @examples
+#' TO DO
+gen.lower.coordinate=function(p){
+  mat=matrix(1:p^2, nrow = p)
+  return(mat[lower.tri(mat, diag = F)])  
+}

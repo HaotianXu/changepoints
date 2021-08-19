@@ -1,5 +1,5 @@
 #' @title Internal Function: Compute value of CUSUM statistic based on KS distance (multivariate).
-#' @param Y         A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being multiple observations on each time point.
+#' @param Y         A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
 #' @param t         A \code{integer} scalar of splitting index.

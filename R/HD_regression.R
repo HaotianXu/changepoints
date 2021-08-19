@@ -158,7 +158,7 @@ local.refine.regression = function(cpt.init, y, X, zeta, w = 1/3){
   cpt.init.numb = length(cpt.init)
   cpt.refined = rep(0, cpt.init.numb+1)
   for (k in 1:cpt.init.numb){
-    s = w*cpt.refined[k] + (1-w)*cpt.init.ext[k+1]
+    s = w*cpt.init.ext[k] + (1-w)*cpt.init.ext[k+1]
     e = (1-w)*cpt.init.ext[k+1] + w*cpt.init.ext[k+2]
     lower = ceiling(s) + 1
     upper = floor(e) - 1
