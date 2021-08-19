@@ -250,8 +250,8 @@ WBS.univar = function(y, s, e, Alpha, Beta, delta, level = 0){
     }
     m_star = which.max(a)
   }
-  temp1 = NWBS(Y, s, b[m_star]-1, Alpha, Beta, N, delta, level)
-  temp2 = NWBS(Y, b[m_star], e, Alpha, Beta, N, delta, level)
+  temp1 = WBS.univar(y, s, b[m_star]-1, Alpha, Beta, delta, level)
+  temp2 = WBS.univar(y, b[m_star], e, Alpha, Beta, delta, level)
   S = c(temp1$S, b[m_star], temp2$S)
   Dval = c(temp1$Dval, a[m_star], temp2$Dval)
   Level = c(temp1$Level, level, temp2$Level)

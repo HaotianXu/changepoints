@@ -13,7 +13,7 @@ BS.cov(X, s, e, level = 0, ...)
 
 \item{e}{A \code{integer} scalar of ending index.}
 
-\item{level}{A parameter using to track the level a change point is detected. Should be fixed as 0.}
+\item{level}{A parameter for tracking the level at which a change point is detected. Should be fixed as 0.}
 
 \item{...}{Additional arguments.}
 }
