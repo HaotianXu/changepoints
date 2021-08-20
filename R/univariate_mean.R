@@ -131,7 +131,7 @@ CV.search.DP.univar = function(gamma.set, delta, y, ...){
 #' @param y         A \code{numeric} vector of observations.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
-#' @param delta     A positive \code{integer} scalar of minimum spacing.
+#' @param delta     A positive \code{numeric} scalar of minimum spacing.
 #' @param level     Should be fixed as 0.
 #' @param ...      Additional arguments.
 #' @return  A \code{list} with the structure:
@@ -149,7 +149,7 @@ CV.search.DP.univar = function(gamma.set, delta, y, ...){
 #' temp = BS.univar(y, 1, 300, 5)
 #' plot.ts(y)
 #' points(x = tail(temp$S[order(temp$Dval)],4), y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-BS.univar = function(y, s, e, delta, level = 0, ...){
+BS.univar = function(y, s, e, delta = 2, level = 0, ...){
   S = NULL
   Dval = NULL
   Level = NULL
@@ -211,7 +211,7 @@ BS.univar = function(y, s, e, delta, level = 0, ...){
 #' plot.ts(y)
 #' points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
 #' BS.threshold(temp, 1.5)
-WBS.univar = function(y, s, e, Alpha, Beta, delta, level = 0){ 
+WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){ 
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
   idx = which(Beta_new - Alpha_new > delta)

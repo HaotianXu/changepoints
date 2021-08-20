@@ -49,7 +49,7 @@ CUSUM.KS.multivariate = function(Y, s, e, t, h){
 MNWBS = function(Y, s, e, Alpha, Beta, h, level = 0, ...){
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
-  idx = which(Beta_new - Alpha_new > 2 * max(p,h^(-p)))
+  idx = which(Beta_new - Alpha_new > 2*max(p,h^(-p))+1)
   Alpha_new = Alpha_new[idx]
   Beta_new = Beta_new[idx]
   M = length(Alpha_new)
@@ -74,12 +74,14 @@ MNWBS = function(Y, s, e, Alpha, Beta, h, level = 0, ...){
     a = rep(0, M)
     b = rep(0, M)
     for(m in 1:M){
-      temp = rep(0, Beta_new[m] - Alpha_new[m] - 2*max(h^{-p},p) + 1)
-      for(t in (Alpha_new[m]+max(h^{-p},p)):(Beta_new[m]-max(h^{-p},p))){
+      s_star = ceiling(Alpha_new[m]+max(h^{-p},p))
+      e_star = floor(Beta_new[m]-max(h^{-p},p))
+      temp = rep(0, e_star - s_star + 1)
+      for(t in s_star:e_star){
         temp[t-(Alpha_new[m])] = CUSUM.KS.multivariate(Y, Alpha_new[m], Beta_new[m], t, h)
       }
       best_value = max(temp)
-      best_t = which.max(temp) + Alpha_new[m]
+      best_t = which.max(temp) + s_star - 1
       a[m] = best_value
       b[m] = best_t
     }
