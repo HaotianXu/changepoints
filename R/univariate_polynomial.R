@@ -5,15 +5,15 @@
 #' @param r          An \code{integer} scalar representing the order of polynomials.
 #' @return  A (e-s+1)-by-(r+1) \code{numeric} basis matrix.
 #' @noRd
-basis.poly = function(n, s, e, r){
-  basis_mat = sapply(0:r, function(x) ((s:e)/n)^x)
+basis.poly <- function(n, s, e, r) {
+  .Call('_changepoints_rcpp_basis_poly', PACKAGE = 'changepoints', n, s, e, r)
 }
 
 
 #' @title Dynamic programming algorithm for univariate polynomials change points detection. 
 #' @description TO DO
 #' @param y         A \code{numeric} vector of observations.
-#' @param r         A \code{numeric} order of polynomials.
+#' @param r         An \code{integer} scalar order of polynomials.
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
 #' @param ...      Additional arguments.
@@ -23,39 +23,42 @@ basis.poly = function(n, s, e, r){
 #' @examples
 #' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 #' DP.regression(2, 5, data$y, X = data$X, lambda = 1)
-DP.poly = function(y, r, gamma, delta, ...){
-  n = length(y)
-  bestvalue = rep(0,n+1)
-  partition = rep(0,n)
-  yhat = rep(NA, n)
-  bestvalue[1] = -gamma
-  for(i in 1:n){
-    bestvalue[i+1] = Inf
-    for(l in 1:i){
-      if(i - l > delta){
-        u_mat = basis.poly(n, l, i, r)
-        proj_mat = u_mat %*% solve(t(u_mat)%*%u_mat) %*% t(u_mat)
-        b = bestvalue[l] + gamma + (norm((diag(1, i-l+1) - proj_mat) %*% y[l:i], type = "2"))^2
-      }else{
-        b = Inf
-      }
-      if(b < bestvalue[i+1]){
-        bestvalue[i+1] = b
-        partition[i] = l-1
-      }
-    }
-  }
-  i = n
-  l = partition[i]
-  while(i > 0){
-    u_mat = basis.poly(n, l+1, i, r)
-    proj_mat = u_mat %*% solve(t(u_mat)%*%u_mat) %*% t(u_mat)
-    yhat[(l+1):i] = proj_mat %*% y[(l+1):i]
-    i = l
-    l = partition[i]
-  }
-  return(list(partition = partition, yhat = yhat))
+DP.poly <- function(y, r, gamma, delta, ...) {
+  .Call('_changepoints_rcpp_DP_poly', PACKAGE = 'changepoints', y, r, gamma, delta)
 }
+# DP.poly = function(y, r, gamma, delta, ...){
+#   n = length(y)
+#   bestvalue = rep(0,n+1)
+#   partition = rep(0,n)
+#   yhat = rep(NA, n)
+#   bestvalue[1] = -gamma
+#   for(i in 1:n){
+#     bestvalue[i+1] = Inf
+#     for(l in 1:i){
+#       if(i - l > delta){
+#         u_mat = basis.poly(n, l, i, r)
+#         proj_mat = u_mat %*% solve(t(u_mat)%*%u_mat) %*% t(u_mat)
+#         b = bestvalue[l] + gamma + (norm((diag(1, i-l+1) - proj_mat) %*% y[l:i], type = "2"))^2
+#       }else{
+#         b = Inf
+#       }
+#       if(b < bestvalue[i+1]){
+#         bestvalue[i+1] = b
+#         partition[i] = l-1
+#       }
+#     }
+#   }
+#   i = n
+#   l = partition[i]
+#   while(i > 0){
+#     u_mat = basis.poly(n, l+1, i, r)
+#     proj_mat = u_mat %*% solve(t(u_mat)%*%u_mat) %*% t(u_mat)
+#     yhat[(l+1):i] = proj_mat %*% y[(l+1):i]
+#     i = l
+#     l = partition[i]
+#   }
+#   return(list(partition = partition, yhat = yhat))
+# }
 
 
 #Two-step estimation

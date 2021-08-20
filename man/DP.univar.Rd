@@ -2,16 +2,16 @@
 % Please edit documentation in R/univariate_mean.R
 \name{DP.univar}
 \alias{DP.univar}
-\title{Dynamic programming for univariate mean change points detection by l0 penalty}
+\title{Dynamic programming for univariate mean change points detection by l0 penalty (RCPP)}
 \usage{
-DP.univar(gamma, delta, y, ...)
+DP.univar(y, gamma, delta, ...)
 }
 \arguments{
+\item{y}{A \code{numeric} vector of observations.}
+
 \item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
 
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
-
-\item{y}{A \code{numeric} vector of observations.}
 
 \item{...}{Additional arguments.}
 }
@@ -22,8 +22,8 @@ TO DO.
 TO DO
 }
 \examples{
-y = c(rep(0, 100), rep(1, 100))
-DP.univar(1, 4, y)
+y = rnorm(300) + c(rep(0,130),rep(-1,20),rep(1,20),rep(0,130))
+DP_univar(y, 1, 5)
 }
 \author{
 Haotian Xu

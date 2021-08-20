@@ -4,14 +4,14 @@
 \alias{CV.search.DP.univar}
 \title{Perform grid search based on Cross-Validation of Dynamic Programming algorithm for univariate mean change points detection by l0 penalty}
 \usage{
-CV.search.DP.univar(gamma.set, delta, y, ...)
+CV.search.DP.univar(y, gamma.set, delta, ...)
 }
 \arguments{
+\item{y}{A \code{numeric} vector of observations.}
+
 \item{gamma.set}{A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.}
 
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
-
-\item{y}{A \code{numeric} vector of observations.}
 
 \item{...}{Additional arguments.}
 }

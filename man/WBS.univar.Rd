@@ -4,7 +4,7 @@
 \alias{WBS.univar}
 \title{Wild binary segmentation for univariate mean change points detection}
 \usage{
-WBS.univar(y, s, e, Alpha, Beta, delta, level = 0)
+WBS.univar(y, s, e, Alpha, Beta, delta = 2, level = 0)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of observations.}

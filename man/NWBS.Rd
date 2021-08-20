@@ -4,7 +4,7 @@
 \alias{NWBS}
 \title{Wild binary segmentation for univariate nonparametric change points detection}
 \usage{
-NWBS(Y, s, e, Alpha, Beta, N, delta, level = 0, ...)
+NWBS(Y, s, e, Alpha, Beta, N, delta = 2, level = 0, ...)
 }
 \arguments{
 \item{Y}{A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being multiple observations on each time point.}

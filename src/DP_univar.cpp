@@ -1,10 +1,10 @@
-//D_P.cpp
+//DP_univar.cpp
 #include <RcppArmadillo.h>
 #include <limits>
-#include "D_P_univar.h"
+#include "DP_univar.h"
 
 // [[Rcpp::export]]
-Rcpp::List rcpp_D_P_univar(double gamma, int delta, const arma::vec& y) {
+Rcpp::List rcpp_DP_univar(const arma::vec& y, double gamma, int delta) {
   int N = y.size();
   double b = 0;
   double dist = 0;

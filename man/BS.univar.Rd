@@ -4,7 +4,7 @@
 \alias{BS.univar}
 \title{Standard binary segmentation for univariate mean change points detection}
 \usage{
-BS.univar(y, s, e, delta, level = 0, ...)
+BS.univar(y, s, e, delta = 2, level = 0, ...)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of observations.}
@@ -13,7 +13,7 @@ BS.univar(y, s, e, delta, level = 0, ...)
 
 \item{e}{A \code{integer} scalar of ending index.}
 
-\item{delta}{A positive \code{integer} scalar of minimum spacing.}
+\item{delta}{A positive \code{numeric} scalar of minimum spacing.}
 
 \item{level}{Should be fixed as 0.}
 

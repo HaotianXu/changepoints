@@ -4,14 +4,14 @@
 \alias{CV.DP.univar}
 \title{Internal Function: Cross-Validation of Dynamic Programming algorithm for univariate mean change points detection by l0 penalty}
 \usage{
-CV.DP.univar(gamma, delta, y, ...)
+CV.DP.univar(y, gamma, delta, ...)
 }
 \arguments{
+\item{y}{A \code{numeric} vector of observations.}
+
 \item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
 
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
-
-\item{y}{A \code{numeric} vector of observations.}
 
 \item{...}{Additional arguments.}
 }

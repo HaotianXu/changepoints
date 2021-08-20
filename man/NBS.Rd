@@ -4,7 +4,7 @@
 \alias{NBS}
 \title{Standard binary segmentation for univariate nonparametric change points detection}
 \usage{
-NBS(Y, s, e, N, delta, level = 0, ...)
+NBS(Y, s, e, N, delta = 2, level = 0, ...)
 }
 \arguments{
 \item{Y}{A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being multiple observations on each time point.}

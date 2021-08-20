@@ -11,16 +11,44 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// rcpp_D_P_univar
-Rcpp::List rcpp_D_P_univar(double gamma, int delta, const arma::vec& y);
-RcppExport SEXP _changepoints_rcpp_D_P_univar(SEXP gammaSEXP, SEXP deltaSEXP, SEXP ySEXP) {
+// rcpp_DP_poly
+Rcpp::List rcpp_DP_poly(const arma::vec& y, int r, double gamma, int delta);
+RcppExport SEXP _changepoints_rcpp_DP_poly(SEXP ySEXP, SEXP rSEXP, SEXP gammaSEXP, SEXP deltaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type r(rSEXP);
     Rcpp::traits::input_parameter< double >::type gamma(gammaSEXP);
     Rcpp::traits::input_parameter< int >::type delta(deltaSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_DP_poly(y, r, gamma, delta));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_DP_univar
+Rcpp::List rcpp_DP_univar(const arma::vec& y, double gamma, int delta);
+RcppExport SEXP _changepoints_rcpp_DP_univar(SEXP ySEXP, SEXP gammaSEXP, SEXP deltaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_D_P_univar(gamma, delta, y));
+    Rcpp::traits::input_parameter< double >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< int >::type delta(deltaSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_DP_univar(y, gamma, delta));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_basis_poly
+arma::mat rcpp_basis_poly(int n, int s, int e, int r);
+RcppExport SEXP _changepoints_rcpp_basis_poly(SEXP nSEXP, SEXP sSEXP, SEXP eSEXP, SEXP rSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type s(sSEXP);
+    Rcpp::traits::input_parameter< int >::type e(eSEXP);
+    Rcpp::traits::input_parameter< int >::type r(rSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_basis_poly(n, s, e, r));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -36,7 +64,9 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_changepoints_rcpp_D_P_univar", (DL_FUNC) &_changepoints_rcpp_D_P_univar, 3},
+    {"_changepoints_rcpp_DP_poly", (DL_FUNC) &_changepoints_rcpp_DP_poly, 4},
+    {"_changepoints_rcpp_DP_univar", (DL_FUNC) &_changepoints_rcpp_DP_univar, 3},
+    {"_changepoints_rcpp_basis_poly", (DL_FUNC) &_changepoints_rcpp_basis_poly, 4},
     {"_changepoints_rcpp_hello_world", (DL_FUNC) &_changepoints_rcpp_hello_world, 0},
     {NULL, NULL, 0}
 };
