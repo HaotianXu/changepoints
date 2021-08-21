@@ -45,7 +45,7 @@ DP.univar <- function(y, gamma, delta, ...) {
 # }
 
 
-#' @title Internal Function: Cross-Validation of Dynamic Programming algorithm for univariate mean change points detection by l0 penalty
+#' @title Cross-Validation of Dynamic Programming algorithm for univariate mean change points detection by l0 penalty
 #' @description TO DO
 #' @param y         A \code{numeric} vector of observations.
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
