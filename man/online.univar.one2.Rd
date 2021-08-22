@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean_online.R
 \name{online.univar.one2}
 \alias{online.univar.one2}
-\title{Online change point detection via CUSUM 2 (only one change point)}
+\title{Online change point detection via CUSUM 2 (single change point)}
 \usage{
 online.univar.one2(y_vec, gamma, tau_gamma, ...)
 }

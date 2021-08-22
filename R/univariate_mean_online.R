@@ -1,4 +1,4 @@
-#' @title Online change point detection via CUSUM (only one change point).
+#' @title Online change point detection via CUSUM (single change point).
 #' @description TO DO
 #' @param y_vec       A \code{numeric} vector of observations.
 #' @param tau_vec     A \code{numeric} vector of thresholds at time t>= 2.
@@ -23,7 +23,7 @@ online.univar.one = function(y_vec, tau_vec, ...){
 }
 
 
-#' @title Online change point detection via CUSUM 2 (only one change point)
+#' @title Online change point detection via CUSUM 2 (single change point)
 #' @description TO DO
 #' @param y_vec       A \code{numeric} vector of observations.
 #' @param gamma       A \code{integer} scalar of interval length (>= 2)
@@ -48,7 +48,7 @@ online.univar.one2 = function(y_vec, gamma, tau_gamma, ...){
 
 
 
-#' @title Online change point detection via CUSUM 3 (only one change point).
+#' @title Online change point detection via CUSUM 3 (single change point).
 #' @description TO DO
 #' @param y_vec       A \code{numeric} vector of observations.
 #' @param tau_vec     A \code{numeric} vector of thresholds at time t>= 1.
@@ -79,22 +79,33 @@ online.univar.one3 = function(y_vec, tau_vec, ...){
 }
 
 
+#' @title Online change point detection via CUSUM 4 (multiple change points).
+#' @description TO DO
+#' @param y_vec       A \code{numeric} vector of observations.
+#' @param tau_vec     A \code{numeric} vector of thresholds at time t>= 2.
+#' @param ...         Additional arguments.
+#' @return  An \code{integer} scalar of estimated change point location.
+#' @export
+#' @author Haotian Xu
+#' @examples
+#' TO DO
 online.univar.multi = function(y_vec, tau_vec, ...){
-  if(length(y_vec) != length(tau_vec)){
-    stop("y_vec and tau_vec should have the same length.")
+  if(length(y_vec) - length(tau_vec) != 1){
+    stop("tau_vec should be the vector of thresholds at time t >= 2.")
   }
+  cpt = NULL
+  e = 0
   t = 1
   FLAG = 0
-  while(FLAG == 0 & t <= length(y_vec)){
+  while(t < length(y_vec)-1){
     t = t + 1
-    J = floor(log2(t))
-    j = 0
-    while(j < J & FLAG == 0){
-      j = j + 1
-      s_j = t - 2^(j-1)
-      cusum = sqrt((t-s_j)*s_j/t) * abs(mean(y_vec[1:s_j]) - mean(y_vec[(s_j+1):t]))
-      FLAG = (cusum > tau_vec[t])
+    cusum_vec = sapply((e+1):(t-1), function(s) sqrt((t-s)*(s-e)/(t-e)) * abs(mean(y_vec[(e+1):s]) - mean(y_vec[(s+1):t])))
+    FLAG = 1 - prod(cusum_vec <= tau_vec[t])
+    if(FLAG == 1){
+      cpt = c(cpt, t)
+      FLAG = 0
+      e = t
     }
   }
-  return(t)
+  return(cpt)
 }
