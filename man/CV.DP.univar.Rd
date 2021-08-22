@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean.R
 \name{CV.DP.univar}
 \alias{CV.DP.univar}
-\title{Internal Function: Cross-Validation of Dynamic Programming algorithm for univariate mean change points detection by l0 penalty}
+\title{Cross-Validation of Dynamic Programming algorithm for univariate mean change points detection by l0 penalty}
 \usage{
 CV.DP.univar(y, gamma, delta, ...)
 }
