@@ -4,18 +4,18 @@
 \alias{CV.DP.regression}
 \title{Cross-Validation of Dynamic Programming algorithm for regression change points detection by l0 penalty}
 \usage{
-CV.DP.regression(gamma, delta, y, X, lambda, ...)
+CV.DP.regression(y, X, gamma, lambda, delta, ...)
 }
 \arguments{
-\item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
-
-\item{delta}{A strictly \code{integer} scalar of minimum spacing.}
-
 \item{y}{A \code{numeric} vector of observations.}
 
 \item{X}{A \code{numeric} matrix of covariates.}
 
+\item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
+
 \item{lambda}{A \code{numeric} scalar of tuning parameter for the lasso penalty.}
+
+\item{delta}{A strictly \code{integer} scalar of minimum spacing.}
 
 \item{...}{Additional arguments.}
 }

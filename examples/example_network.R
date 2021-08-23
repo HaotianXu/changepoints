@@ -1,5 +1,5 @@
 set.seed(0)
-p = 60 #p dimension of network
+p = 60 #dimension of network
 B = 3 #number of blocks
 K = 3 #number of change point + 1
 rho = 0.05 # sparsity of the network

@@ -42,5 +42,5 @@ plot.ts(t(Y))
 points(x = tail(temp$S[order(temp$Dval)],4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
 }
 \author{
-Haotian Xu
+Oscar Hernan Madrid Padilla, Haotian Xu
 }

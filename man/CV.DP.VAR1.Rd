@@ -2,22 +2,20 @@
 % Please edit documentation in R/VAR.R
 \name{CV.DP.VAR1}
 \alias{CV.DP.VAR1}
-\title{Cross-Validation of Dynamic Programming algorithm for regression change points detection by l0 penalty}
+\title{Cross-Validation of Dynamic Programming algorithm for VAR1 change points detection via l0 penalty}
 \usage{
-CV.DP.VAR1(DATA, gamma, delta, lambda, ...)
+CV.DP.VAR1(DATA, gamma, lambda, delta, ...)
 }
 \arguments{
-\item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
+\item{DATA}{A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.}
 
-\item{delta}{A strictly \code{integer} scalar of minimum spacing.}
+\item{gamma}{A positive \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
 
-\item{lambda}{A \code{numeric} scalar of tuning parameter for the lasso penalty.}
+\item{lambda}{A positive \code{numeric} scalar of tuning parameter for the lasso penalty.}
+
+\item{delta}{A positive \code{integer} scalar of minimum spacing.}
 
 \item{...}{Additional arguments.}
-
-\item{y}{A \code{numeric} vector of observations.}
-
-\item{X}{A \code{numeric} matrix of covariates.}
 }
 \value{
 TO DO.

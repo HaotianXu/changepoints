@@ -94,9 +94,9 @@ error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
 #' N = ncol(data)
 #' X_curr = data[,1:(N-1)]
 #' X_futu = data[,2:N]
-#' parti = DP.VAR1(gamma = 1, delta = 5, X_futu, X_curr, lambda = 1)$partition
+#' parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
 #' localization = part2local(parti)
-DP.VAR1 = function(gamma, delta, X_futu, X_curr, lambda, ...){
+DP.VAR1 = function(X_futu, X_curr, gamma, lambda, delta, ...){
   p = nrow(X_futu)
   N = ncol(X_futu) + 1
   bestvalue = rep(0,N)
@@ -126,8 +126,7 @@ DP.VAR1 = function(gamma, delta, X_futu, X_curr, lambda, ...){
 #' @title Local refinement for VAR1 change points detection [11] 
 #' @description TO DO
 #' @param cpt.init   A \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
-#' @param y          A \code{numeric} vector of response variable.
-#' @param X          A \code{numeric} matrix of covariates.
+#' @param DATA       A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.
 #' @param zeta.group A \code{numeric} scalar of lasso penalty.
 #' @param w          A \code{numeric} scalar of weight for interpolation.
 #' @param ...       Additional arguments.
@@ -138,7 +137,7 @@ DP.VAR1 = function(gamma, delta, X_futu, X_curr, lambda, ...){
 #' #TODO data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 #' cpt.init = part2local(DP.regression(2, 5, data$y, X = data$X, lambda = 2)$partition)$cpt
 #' local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
-local.refine.VAR1 = function(cpt.init, DATA, zeta.group, w = 1/3){
+local.refine.VAR1 = function(cpt.init, DATA, zeta.group, w = 1/3, ...){
   N = ncol(DATA)
   p = nrow(DATA)
   X_curr = DATA[,1:(N-1)]
@@ -161,8 +160,9 @@ local.refine.VAR1 = function(cpt.init, DATA, zeta.group, w = 1/3){
 #' @title Internal Function: An objective function to select the best splitting location in the local refinement
 #' @param s.inter    A \code{numeric} scalar of interpolated starting index.
 #' @param e.inter    A \code{numeric} scalar of ending index.
-#' @param y          A \code{numeric} vector of response variable.
-#' @param X          A \code{numeric} matrix of covariates.
+#' @param eta        A \code{integer} scalar of splitting index.
+#' @param X_futu     A \code{numeric} matrix of time series at one step ahead.
+#' @param X_curr     A \code{numeric} matrix of time series at current step.
 #' @param zeta.group A \code{numeric} scalar of tuning parameter for the group lasso.
 #' @noRd
 obj.func.lr.VAR1 = function(s.inter, e.inter, eta, X_futu, X_curr, zeta.group){
@@ -202,20 +202,19 @@ X.glasso.converter.VAR1 = function(X, eta, s_ceil){
 
 
 
-#' @title Cross-Validation of Dynamic Programming algorithm for regression change points detection by l0 penalty
+#' @title Cross-Validation of Dynamic Programming algorithm for VAR1 change points detection via l0 penalty
 #' @description TO DO
-#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
-#' @param delta     A strictly \code{integer} scalar of minimum spacing.
-#' @param y         A \code{numeric} vector of observations.
-#' @param X         A \code{numeric} matrix of covariates.
-#' @param lambda    A \code{numeric} scalar of tuning parameter for the lasso penalty.
+#' @param DATA      A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.
+#' @param gamma     A positive \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
+#' @param lambda    A positive \code{numeric} scalar of tuning parameter for the lasso penalty.
+#' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param ...      Additional arguments.
 #' @return TO DO.
 #' @export
 #' @author
 #' @examples
 #' TO DO
-CV.DP.VAR1 = function(DATA, gamma, delta, lambda, ...){
+CV.DP.VAR1 = function(DATA, gamma, lambda, delta, ...){
   DATA.temp = DATA
   if (ncol(DATA)%%2 == 0){
     DATA.temp = DATA[,2:ncol(DATA)]
@@ -228,9 +227,7 @@ CV.DP.VAR1 = function(DATA, gamma, delta, lambda, ...){
   X_curr.test = X_curr[,seq(2,N-1,2)]
   X_futu.train = X_futu[,seq(1,N-1,2)]
   X_futu.test = X_futu[,seq(2,N-1,2)]
-  init_cpt_train = part2local(DP.VAR1(gamma, delta, X_futu.train, X_curr.train, lambda)$partition)
-
-
+  init_cpt_train = part2local(DP.VAR1(X_futu.train, X_curr.train, gamma, lambda, delta)$partition)
   init_cpt = 2*init_cpt_train
   len = length(init_cpt)
   init_cpt_long = c(init_cpt_train, ncol(X_curr.train))
@@ -266,4 +263,31 @@ CV.DP.VAR1 = function(DATA, gamma, delta, lambda, ...){
 error.test.VAR1 = function(lower, upper, X_futu, X_curr, transition.hat){
   res = norm(X_futu[lower:upper] - transition.hat%*%X_curr[,lower:upper], type = "F")^2
   return(res)
-} 
+}
+
+
+#' @title Grid search based on Cross-Validation of Dynamic Programming for regression change points detection via l0 penalty
+#' @description TO DO
+#' @param DATA          A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.
+#' @param gamma.set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
+#' @param lambda.set    A \code{numeric} vector of candidate tuning parameter for the lasso penalty.
+#' @param delta         A strictly \code{integer} scalar of minimum spacing.
+#' @param ...           Additional arguments.
+#' @return TO DO.
+#' @export
+#' @author
+#' @examples
+#' TO DO
+CV.search.DP.VAR1 = function(DATA, gamma.set, lambda.set, delta, ...){
+  output = sapply(1:length(lambda.set), function(i) sapply(1:length(gamma.set), 
+                                                           function(j) CV.DP.VAR1(DATA, gamma.set[j], lambda.set[i], delta)))
+  cpt_hat = output[seq(1,4*length(gamma.set),4),]## estimated change points
+  K_hat = output[seq(2,4*length(gamma.set),4),]## number of estimated change points
+  test_error = output[seq(3,4*length(gamma.set),4),]## validation loss
+  train_error = output[seq(4,4*length(gamma.set),4),]## training loss                                                      
+  result = list(cpt_hat = cpt_hat, K_hat = K_hat, test_error = test_error, train_error = train_error)
+  return(result)
+}
+
+
+

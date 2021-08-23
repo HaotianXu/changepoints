@@ -1,18 +1,18 @@
 #' @title Dynamic programming algorithm for regression change points detection by l0 penalty
 #' @description TO DO
-#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
-#' @param delta     A strictly \code{integer} scalar of minimum spacing.
 #' @param y         A \code{numeric} vector of observations.
 #' @param X         A \code{numeric} matrix of covariates.
-#' @param lambda    A \code{numeric} scalar of tuning parameter for the lasso penalty.
+#' @param gamma     A positive \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
+#' @param lambda    A positive \code{numeric} scalar of tuning parameter for the lasso penalty.
+#' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param ...      Additional arguments.
 #' @return TO DO.
 #' @export
 #' @author
 #' @examples
 #' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-#' DP.regression(2, 5, data$y, X = data$X, lambda = 1)
-DP.regression = function(gamma, delta, y, X, lambda, ...){
+#' DP.regression(data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
+DP.regression = function(y, X, gamma, lambda, delta, ...){
   N = length(y)
   bestvalue = rep(0,N+1)
   partition = rep(0,N)
@@ -213,18 +213,18 @@ X.glasso.converter.regression = function(X, eta, s_ceil){
 
 #' @title Cross-Validation of Dynamic Programming algorithm for regression change points detection by l0 penalty
 #' @description TO DO
-#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
-#' @param delta     A strictly \code{integer} scalar of minimum spacing.
 #' @param y         A \code{numeric} vector of observations.
 #' @param X         A \code{numeric} matrix of covariates.
+#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param lambda    A \code{numeric} scalar of tuning parameter for the lasso penalty.
+#' @param delta     A strictly \code{integer} scalar of minimum spacing.
 #' @param ...      Additional arguments.
 #' @return TO DO.
 #' @export
 #' @author
 #' @examples
 #' TO DO
-CV.DP.regression = function(gamma, delta, y, X, lambda, ...){
+CV.DP.regression = function(y, X, gamma, lambda, delta, ...){
   N = ncol(X)
   even_indexes = seq(2, N, 2)
   odd_indexes = seq(1, N, 2)
@@ -232,7 +232,7 @@ CV.DP.regression = function(gamma, delta, y, X, lambda, ...){
   train.y = y[odd_indexes]
   validation.X = X[,even_indexes]
   validation.y = y[even_indexes]
-  init_cpt_train = part2local(DP.regression(gamma, delta, train.y, train.X, lambda)$partition)
+  init_cpt_train = part2local(DP.regression(train.y, train.X, gamma, lambda, delta)$partition)
   init_cpt_train.long = c(0, init_cpt_train, ncol(train.X))
   diff.point = diff(init_cpt_train.long)
   if (length(which(diff.point == 1)) > 0){
@@ -280,12 +280,12 @@ error.test.regression = function(lower, upper, y, X, beta.hat){
 } 
 
 
-#' @title Perform grid search based on Cross-Validation of Dynamic Programming algorithm for regression change points detection by l0 penalty
+#' @title Grid search based on Cross-Validation of Dynamic Programming for regression change points detection via l0 penalty
 #' @description TO DO
-#' @param lambda.set    A \code{numeric} vector of candidate tuning parameter for the lasso penalty.
-#' @param gamma.set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
 #' @param y             A \code{numeric} vector of observations.
 #' @param X             A \code{numeric} matrix of covariates.
+#' @param gamma.set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
+#' @param lambda.set    A \code{numeric} vector of candidate tuning parameter for the lasso penalty.
 #' @param delta         A strictly \code{integer} scalar of minimum spacing.
 #' @param ...           Additional arguments.
 #' @return TO DO.
@@ -293,9 +293,9 @@ error.test.regression = function(lower, upper, y, X, beta.hat){
 #' @author
 #' @examples
 #' TO DO
-CV.search.DP.regression = function(lambda.set, gamma.set, y, X, delta){
+CV.search.DP.regression = function(y, X, gamma.set, lambda.set, delta){
   output = sapply(1:length(lambda.set), function(i) sapply(1:length(gamma.set), 
-                                                           function(j) CV.DP.regression(gamma.set[j], delta, y, X, lambda.set[i])))
+                                                           function(j) CV.DP.regression(y, X, gamma.set[j], lambda.set[i], delta)))
   print(output)
   cpt_hat = output[seq(1,4*length(gamma.set),4),]## estimated change points
   K_hat = output[seq(2,4*length(gamma.set),4),]## number of estimated change points

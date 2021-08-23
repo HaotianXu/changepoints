@@ -4,18 +4,18 @@
 \alias{DP.regression}
 \title{Dynamic programming algorithm for regression change points detection by l0 penalty}
 \usage{
-DP.regression(gamma, delta, y, X, lambda, ...)
+DP.regression(y, X, gamma, lambda, delta, ...)
 }
 \arguments{
-\item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
-
-\item{delta}{A strictly \code{integer} scalar of minimum spacing.}
-
 \item{y}{A \code{numeric} vector of observations.}
 
 \item{X}{A \code{numeric} matrix of covariates.}
 
-\item{lambda}{A \code{numeric} scalar of tuning parameter for the lasso penalty.}
+\item{gamma}{A positive \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
+
+\item{lambda}{A positive \code{numeric} scalar of tuning parameter for the lasso penalty.}
+
+\item{delta}{A positive \code{integer} scalar of minimum spacing.}
 
 \item{...}{Additional arguments.}
 }
@@ -27,7 +27,7 @@ TO DO
 }
 \examples{
 data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-DP.regression(2, 5, data$y, X = data$X, lambda = 1)
+DP.regression(data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
 }
 \author{
 

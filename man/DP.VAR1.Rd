@@ -4,14 +4,14 @@
 \alias{DP.VAR1}
 \title{Dynamic programming for VAR1 change points detection by l0 penalty}
 \usage{
-DP.VAR1(gamma, delta, X_futu, X_curr, lambda, ...)
+DP.VAR1(X_futu, X_curr, gamma, lambda, delta, ...)
 }
 \arguments{
 \item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
 
-\item{delta}{A strictly \code{integer} scalar of minimum spacing.}
-
 \item{lambda}{A \code{numeric} scalar of tuning parameter for lasso penalty.}
+
+\item{delta}{A strictly \code{integer} scalar of minimum spacing.}
 
 \item{...}{Additional arguments.}
 
@@ -39,7 +39,7 @@ data = cbind(simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
 N = ncol(data)
 X_curr = data[,1:(N-1)]
 X_futu = data[,2:N]
-parti = DP.VAR1(gamma = 1, delta = 5, X_futu, X_curr, lambda = 1)$partition
+parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
 localization = part2local(parti)
 }
 \author{

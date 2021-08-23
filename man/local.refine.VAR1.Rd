@@ -4,18 +4,16 @@
 \alias{local.refine.VAR1}
 \title{Local refinement for VAR1 change points detection [11]}
 \usage{
-local.refine.VAR1(cpt.init, DATA, zeta.group, w = 1/3)
+local.refine.VAR1(cpt.init, DATA, zeta.group, w = 1/3, ...)
 }
 \arguments{
 \item{cpt.init}{A \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
 
+\item{DATA}{A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.}
+
 \item{zeta.group}{A \code{numeric} scalar of lasso penalty.}
 
 \item{w}{A \code{numeric} scalar of weight for interpolation.}
-
-\item{y}{A \code{numeric} vector of response variable.}
-
-\item{X}{A \code{numeric} matrix of covariates.}
 
 \item{...}{Additional arguments.}
 }

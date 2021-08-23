@@ -55,5 +55,5 @@ points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval
 BS.threshold(temp, 1.5)
 }
 \author{
-Haotian Xu
+Oscar Hernan Madrid Padilla, Haotian Xu
 }

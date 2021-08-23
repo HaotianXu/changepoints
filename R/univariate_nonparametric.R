@@ -16,7 +16,7 @@
 #'  \item ...         Additional parameters.
 #' } 
 #' @export
-#' @author Haotian Xu
+#' @author Oscar Hernan Madrid Padilla, Haotian Xu
 #' @examples
 #' Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))
 #' N = rep(1, 300)
@@ -99,7 +99,7 @@ CUSUM.KS = function(Y, s, e, t, N){
 #'  \item ...         Additional parameters.
 #' } 
 #' @export
-#' @author Haotian Xu
+#' @author Oscar Hernan Madrid Padilla, Haotian Xu
 #' @examples
 #' Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))
 #' M =   120

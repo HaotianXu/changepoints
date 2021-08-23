@@ -14,4 +14,4 @@ X = data$X
 y = data$y
 true = data$cpt.true
 
-CV.search.DP.regression(lambda.dp.set, gamma.dp.set, y, X, delta)
+CV.search.DP.regression(y, X, gamma.dp.set, lambda.dp.set, delta)
