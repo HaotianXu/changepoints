@@ -39,17 +39,18 @@ TO DO
 \examples{
 y = c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))
 M = 120
-Alpha = sample.int(size = M, n = 300, replace = TRUE)
-Beta = sample.int(size = M, n = T, replace = TRUE)
+Alpha = sample.int(size = M, n = length(y), replace = TRUE)
+Beta = sample.int(size = M, n = length(y), replace = TRUE)
 for(j in 1:M){
   aux =  Alpha[j]
   aux2 = Beta[j]
   Alpha[j] = min(aux, aux2)
   Beta[j] = max(aux, aux2)
 }
-temp = WBS.univar(y, 1, 300, Alpha, Beta, 5)
+temp = WBS.univar(y, 1, length(y), Alpha, Beta, delta = 5)
 plot.ts(y)
-points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
+points(x = tail(temp$S[order(temp$Dval)], 4),
+       y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
 BS.threshold(temp, 1.5)
 }
 \author{

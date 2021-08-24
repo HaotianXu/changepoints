@@ -135,6 +135,40 @@ one.step.trim = function(idx_remove_parent, data_children){
 
 
 
+#' @title Generate random intervals for WBS.
+#' @description TO DO
+#' @param M        A positive \code{integer} scalar of number of random intervals.
+#' @param lower    A positive \code{integer} scalar of lower bound of random intervals.
+#' @param upper    A positive \code{integer} scalar of upper bound of random intervals.
+#' @param ...      Additional arguments.
+#' @return  A \code{list} with the structure:
+#' \itemize{
+#'  \item Alpha:    A M-dim vector representing the starting indices of random intervals.
+#'  \item Beta:     A M-dim vector representing the ending indices of random intervals.
+#'  \item ...         Additional parameters.
+#' } 
+#' @export
+#' @author
+#' @examples
+#' WBS.intervals(120, lower = 1, upper = 300)
+WBS.intervals = function(M, lower = 1, upper, ...){
+  if(lower >= upper){
+    stop("Integer 'lower' should be strictly smaller than integer 'upper'.")
+  }
+  Alpha = sample(x = lower:upper, size = M, replace = TRUE)
+  Beta = sample(x = lower:upper, size = M, replace = TRUE)
+  for(j in 1:M){
+    aux = Alpha[j]
+    aux2 = Beta[j]
+    Alpha[j] = min(aux, aux2)
+    Beta[j] = max(aux, aux2)
+  }
+  return(list(Alpha = Alpha, Beta = Beta))
+}
+
+
+
+
 #' @title Generate coordinates of lower triangular matrix of dimension p.
 #' @param p          A \code{integer} scalar of dimensionality.
 #' @return    A \code{integer} (p*(p-1)/2)-dim vector representing the indices of the lower triangular entries (indices correspond to the vectorization by stacking columns).

@@ -62,7 +62,7 @@ CV.DP.univar = function(y, gamma, delta, ...){
   odd_indexes = seq(1, N, 2)
   train.y = y[odd_indexes]
   validation.y = y[even_indexes]
-  init_cpt_train = part2local(D_P_univar(gamma, delta, train.y)$partition)
+  init_cpt_train = part2local(DP.univar(train.y, gamma, delta)$partition)
   init_cpt_train.long = c(0, init_cpt_train, length(train.y))
   diff.point = diff(init_cpt_train.long)
   if (length(which(diff.point == 1)) > 0){
@@ -103,7 +103,7 @@ CV.DP.univar = function(y, gamma, delta, ...){
 #' @examples
 #' TO DO
 CV.search.DP.univar = function(y, gamma.set, delta, ...){
-  output = sapply(1:length(gamma.set), function(j) CV.DP.univar(gamma.set[j], delta, y))
+  output = sapply(1:length(gamma.set), function(j) CV.DP.univar(y, gamma.set[j], delta))
   print(output)
   cpt_hat = output[1,]## estimated change points
   K_hat = output[2,]## number of estimated change points
@@ -134,9 +134,10 @@ CV.search.DP.univar = function(y, gamma.set, delta, ...){
 #' @author Haotian Xu
 #' @examples
 #' y = c(rnorm(100, 0, 1), rnorm(100, 10, 10), rnorm(100, 40, 10))
-#' temp = BS.univar(y, 1, 300, 5)
+#' temp = BS.univar(y, 1, length(y), delta = 5)
 #' plot.ts(y)
-#' points(x = tail(temp$S[order(temp$Dval)],4), y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
+#' points(x = tail(temp$S[order(temp$Dval)],4),
+#'        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
 BS.univar = function(y, s, e, delta = 2, level = 0, ...){
   S = NULL
   Dval = NULL
@@ -187,17 +188,18 @@ BS.univar = function(y, s, e, delta = 2, level = 0, ...){
 #' @examples
 #' y = c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))
 #' M = 120
-#' Alpha = sample.int(size = M, n = 300, replace = TRUE)
-#' Beta = sample.int(size = M, n = T, replace = TRUE)
+#' Alpha = sample.int(size = M, n = length(y), replace = TRUE)
+#' Beta = sample.int(size = M, n = length(y), replace = TRUE)
 #' for(j in 1:M){
 #'   aux =  Alpha[j]
 #'   aux2 = Beta[j]
 #'   Alpha[j] = min(aux, aux2)
 #'   Beta[j] = max(aux, aux2)
 #' }
-#' temp = WBS.univar(y, 1, 300, Alpha, Beta, 5)
+#' temp = WBS.univar(y, 1, length(y), Alpha, Beta, delta = 5)
 #' plot.ts(y)
-#' points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
+#' points(x = tail(temp$S[order(temp$Dval)], 4),
+#'        y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
 #' BS.threshold(temp, 1.5)
 WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){ 
   Alpha_new = pmax(Alpha, s)
