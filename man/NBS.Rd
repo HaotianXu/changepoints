@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_nonparametric.R
 \name{NBS}
 \alias{NBS}
-\title{Standard binary segmentation for univariate nonparametric change points detection}
+\title{Standard binary segmentation for univariate nonparametric change points detection.}
 \usage{
 NBS(Y, s, e, N, delta = 2, level = 0, ...)
 }
@@ -24,15 +24,14 @@ NBS(Y, s, e, N, delta = 2, level = 0, ...)
 \value{
 A \code{list} with the structure:
 \itemize{
- \item S           A vector of estimated changepoints (sorted in strictly increasing order).
- \item Dval        A vector of values of CUSUM statistic based on KS distance.
- \item Level       A vector representing the levels at which each change point is detected.
- \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
- \item ...         Additional parameters.
+ \item S:           A vector of estimated changepoints (sorted in strictly increasing order).
+ \item Dval:        A vector of values of CUSUM statistic based on KS distance.
+ \item Level:       A vector representing the levels at which each change point is detected.
+ \item Parent:      A matrix with the starting indices on the first row and the ending indices on the second row.
 }
 }
 \description{
-TO DO
+Perform standard binary segmentation for univariate nonparametric change points detection.
 }
 \examples{
 Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))

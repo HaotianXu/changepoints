@@ -37,6 +37,7 @@ temp = BS.univar(y, 1, length(y), delta = 5)
 plot.ts(y)
 points(x = tail(temp$S[order(temp$Dval)],4),
        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
+threshold.BS(temp, 20)
 }
 \author{
 Haotian Xu

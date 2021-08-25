@@ -20,15 +20,14 @@ BS.cov(X, s, e, level = 0, ...)
 \value{
 A \code{list} with the structure:
 \itemize{
- \item S           A vector of estimated changepoints (sorted in strictly increasing order).
- \item Dval        A vector of values of CUSUM statistic based on KS distance.
- \item Level       A vector representing the levels at which each change point is detected.
- \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
- \item ...         Additional parameters.
+ \item S:           A vector of estimated changepoints (sorted in strictly increasing order).
+ \item Dval:        A vector of values of CUSUM statistic based on KS distance.
+ \item Level:       A vector representing the levels at which each change point is detected.
+ \item Parent:      A matrix with the starting indices on the first row and the ending indices on the second row.
 }
 }
 \description{
-TO DO
+Perform binary Segmentation for covariance change points detection through Operator Norm.
 }
 \examples{
 p = 10

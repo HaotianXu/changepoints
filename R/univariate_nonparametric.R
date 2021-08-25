@@ -1,19 +1,18 @@
-#' @title Standard binary segmentation for univariate nonparametric change points detection
-#' @description TO DO
+#' @title Standard binary segmentation for univariate nonparametric change points detection.
+#' @description Perform standard binary segmentation for univariate nonparametric change points detection.
 #' @param Y         A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being multiple observations on each time point.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
 #' @param N         A \code{integer} vector representing number of multiple observations on each time point.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param level     Should be fixed as 0.
-#' @param ...      Additional arguments.
+#' @param ...       Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
-#'  \item S           A vector of estimated changepoints (sorted in strictly increasing order).
-#'  \item Dval        A vector of values of CUSUM statistic based on KS distance.
-#'  \item Level       A vector representing the levels at which each change point is detected.
-#'  \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
-#'  \item ...         Additional parameters.
+#'  \item S:           A vector of estimated changepoints (sorted in strictly increasing order).
+#'  \item Dval:        A vector of values of CUSUM statistic based on KS distance.
+#'  \item Level:       A vector representing the levels at which each change point is detected.
+#'  \item Parent:      A matrix with the starting indices on the first row and the ending indices on the second row.
 #' } 
 #' @export
 #' @author Oscar Hernan Madrid Padilla, Haotian Xu
@@ -46,7 +45,7 @@ NBS = function(Y, s, e, N, delta = 2, level = 0, ...){
     Level = c(temp1$Level, level, temp2$Level)
     Parent = cbind(temp1$Parent, parent, temp2$Parent)
     result = list(S = S, Dval = Dval, Level = Level, Parent = Parent)
-    class(result) = append(class(result), "BS")
+    class(result) = "BS"
     return(result)
   }
 }
@@ -81,8 +80,8 @@ CUSUM.KS = function(Y, s, e, t, N){
 
 
 
-#' @title Wild binary segmentation for univariate nonparametric change points detection
-#' @description TO DO
+#' @title Wild binary segmentation for univariate nonparametric change points detection.
+#' @description Perform wild binary segmentation for univariate nonparametric change points detection.
 #' @param Y         A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being multiple observations on each time point.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
@@ -94,11 +93,10 @@ CUSUM.KS = function(Y, s, e, t, N){
 #' @param ...      Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
-#'  \item S           A vector of estimated changepoints (sorted in strictly increasing order).
-#'  \item Dval        A vector of values of CUSUM statistic based on KS distance.
-#'  \item Level       A vector representing the levels at which each change point is detected.
-#'  \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
-#'  \item ...         Additional parameters.
+#'  \item S:           A vector of estimated changepoints (sorted in strictly increasing order).
+#'  \item Dval:        A vector of values of CUSUM statistic based on KS distance.
+#'  \item Level:       A vector representing the levels at which each change point is detected.
+#'  \item Parent:      A matrix with the starting indices on the first row and the ending indices on the second row.
 #' } 
 #' @export
 #' @author Oscar Hernan Madrid Padilla, Haotian Xu
@@ -163,7 +161,7 @@ NWBS = function(Y, s, e, Alpha, Beta, N, delta = 2, level = 0, ...){
   Level = c(temp1$Level, level, temp2$Level)
   Parent = cbind(temp1$Parent, parent, temp2$Parent)
   result = list(S = S, Dval = Dval, Level = Level, Parent = Parent)
-  class(result) = append(class(result), "BS")
+  class(result) = "BS"
   return(result)
 }
 

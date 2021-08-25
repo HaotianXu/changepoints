@@ -17,7 +17,7 @@ CUSUM.cov = function(X, s, e, t){
 
 
 #' @title Binary Segmentation for covariance change points detection through Operator Norm.
-#' @description TO DO
+#' @description Perform binary Segmentation for covariance change points detection through Operator Norm.
 #' @param X         A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
@@ -25,11 +25,10 @@ CUSUM.cov = function(X, s, e, t){
 #' @param ...      Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
-#'  \item S           A vector of estimated changepoints (sorted in strictly increasing order).
-#'  \item Dval        A vector of values of CUSUM statistic based on KS distance.
-#'  \item Level       A vector representing the levels at which each change point is detected.
-#'  \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
-#'  \item ...         Additional parameters.
+#'  \item S:           A vector of estimated changepoints (sorted in strictly increasing order).
+#'  \item Dval:        A vector of values of CUSUM statistic based on KS distance.
+#'  \item Level:       A vector representing the levels at which each change point is detected.
+#'  \item Parent:      A matrix with the starting indices on the first row and the ending indices on the second row.
 #' } 
 #' @export
 #' @author Haotian Xu
@@ -69,7 +68,7 @@ BS.cov = function(X, s, e, level = 0, ...){
     Level = c(temp1$Level, level, temp2$Level)
     Parent = cbind(temp1$Parent, parent, temp2$Parent)
     result = list(S = S, Dval = Dval, Level = Level, Parent = Parent)
-    class(result) = append(class(result), "BS")
+    class(result) = "BS"
     return(result)
   }
 }
@@ -98,8 +97,8 @@ PC.cov = function(X, Alpha, Beta){
 }
 
 
-#' @title Wild binary segmentation for covariance change points detection through Independent Projection
-#' @description TO DO
+#' @title Wild binary segmentation for covariance change points detection through Independent Projection.
+#' @description  Perform wild binary segmentation for covariance change points detection through Independent Projection
 #' @param X         A \code{numeric} vector of observations.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
@@ -110,11 +109,10 @@ PC.cov = function(X, Alpha, Beta){
 #' @param ...      Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
-#'  \item S           A vector of estimated changepoints (sorted in strictly increasing order).
-#'  \item Dval        A vector of values of CUSUM statistic based on KS distance.
-#'  \item Level       A vector representing the levels at which each change point is detected.
-#'  \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
-#'  \item ...         Additional parameters.
+#'  \item S:           A vector of estimated changepoints (sorted in strictly increasing order).
+#'  \item Dval:        A vector of values of CUSUM statistic based on KS distance.
+#'  \item Level:       A vector representing the levels at which each change point is detected.
+#'  \item Parent:      A matrix with the starting indices on the first row and the ending indices on the second row.
 #' } 
 #' @export
 #' @author Haotian Xu
@@ -181,7 +179,7 @@ WBSIP.cov = function(X, X_prime, s, e, Alpha, Beta, delta, level = 0){
   Level = c(temp1$Level, level, temp2$Level)
   Parent = cbind(temp1$Parent, parent, temp2$Parent)
   result = list(S = S, Dval = Dval, Level = Level, Parent = Parent)
-  class(result) = append(class(result), "BS")
+  class(result) = "BS"
   return(result)
 }
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/HD_covariance.R
 \name{WBSIP.cov}
 \alias{WBSIP.cov}
-\title{Wild binary segmentation for covariance change points detection through Independent Projection}
+\title{Wild binary segmentation for covariance change points detection through Independent Projection.}
 \usage{
 WBSIP.cov(X, X_prime, s, e, Alpha, Beta, delta, level = 0)
 }
@@ -26,15 +26,14 @@ WBSIP.cov(X, X_prime, s, e, Alpha, Beta, delta, level = 0)
 \value{
 A \code{list} with the structure:
 \itemize{
- \item S           A vector of estimated changepoints (sorted in strictly increasing order).
- \item Dval        A vector of values of CUSUM statistic based on KS distance.
- \item Level       A vector representing the levels at which each change point is detected.
- \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
- \item ...         Additional parameters.
+ \item S:           A vector of estimated changepoints (sorted in strictly increasing order).
+ \item Dval:        A vector of values of CUSUM statistic based on KS distance.
+ \item Level:       A vector representing the levels at which each change point is detected.
+ \item Parent:      A matrix with the starting indices on the first row and the ending indices on the second row.
 }
 }
 \description{
-TO DO
+Perform wild binary segmentation for covariance change points detection through Independent Projection
 }
 \examples{
 y = c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))

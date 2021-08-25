@@ -151,6 +151,7 @@ CV.search.DP.univar = function(y, gamma.set, delta, ...){
 #' plot.ts(y)
 #' points(x = tail(temp$S[order(temp$Dval)],4),
 #'        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
+#' threshold.BS(temp, 20)
 BS.univar = function(y, s, e, delta = 2, level = 0, ...){
   S = NULL
   Dval = NULL
@@ -174,7 +175,7 @@ BS.univar = function(y, s, e, delta = 2, level = 0, ...){
     Level = c(temp1$Level, level, temp2$Level)
     Parent = cbind(temp1$Parent, parent, temp2$Parent)
     result = list(S = S, Dval = Dval, Level = Level, Parent = Parent)
-    class(result) = append(class(result), "BS")
+    class(result) = "BS"
     return(result)
   }
 }
@@ -253,7 +254,7 @@ WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){
   Level = c(temp1$Level, level, temp2$Level)
   Parent = cbind(temp1$Parent, parent, temp2$Parent)
   result = list(S = S, Dval = Dval, Level = Level, Parent = Parent)
-  class(result) = append(class(result), "BS")
+  class(result) = "BS"
   return(result)
 }
 
