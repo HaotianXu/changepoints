@@ -11,18 +11,22 @@ basis.poly <- function(n, s, e, r) {
 
 
 #' @title Dynamic programming algorithm for univariate polynomials change points detection. 
-#' @description TO DO
+#' @description Perform dynamic programming algorithm for univariate polynomials change points detection.
 #' @param y         A \code{numeric} vector of observations.
 #' @param r         An \code{integer} scalar order of polynomials.
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
-#' @param ...      Additional arguments.
-#' @return TO DO.
+#' @param ...       Additional arguments.
+#' @return A \code{list} with the structure:
+#' \itemize{
+#'  \item partition   A vector of the best partition.
+#'  \item yhat        A vector of mean estimation for corresponding to the best partition.
+#' }
 #' @export
-#' @author
+#' @author 
 #' @examples
 #' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-#' DP.regression(2, 5, data$y, X = data$X, lambda = 1)
+#' DP.poly(2, 5, data$y, X = data$X, lambda = 1)
 DP.poly <- function(y, r, gamma, delta, ...) {
   .Call('_changepoints_rcpp_DP_poly', PACKAGE = 'changepoints', y, r, gamma, delta)
 }

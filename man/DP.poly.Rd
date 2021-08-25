@@ -18,14 +18,18 @@ DP.poly(y, r, gamma, delta, ...)
 \item{...}{Additional arguments.}
 }
 \value{
-TO DO.
+A \code{list} with the structure:
+\itemize{
+ \item partition   A vector of the best partition.
+ \item yhat        A vector of mean estimation for corresponding to the best partition.
+}
 }
 \description{
-TO DO
+Perform dynamic programming algorithm for univariate polynomials change points detection.
 }
 \examples{
 data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-DP.regression(2, 5, data$y, X = data$X, lambda = 1)
+DP.poly(2, 5, data$y, X = data$X, lambda = 1)
 }
 \author{
 

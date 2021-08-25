@@ -1,12 +1,12 @@
-#' @title Dynamic programming algorithm for regression change points detection by l0 penalty
-#' @description TO DO
+#' @title Dynamic programming algorithm for regression change points detection through l0 penalty.
+#' @description     Perform dynamic programming algorithm for regression change points detection through l0 penalty.
 #' @param y         A \code{numeric} vector of observations.
 #' @param X         A \code{numeric} matrix of covariates.
 #' @param gamma     A positive \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param lambda    A positive \code{numeric} scalar of tuning parameter for the lasso penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @param ...      Additional arguments.
-#' @return TO DO.
+#' @param ...       Additional arguments.
+#' @return          A vector of the best partition.
 #' @export
 #' @author
 #' @examples
@@ -42,8 +42,8 @@ DP.regression = function(y, X, gamma, lambda, delta, ...){
 }
 
 
-#' @title Simulate sparse regression model with changepoints in coefficients (Model1 in [10]) under the setting of Simulations 4.2 [10]
-#' @description TO DO
+#' @title Simulate sparse regression model with changepoints in coefficients.
+#' @description      Simulate sparse regression model with changepoints in coefficients under the setting of Simulations 4.2 [10].
 #' @param d0         A \code{numeric} scalar of number of nonzero coefficients.
 #' @param cpt.ture   A \code{integer} vector of true changepoints (sorted in strictly increasing order).
 #' @param p          A \code{integer} scalar of dimensionality.
@@ -137,8 +137,8 @@ error.pred.seg.regression = function(s, e, y, X, lambda, delta){
 }
 
 
-#' @title Local refinement for regression change points detection [10] 
-#' @description TO DO
+#' @title Local refinement for regression change points detection.
+#' @description     Perform local refinement for regression change points detection.
 #' @param cpt.init  A \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
 #' @param y         A \code{numeric} vector of response variable.
 #' @param X         A \code{numeric} matrix of covariates.
@@ -211,8 +211,8 @@ X.glasso.converter.regression = function(X, eta, s_ceil){
 
 
 
-#' @title Cross-Validation of Dynamic Programming algorithm for regression change points detection by l0 penalty
-#' @description TO DO
+#' @title Cross-validation of dynamic programming algorithm for regression change points detection through l0 penalty.
+#' @description     Perform cross-validation of dynamic programming algorithm for regression change points detection through l0 penalty.
 #' @param y         A \code{numeric} vector of observations.
 #' @param X         A \code{numeric} matrix of covariates.
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.

@@ -107,7 +107,9 @@ BS.network = function(data_mat1, data_mat2, s, e, delta, level = 0, ...){
     Dval = c(temp1$Dval, best_value, temp2$Dval)
     Level = c(temp1$Level, level, temp2$Level)
     Parent = cbind(temp1$Parent, parent, temp2$Parent)
-    return(list(S = S, Dval = Dval, Level = Level, Parent = Parent))
+    result = list(S = S, Dval = Dval, Level = Level, Parent = Parent)
+    class(result) = append(class(result), "BS")
+    return(result)
   }
 }
 

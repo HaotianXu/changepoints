@@ -160,7 +160,9 @@ BS.univar = function(y, s, e, delta = 2, level = 0, ...){
     Dval = c(temp1$Dval, best_value, temp2$Dval)
     Level = c(temp1$Level, level, temp2$Level)
     Parent = cbind(temp1$Parent, parent, temp2$Parent)
-    return(list(S = S, Dval = Dval, Level = Level, Parent = Parent))
+    result = list(S = S, Dval = Dval, Level = Level, Parent = Parent)
+    class(result) = append(class(result), "BS")
+    return(result)
   }
 }
 
@@ -246,7 +248,9 @@ WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){
   Dval = c(temp1$Dval, a[m_star], temp2$Dval)
   Level = c(temp1$Level, level, temp2$Level)
   Parent = cbind(temp1$Parent, parent, temp2$Parent)
-  return(list(S = S, Dval = Dval, Level = Level, Parent = Parent))
+  result = list(S = S, Dval = Dval, Level = Level, Parent = Parent)
+  class(result) = append(class(result), "BS")
+  return(result)
 }
 
 

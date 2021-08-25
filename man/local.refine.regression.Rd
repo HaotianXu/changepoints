@@ -2,7 +2,7 @@
 % Please edit documentation in R/HD_regression.R
 \name{local.refine.regression}
 \alias{local.refine.regression}
-\title{Local refinement for regression change points detection [10]}
+\title{Local refinement for regression change points detection.}
 \usage{
 local.refine.regression(cpt.init, y, X, zeta, w = 1/3)
 }
@@ -23,7 +23,7 @@ local.refine.regression(cpt.init, y, X, zeta, w = 1/3)
 A \code{numeric} scalar of prediction error in l2 norm.
 }
 \description{
-TO DO
+Perform local refinement for regression change points detection.
 }
 \examples{
 data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)

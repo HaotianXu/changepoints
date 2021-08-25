@@ -2,7 +2,7 @@
 % Please edit documentation in R/HD_regression.R
 \name{CV.DP.regression}
 \alias{CV.DP.regression}
-\title{Cross-Validation of Dynamic Programming algorithm for regression change points detection by l0 penalty}
+\title{Cross-validation of dynamic programming algorithm for regression change points detection through l0 penalty.}
 \usage{
 CV.DP.regression(y, X, gamma, lambda, delta, ...)
 }
@@ -23,7 +23,7 @@ CV.DP.regression(y, X, gamma, lambda, delta, ...)
 TO DO.
 }
 \description{
-TO DO
+Perform cross-validation of dynamic programming algorithm for regression change points detection through l0 penalty.
 }
 \examples{
 TO DO

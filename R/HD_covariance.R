@@ -68,7 +68,9 @@ BS.cov = function(X, s, e, level = 0, ...){
     Dval = c(temp1$Dval, best_value, temp2$Dval)
     Level = c(temp1$Level, level, temp2$Level)
     Parent = cbind(temp1$Parent, parent, temp2$Parent)
-    return(list(S = S, Dval = Dval, Level = Level, Parent = Parent))
+    result = list(S = S, Dval = Dval, Level = Level, Parent = Parent)
+    class(result) = append(class(result), "BS")
+    return(result)
   }
 }
 
@@ -178,6 +180,8 @@ WBSIP.cov = function(X, X_prime, s, e, Alpha, Beta, delta, level = 0){
   Dval = c(temp1$Dval, a[m_star], temp2$Dval)
   Level = c(temp1$Level, level, temp2$Level)
   Parent = cbind(temp1$Parent, parent, temp2$Parent)
-  return(list(S = S, Dval = Dval, Level = Level, Parent = Parent))
+  result = list(S = S, Dval = Dval, Level = Level, Parent = Parent)
+  class(result) = append(class(result), "BS")
+  return(result)
 }
 

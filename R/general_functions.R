@@ -51,16 +51,16 @@ Hausdorff.dist = function(vec1, vec2, ...){
 }
 
 
-#' @title Thresholding the standard binary segmentation for univariate mean change points detection
-#' @description TO DO
-#' @param BS_result     A \code{numeric} vector of observations.
-#' @param tau           A \code{numeric} scalar of thresholding value.
-#' @param ...      Additional arguments.
+#' @title Thresholding a BS object.
+#' @description         Given a BS object, perform thresholding to find the change point locations.
+#' @param BS_object     A \code{numeric} vector of observations.
+#' @param tau           A positive \code{numeric} scalar of thresholding value.
+#' @param ...           Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
 #'  \item BS_tree             A list of data.frame containing "current" indices, "parent" indices, "location" indices and "value" of CUSUM at all steps.
 #'  \item BS_tree_trimmed     BS_tree with change points which do not satisfy the thresholding criteria removed.
-#'  \item ...         Additional parameters.
+#'  \item change_points       A matrix contains change point locations, values of corresponding statistic, and levels at which each change point is detected.
 #' } 
 #' @export
 #' @author Haotian Xu
@@ -69,21 +69,21 @@ Hausdorff.dist = function(vec1, vec2, ...){
 #' temp = BS.univar(y, 1, 300, 5)
 #' plot.ts(y)
 #' points(x = tail(temp$S[order(temp$Dval)],4), y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-#' BS.threshold(temp, 10)
-BS.threshold = function(BS_result, tau, ...){
-  level_unique = unique(BS_result$Level[order(BS_result$Level)])
+#' threshold.BS(temp, 10)
+threshold.BS = function(BS_object, tau, ...){
+  level_unique = unique(BS_object$Level[order(BS_object$Level)])
   level_length = length(level_unique)
   BS_tree = vector("list", level_length)
-  BS_tree[[1]] = data.frame(current = 1, parent = 1, location = BS_result$S[order(BS_result$Level)][1], value = BS_result$Dval[order(BS_result$Level)][1])
+  BS_tree[[1]] = data.frame(current = 1, parent = 1, location = BS_object$S[order(BS_object$Level)][1], value = BS_object$Dval[order(BS_object$Level)][1])
   for(i in 2:level_length){
-    idx_curr = cumsum(table(BS_result$Level))[i-1] + 1:table(BS_result$Level)[i]
-    idx_prev = cumsum(table(BS_result$Level))[i-1] + 1 - table(BS_result$Level)[i-1]:1
-    interval_prev = as.matrix(BS_result$Parent[,order(BS_result$Level)][,idx_prev])
-    e_curr = BS_result$Parent[,order(BS_result$Level)][2,idx_curr]
+    idx_curr = cumsum(table(BS_object$Level))[i-1] + 1:table(BS_object$Level)[i]
+    idx_prev = cumsum(table(BS_object$Level))[i-1] + 1 - table(BS_object$Level)[i-1]:1
+    interval_prev = as.matrix(BS_object$Parent[,order(BS_object$Level)][,idx_prev])
+    e_curr = BS_object$Parent[,order(BS_object$Level)][2,idx_curr]
     BS_tree[[i]] = data.frame(current = 1:length(idx_curr),
                               parent = sapply(e_curr, function(x) which(rbind(interval_prev[1,] <= x & interval_prev[2,] >= x))), 
-                              location = BS_result$S[order(BS_result$Level)][idx_curr],
-                              value = BS_result$Dval[order(BS_result$Level)][idx_curr])
+                              location = BS_object$S[order(BS_object$Level)][idx_curr],
+                              value = BS_object$Dval[order(BS_object$Level)][idx_curr])
   }
   BS_tree_trimmed = BS_tree
   for(i in 1:level_length){

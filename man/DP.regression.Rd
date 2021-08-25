@@ -2,7 +2,7 @@
 % Please edit documentation in R/HD_regression.R
 \name{DP.regression}
 \alias{DP.regression}
-\title{Dynamic programming algorithm for regression change points detection by l0 penalty}
+\title{Dynamic programming algorithm for regression change points detection through l0 penalty.}
 \usage{
 DP.regression(y, X, gamma, lambda, delta, ...)
 }
@@ -20,10 +20,10 @@ DP.regression(y, X, gamma, lambda, delta, ...)
 \item{...}{Additional arguments.}
 }
 \value{
-TO DO.
+A vector of the best partition.
 }
 \description{
-TO DO
+Perform dynamic programming algorithm for regression change points detection through l0 penalty.
 }
 \examples{
 data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/HD_regression.R
 \name{simu.change.regression}
 \alias{simu.change.regression}
-\title{Simulate sparse regression model with changepoints in coefficients (Model1 in [10]) under the setting of Simulations 4.2 [10]}
+\title{Simulate sparse regression model with changepoints in coefficients.}
 \usage{
 simu.change.regression(d0, cpt.true, p, n, sigma, kappa)
 }
@@ -32,7 +32,7 @@ A \code{list} with the structure:
 }
 }
 \description{
-TO DO
+Simulate sparse regression model with changepoints in coefficients under the setting of Simulations 4.2 [10].
 }
 \examples{
 TO DO
