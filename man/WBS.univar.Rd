@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean.R
 \name{WBS.univar}
 \alias{WBS.univar}
-\title{Wild binary segmentation for univariate mean change points detection}
+\title{Wild binary segmentation for univariate mean change points detection.}
 \usage{
 WBS.univar(y, s, e, Alpha, Beta, delta = 2, level = 0)
 }
@@ -26,32 +26,23 @@ WBS.univar(y, s, e, Alpha, Beta, delta = 2, level = 0)
 \value{
 A \code{list} with the structure:
 \itemize{
- \item S           A vector of estimated changepoints (sorted in strictly increasing order).
- \item Dval        A vector of values of CUSUM statistic based on KS distance.
- \item Level       A vector representing the levels at which each change point is detected.
- \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
- \item ...         Additional parameters.
+ \item{S}: A vector of estimated change point locations (sorted in strictly increasing order).
+ \item{Dval}: A vector of values of CUSUM statistic based on KS distance.
+ \item{Level}: A vector representing the levels at which each change point is detected.
+ \item{Parent}: A matrix with the starting indices on the first row and the ending indices on the second row.
 }
 }
 \description{
-TO DO
+Perform wild binary segmentation for univariate mean change points detection.
 }
 \examples{
 y = c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))
-M = 120
-Alpha = sample.int(size = M, n = length(y), replace = TRUE)
-Beta = sample.int(size = M, n = length(y), replace = TRUE)
-for(j in 1:M){
-  aux =  Alpha[j]
-  aux2 = Beta[j]
-  Alpha[j] = min(aux, aux2)
-  Beta[j] = max(aux, aux2)
-}
-temp = WBS.univar(y, 1, length(y), Alpha, Beta, delta = 5)
+intervals = WBS.intervals(M = 120, lower = 1, upper = length(y))
+temp = WBS.univar(y, 1, length(y), intervals$Alpha, intervals$Beta, delta = 5)
 plot.ts(y)
 points(x = tail(temp$S[order(temp$Dval)], 4),
-       y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
-BS.threshold(temp, 1.5)
+       y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
+threshold.BS(temp, 100)
 }
 \author{
 Haotian Xu

@@ -2,7 +2,7 @@
 % Please edit documentation in R/general_functions.R
 \name{part2local}
 \alias{part2local}
-\title{Partition to localization}
+\title{Partition to localization.}
 \usage{
 part2local(x)
 }
@@ -12,14 +12,14 @@ part2local(x)
 \item{...}{Additional arguments.}
 }
 \value{
-TO DO.
+A vector of change point locations.
 }
 \description{
-TO DO
+Find change point locations from the best partition produced by dynamic programming.
 }
 \examples{
 y = c(rep(0, 100), rep(1, 100))
-part2local(D_P_univar(1, 4, y)$partition)
+part2local(DP.univar(y, 1, 4)$partition)
 }
 \author{
 Haotian Xu

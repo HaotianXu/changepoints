@@ -1,13 +1,13 @@
-#' @title Partition to localization
-#' @description TO DO
+#' @title Partition to localization.
+#' @description     Find change point locations from the best partition produced by dynamic programming.
 #' @param x         A \code{numeric} vector of observations.
-#' @param ...      Additional arguments.
-#' @return TO DO.
+#' @param ...       Additional arguments.
+#' @return A vector of change point locations.
 #' @export
 #' @author Haotian Xu
 #' @examples
 #' y = c(rep(0, 100), rep(1, 100))
-#' part2local(D_P_univar(1, 4, y)$partition)
+#' part2local(DP.univar(y, 1, 4)$partition)
 part2local = function(x){
   N = length(x)
   localization = c()
@@ -23,8 +23,8 @@ part2local = function(x){
 }
 
 
-#' @title Bidirectional Hausdorff distance
-#' @description TO DO
+#' @title Bidirectional Hausdorff distance.
+#' @description     Compute the bidirectional Hausdorff distance between two sets.
 #' @param vec1      A \code{integer} vector forms a subset of {1, 2, ..., n}.
 #' @param vec2      A \code{integer} vector forms a subset of {1, 2, ..., n}.
 #' @param ...      Additional arguments.
@@ -58,9 +58,9 @@ Hausdorff.dist = function(vec1, vec2, ...){
 #' @param ...           Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
-#'  \item BS_tree             A list of data.frame containing "current" indices, "parent" indices, "location" indices and "value" of CUSUM at all steps.
-#'  \item BS_tree_trimmed     BS_tree with change points which do not satisfy the thresholding criteria removed.
-#'  \item change_points       A matrix contains change point locations, values of corresponding statistic, and levels at which each change point is detected.
+#'  \item{BS_tree}: {A list of data.frame containing "current" indices, "parent" indices, "location" indices and "value" of CUSUM at all steps.}
+#'  \item{BS_tree_trimmed}: {BS_tree with change points which do not satisfy the thresholding criteria removed.}
+#'  \item{change_points}: {A matrix contains change point locations, values of corresponding statistic, and levels at which each change point is detected.}
 #' } 
 #' @export
 #' @author Haotian Xu
@@ -115,9 +115,8 @@ threshold.BS = function(BS_object, tau, ...){
 #' @param data_children         A \code{data.frame} including "current" indices, "parent" indices, "location" indices and "value" of CUSUM at the next step.
 #' @return  A \code{list} with the structure:
 #' \itemize{
-#'  \item idx_remove_children       A vector of indices of children in the next step.
-#'  \item data_children_trimmed     A data.frame being data_children with the observations (idx_remove_children) removed.
-#'  \item ...         Additional parameters.
+#'  \item{idx_remove_children}: {A vector of indices of children in the next step.}
+#'  \item{data_children_trimmed}: {A data.frame being data_children with the observations (idx_remove_children) removed.}
 #' } 
 #' @noRd
 one.step.trim = function(idx_remove_parent, data_children){
@@ -136,19 +135,18 @@ one.step.trim = function(idx_remove_parent, data_children){
 
 
 #' @title Generate random intervals for WBS.
-#' @description TO DO
+#' @description    Generate random intervals for WBS.
 #' @param M        A positive \code{integer} scalar of number of random intervals.
 #' @param lower    A positive \code{integer} scalar of lower bound of random intervals.
 #' @param upper    A positive \code{integer} scalar of upper bound of random intervals.
 #' @param ...      Additional arguments.
-#' @return  A \code{list} with the structure:
+#' @return         A \code{list} with the structure:
 #' \itemize{
-#'  \item Alpha:    A M-dim vector representing the starting indices of random intervals.
-#'  \item Beta:     A M-dim vector representing the ending indices of random intervals.
-#'  \item ...         Additional parameters.
+#'  \item{Alpha}: {A M-dim vector representing the starting indices of random intervals.}
+#'  \item{Beta}: {A M-dim vector representing the ending indices of random intervals.}
 #' } 
 #' @export
-#' @author
+#' @author    Oscar Hernan Madrid Padilla
 #' @examples
 #' WBS.intervals(120, lower = 1, upper = 300)
 WBS.intervals = function(M, lower = 1, upper, ...){
@@ -170,12 +168,12 @@ WBS.intervals = function(M, lower = 1, upper, ...){
 
 
 #' @title Generate coordinates of lower triangular matrix of dimension p.
-#' @param p          A \code{integer} scalar of dimensionality.
+#' @param p   A \code{integer} scalar of dimensionality.
 #' @return    A \code{integer} (p*(p-1)/2)-dim vector representing the indices of the lower triangular entries (indices correspond to the vectorization by stacking columns).
 #' @export
-#' @author
+#' @author    Oscar Hernan Madrid Padilla
 #' @examples
-#' TO DO
+#' gen.lower.coordinate(5)
 gen.lower.coordinate=function(p){
   mat=matrix(1:p^2, nrow = p)
   return(mat[lower.tri(mat, diag = F)])  
@@ -186,18 +184,18 @@ gen.lower.coordinate=function(p){
 #' @title Generate population covariance matrix with dimension p.
 #' @param p       A \code{integer} scalar of dimensionality.
 #' @param sigma2  A positive \code{numeric} scalar representing the variance of each entry.
-#' @param type    3 types of covariance matrix are considered. 1: Diagonal structure; 2: Equal correlation structure; 3: Power decay structure.
+#' @param type    Specify the type of a covariance matrix: Diagonal structure ("diagonal"); Equal correlation structure ("equal"); Power decay structure ("power").
 #' @return    A \code{numeric} p-by-p matrix.
 #' @export
-#' @author
+#' @author  Haotian Xu
 #' @examples
-#' TO DO
+#' gen.cov.mat(p = 5, sigma2 = 1, type = "diagonal")
 gen.cov.mat = function(p, sigma2, type){
-  if(type == 1){
+  if(type == "diagonal"){
     Sigma = diag(1, p)
-  }else if(type == 2){
+  }else if(type == "equal"){
     Sigma = matrix(0.5, nrow = p, ncol = p) + diag(0.5, p)
-  }else if(type == 3){
+  }else if(type == "power"){
     Sigma = matrix(NA, nrow = p, ncol = p)
     for(i in 1:p){
       for(j in 1:p){

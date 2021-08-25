@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean.R
 \name{BS.univar}
 \alias{BS.univar}
-\title{Standard binary segmentation for univariate mean change points detection}
+\title{Standard binary segmentation for univariate mean change points detection.}
 \usage{
 BS.univar(y, s, e, delta = 2, level = 0, ...)
 }
@@ -22,15 +22,14 @@ BS.univar(y, s, e, delta = 2, level = 0, ...)
 \value{
 A \code{list} with the structure:
 \itemize{
- \item S           A vector of estimated changepoints (sorted in strictly increasing order).
- \item Dval        A vector of values of CUSUM statistic based on KS distance.
- \item Level       A vector representing the levels at which each change point is detected.
- \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
- \item ...         Additional parameters.
+ \item{S}: A vector of estimated change point locations (sorted in strictly increasing order).
+ \item{Dval}: A vector of values of CUSUM statistic based on KS distance.
+ \item{Level}: A vector representing the levels at which each change point is detected.
+ \item{Parent}: A matrix with the starting indices on the first row and the ending indices on the second row.
 }
 }
 \description{
-TO DO
+Perform standard binary segmentation for univariate mean change points detection
 }
 \examples{
 y = c(rnorm(100, 0, 1), rnorm(100, 10, 10), rnorm(100, 40, 10))

@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean.R
 \name{DP.univar}
 \alias{DP.univar}
-\title{Dynamic programming for univariate mean change points detection by l0 penalty (RCPP)}
+\title{Dynamic programming for univariate mean change points detection.}
 \usage{
 DP.univar(y, gamma, delta, ...)
 }
@@ -16,14 +16,18 @@ DP.univar(y, gamma, delta, ...)
 \item{...}{Additional arguments.}
 }
 \value{
-TO DO.
+A \code{list} with the structure:
+\itemize{
+ \item{partition}{A vector of the best partition.}
+ \item{yhat}{A vector of mean estimation for corresponding to the best partition.}
+}
 }
 \description{
-TO DO
+Perform dynamic programming for univariate mean change points detection through l0 penalty
 }
 \examples{
 y = rnorm(300) + c(rep(0,130),rep(-1,20),rep(1,20),rep(0,130))
-DP_univar(y, 1, 5)
+DP.univar(y, 1, 5)
 }
 \author{
 Haotian Xu

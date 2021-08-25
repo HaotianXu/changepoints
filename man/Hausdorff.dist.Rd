@@ -2,7 +2,7 @@
 % Please edit documentation in R/general_functions.R
 \name{Hausdorff.dist}
 \alias{Hausdorff.dist}
-\title{Bidirectional Hausdorff distance}
+\title{Bidirectional Hausdorff distance.}
 \usage{
 Hausdorff.dist(vec1, vec2, ...)
 }
@@ -17,7 +17,7 @@ Hausdorff.dist(vec1, vec2, ...)
 An integer scalar.
 }
 \description{
-TO DO
+Compute the bidirectional Hausdorff distance between two sets.
 }
 \examples{
 vec1 = sample.int(1000, size = 50)

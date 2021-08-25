@@ -16,9 +16,9 @@ threshold.BS(BS_object, tau, ...)
 \value{
 A \code{list} with the structure:
 \itemize{
- \item BS_tree             A list of data.frame containing "current" indices, "parent" indices, "location" indices and "value" of CUSUM at all steps.
- \item BS_tree_trimmed     BS_tree with change points which do not satisfy the thresholding criteria removed.
- \item change_points       A matrix contains change point locations, values of corresponding statistic, and levels at which each change point is detected.
+ \item{BS_tree}: {A list of data.frame containing "current" indices, "parent" indices, "location" indices and "value" of CUSUM at all steps.}
+ \item{BS_tree_trimmed}: {BS_tree with change points which do not satisfy the thresholding criteria removed.}
+ \item{change_points}: {A matrix contains change point locations, values of corresponding statistic, and levels at which each change point is detected.}
 }
 }
 \description{

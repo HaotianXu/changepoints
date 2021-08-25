@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean.R
 \name{CV.search.DP.univar}
 \alias{CV.search.DP.univar}
-\title{Perform grid search based on Cross-Validation of Dynamic Programming algorithm for univariate mean change points detection by l0 penalty}
+\title{Grid search for cross-validation of dynamic programming for univariate mean change points detection.}
 \usage{
 CV.search.DP.univar(y, gamma.set, delta, ...)
 }
@@ -11,19 +11,26 @@ CV.search.DP.univar(y, gamma.set, delta, ...)
 
 \item{gamma.set}{A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.}
 
-\item{delta}{A strictly \code{integer} scalar of minimum spacing.}
+\item{delta}{A positive \code{integer} scalar of minimum spacing.}
 
 \item{...}{Additional arguments.}
 }
 \value{
-TO DO.
+A \code{list} with the structure:
+\itemize{
+ \item{cpt_hat}: A list of vector of estimated change points locations (sorted in strictly increasing order).
+ \item{K_hat}: A list of scalar of number of estimated change points.
+ \item{test_error}: A list of vector of testing errors.
+ \item{train_error}: A list of vector of training errors.
+}
 }
 \description{
-TO DO
+Perform grid search for Cross-Validation of Dynamic Programming for univariate mean change points detection through l0 penalty
 }
 \examples{
-TO DO
+y = rnorm(300) + c(rep(0,130),rep(-1,20),rep(1,20),rep(0,130))
+CV.search.DP.univar(y, gamma.set = 3:6, delta = 5)
 }
 \author{
-
+Daren Wang and Haotian Xu
 }

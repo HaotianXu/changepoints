@@ -18,17 +18,16 @@ WBS.intervals(M, lower = 1, upper, ...)
 \value{
 A \code{list} with the structure:
 \itemize{
- \item Alpha:    A M-dim vector representing the starting indices of random intervals.
- \item Beta:     A M-dim vector representing the ending indices of random intervals.
- \item ...         Additional parameters.
+ \item{Alpha}: {A M-dim vector representing the starting indices of random intervals.}
+ \item{Beta}: {A M-dim vector representing the ending indices of random intervals.}
 }
 }
 \description{
-TO DO
+Generate random intervals for WBS.
 }
 \examples{
 WBS.intervals(120, lower = 1, upper = 300)
 }
 \author{
-
+Oscar Hernan Madrid Padilla
 }

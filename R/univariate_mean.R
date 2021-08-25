@@ -1,15 +1,19 @@
-#' @title Dynamic programming for univariate mean change points detection by l0 penalty (RCPP)
-#' @description TO DO
+#' @title Dynamic programming for univariate mean change points detection.
+#' @description     Perform dynamic programming for univariate mean change points detection through l0 penalty
 #' @param y         A \code{numeric} vector of observations.
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @param ...      Additional arguments.
-#' @return TO DO.
+#' @param ...       Additional arguments.
+#' @return A \code{list} with the structure:
+#' \itemize{
+#'  \item{partition}{A vector of the best partition.}
+#'  \item{yhat}{A vector of mean estimation for corresponding to the best partition.}
+#' }
 #' @export
 #' @author Haotian Xu
 #' @examples
 #' y = rnorm(300) + c(rep(0,130),rep(-1,20),rep(1,20),rep(0,130))
-#' DP_univar(y, 1, 5)
+#' DP.univar(y, 1, 5)
 DP.univar <- function(y, gamma, delta, ...) {
   .Call('_changepoints_rcpp_DP_univar', PACKAGE = 'changepoints', y, gamma, delta)
 }
@@ -45,17 +49,20 @@ DP.univar <- function(y, gamma, delta, ...) {
 # }
 
 
-#' @title Cross-Validation of Dynamic Programming algorithm for univariate mean change points detection by l0 penalty
-#' @description TO DO
+#' @title Internal function: Cross-Validation of Dynamic Programming algorithm for univariate mean change points detection.
+#' @description     Perform cross-validation for Dynamic Programming algorithm for univariate mean change points detection through l0 penalty.
 #' @param y         A \code{numeric} vector of observations.
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @param ...      Additional arguments.
-#' @return TO DO.
-#' @export
-#' @author
-#' @examples
-#' TO DO
+#' @param ...       Additional arguments.
+#' @return  A \code{list} with the structure:
+#' \itemize{
+#'  \item{cpt_hat}: A vector of estimated change points locations (sorted in strictly increasing order).
+#'  \item{K_hat}: A scalar of number of estimated change points.
+#'  \item{test_error}: A vector of testing errors.
+#'  \item{train_error}: A vector of training errors.
+#' } 
+#' @noRd
 CV.DP.univar = function(y, gamma, delta, ...){
   N = length(y)
   even_indexes = seq(2, N, 2)
@@ -91,17 +98,24 @@ CV.DP.univar = function(y, gamma, delta, ...){
 }
 
 
-#' @title Perform grid search based on Cross-Validation of Dynamic Programming algorithm for univariate mean change points detection by l0 penalty
-#' @description TO DO
+#' @title Grid search for cross-validation of dynamic programming for univariate mean change points detection.
+#' @description Perform grid search for Cross-Validation of Dynamic Programming for univariate mean change points detection through l0 penalty
 #' @param gamma.set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
 #' @param y             A \code{numeric} vector of observations.
-#' @param delta         A strictly \code{integer} scalar of minimum spacing.
+#' @param delta         A positive \code{integer} scalar of minimum spacing.
 #' @param ...           Additional arguments.
-#' @return TO DO.
+#' @return  A \code{list} with the structure:
+#' \itemize{
+#'  \item{cpt_hat}: A list of vector of estimated change points locations (sorted in strictly increasing order).
+#'  \item{K_hat}: A list of scalar of number of estimated change points.
+#'  \item{test_error}: A list of vector of testing errors.
+#'  \item{train_error}: A list of vector of training errors.
+#' } 
 #' @export
-#' @author
+#' @author  Daren Wang and Haotian Xu
 #' @examples
-#' TO DO
+#' y = rnorm(300) + c(rep(0,130),rep(-1,20),rep(1,20),rep(0,130))
+#' CV.search.DP.univar(y, gamma.set = 3:6, delta = 5)
 CV.search.DP.univar = function(y, gamma.set, delta, ...){
   output = sapply(1:length(gamma.set), function(j) CV.DP.univar(y, gamma.set[j], delta))
   print(output)
@@ -114,8 +128,8 @@ CV.search.DP.univar = function(y, gamma.set, delta, ...){
 }
 
 
-#' @title Standard binary segmentation for univariate mean change points detection
-#' @description TO DO
+#' @title Standard binary segmentation for univariate mean change points detection.
+#' @description     Perform standard binary segmentation for univariate mean change points detection
 #' @param y         A \code{numeric} vector of observations.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
@@ -124,11 +138,10 @@ CV.search.DP.univar = function(y, gamma.set, delta, ...){
 #' @param ...      Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
-#'  \item S           A vector of estimated changepoints (sorted in strictly increasing order).
-#'  \item Dval        A vector of values of CUSUM statistic based on KS distance.
-#'  \item Level       A vector representing the levels at which each change point is detected.
-#'  \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
-#'  \item ...         Additional parameters.
+#'  \item{S}: A vector of estimated change point locations (sorted in strictly increasing order).
+#'  \item{Dval}: A vector of values of CUSUM statistic based on KS distance.
+#'  \item{Level}: A vector representing the levels at which each change point is detected.
+#'  \item{Parent}: A matrix with the starting indices on the first row and the ending indices on the second row.
 #' } 
 #' @export
 #' @author Haotian Xu
@@ -167,8 +180,8 @@ BS.univar = function(y, s, e, delta = 2, level = 0, ...){
 }
 
 
-#' @title Wild binary segmentation for univariate mean change points detection
-#' @description TO DO
+#' @title Wild binary segmentation for univariate mean change points detection.
+#' @description     Perform wild binary segmentation for univariate mean change points detection.
 #' @param y         A \code{numeric} vector of observations.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
@@ -179,30 +192,21 @@ BS.univar = function(y, s, e, delta = 2, level = 0, ...){
 #' @param ...      Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
-#'  \item S           A vector of estimated changepoints (sorted in strictly increasing order).
-#'  \item Dval        A vector of values of CUSUM statistic based on KS distance.
-#'  \item Level       A vector representing the levels at which each change point is detected.
-#'  \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
-#'  \item ...         Additional parameters.
-#' } 
+#'  \item{S}: A vector of estimated change point locations (sorted in strictly increasing order).
+#'  \item{Dval}: A vector of values of CUSUM statistic based on KS distance.
+#'  \item{Level}: A vector representing the levels at which each change point is detected.
+#'  \item{Parent}: A matrix with the starting indices on the first row and the ending indices on the second row.
+#' }
 #' @export
 #' @author Haotian Xu
 #' @examples
 #' y = c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))
-#' M = 120
-#' Alpha = sample.int(size = M, n = length(y), replace = TRUE)
-#' Beta = sample.int(size = M, n = length(y), replace = TRUE)
-#' for(j in 1:M){
-#'   aux =  Alpha[j]
-#'   aux2 = Beta[j]
-#'   Alpha[j] = min(aux, aux2)
-#'   Beta[j] = max(aux, aux2)
-#' }
-#' temp = WBS.univar(y, 1, length(y), Alpha, Beta, delta = 5)
+#' intervals = WBS.intervals(M = 120, lower = 1, upper = length(y))
+#' temp = WBS.univar(y, 1, length(y), intervals$Alpha, intervals$Beta, delta = 5)
 #' plot.ts(y)
 #' points(x = tail(temp$S[order(temp$Dval)], 4),
-#'        y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
-#' BS.threshold(temp, 1.5)
+#'        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
+#' threshold.BS(temp, 100)
 WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){ 
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)

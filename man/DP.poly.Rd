@@ -20,8 +20,8 @@ DP.poly(y, r, gamma, delta, ...)
 \value{
 A \code{list} with the structure:
 \itemize{
- \item partition   A vector of the best partition.
- \item yhat        A vector of mean estimation for corresponding to the best partition.
+ \item{partition}{A vector of the best partition.}
+ \item{yhat}{A vector of mean estimation for corresponding to the best partition.}
 }
 }
 \description{

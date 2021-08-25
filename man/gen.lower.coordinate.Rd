@@ -16,8 +16,8 @@ A \code{integer} (p*(p-1)/2)-dim vector representing the indices of the lower tr
 Generate coordinates of lower triangular matrix of dimension p.
 }
 \examples{
-TO DO
+gen.lower.coordinate(5)
 }
 \author{
-
+Oscar Hernan Madrid Padilla
 }

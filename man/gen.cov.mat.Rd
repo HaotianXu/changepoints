@@ -11,7 +11,7 @@ gen.cov.mat(p, sigma2, type)
 
 \item{sigma2}{A positive \code{numeric} scalar representing the variance of each entry.}
 
-\item{type}{3 types of covariance matrix are considered. 1: Diagonal structure; 2: Equal correlation structure; 3: Power decay structure.}
+\item{type}{Specify the type of a covariance matrix: Diagonal structure ("diagonal"); Equal correlation structure ("equal"); Power decay structure ("power").}
 }
 \value{
 A \code{numeric} p-by-p matrix.
@@ -20,8 +20,8 @@ A \code{numeric} p-by-p matrix.
 Generate population covariance matrix with dimension p.
 }
 \examples{
-TO DO
+gen.cov.mat(p = 5, sigma2 = 1, type = "diagonal")
 }
 \author{
-
+Haotian Xu
 }
