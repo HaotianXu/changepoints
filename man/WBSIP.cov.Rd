@@ -36,20 +36,15 @@ A \code{list} with the structure:
 Perform wild binary segmentation for covariance change points detection through Independent Projection
 }
 \examples{
-y = c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))
-M = 120
-Alpha = sample.int(size = M, n = 300, replace = TRUE)
-Beta = sample.int(size = M, n = T, replace = TRUE)
-for(j in 1:M){
-  aux =  Alpha[j]
-  aux2 = Beta[j]
-  Alpha[j] = min(aux, aux2)
-  Beta[j] = max(aux, aux2)
-}
-temp = WBS.univar(y, 1, 300, Alpha, Beta, 5)
-plot.ts(y)
-points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
-BS.threshold(temp, 1.5)
+p = 5
+A1 = gen.cov.mat(p, 1, "equal")
+A2 = gen.cov.mat(p, 2, "diagonal")
+A3 = gen.cov.mat(p, 3, "power")
+X = cbind(t(mvrnorm(50, mu = rep(0, p), A1)), t(mvrnorm(50, mu = rep(0, p), A2)), t(mvrnorm(60, mu = rep(0, p), A3)))
+X_prime = cbind(t(mvrnorm(50, mu = rep(0, p), A1)), t(mvrnorm(50, mu = rep(0, p), A2)), t(mvrnorm(60, mu = rep(0, p), A3)))
+intervals = WBS.intervals(M = 120, lower = 1, upper = dim(X)[2])
+temp = WBSIP.cov(X, X_prime, 1, dim(X)[2], intervals$Alpha, intervals$Beta, delta = 5)
+threshold.BS(temp, 5)
 }
 \author{
 Haotian Xu

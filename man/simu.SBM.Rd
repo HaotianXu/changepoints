@@ -2,7 +2,7 @@
 % Please edit documentation in R/network.R
 \name{simu.SBM}
 \alias{simu.SBM}
-\title{Simulate a Stochastic Block Model (without change point)}
+\title{Simulate a Stochastic Block Model (without change point).}
 \usage{
 simu.SBM(connec_mat, can_vec, n, ...)
 }
@@ -19,7 +19,7 @@ simu.SBM(connec_mat, can_vec, n, ...)
 A p^2-by-n matrix.
 }
 \description{
-TO DO
+Simulate a Stochastic Block Model (without change point).
 }
 \examples{
 TO DO

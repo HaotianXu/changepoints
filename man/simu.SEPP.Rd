@@ -2,20 +2,20 @@
 % Please edit documentation in R/SEPP.R
 \name{simu.SEPP}
 \alias{simu.SEPP}
-\title{Simulate a (stable) SEPP model (without change point)}
+\title{Simulate a (stable) SEPP model (without change point).}
 \usage{
 simu.SEPP(intercept, M, A, threshold, n, vzero = NULL, ...)
 }
 \arguments{
 \item{intercept}{A \code{numeric} scalar representing the intercept of the model.}
 
-\item{M}{A \code{integer} scalar representing dimensionality.}
+\item{M}{An \code{integer} scalar representing dimensionality.}
 
 \item{A}{A \code{numeric} M-by_M matrix representing the coefficient matrix.}
 
 \item{threshold}{A \code{numeric} scalar representing the upper bound for each coordinate of X_t (for stability).}
 
-\item{n}{A \code{integer} scalar representing sample size.}
+\item{n}{An \code{integer} scalar representing sample size.}
 
 \item{vzero}{A \code{numeric} vector representing the observation at time 0.}
 
@@ -25,7 +25,7 @@ simu.SEPP(intercept, M, A, threshold, n, vzero = NULL, ...)
 A p-by-n matrix.
 }
 \description{
-TO DO
+Simulate a (stable) SEPP model (without change point).
 }
 \examples{
 M = 30

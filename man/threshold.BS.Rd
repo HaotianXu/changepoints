@@ -29,7 +29,7 @@ y = c(rnorm(100, 0, 1), rnorm(100, 10, 10), rnorm(100, 40, 10))
 temp = BS.univar(y, 1, 300, 5)
 plot.ts(y)
 points(x = tail(temp$S[order(temp$Dval)],4), y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-threshold.BS(temp, 10)
+threshold.BS(temp, 20)
 }
 \author{
 Haotian Xu

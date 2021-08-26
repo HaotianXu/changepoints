@@ -7,7 +7,7 @@
 local.refine.regression(cpt.init, y, X, zeta, w = 1/3)
 }
 \arguments{
-\item{cpt.init}{A \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
+\item{cpt.init}{An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
 
 \item{y}{A \code{numeric} vector of response variable.}
 
@@ -27,7 +27,7 @@ Perform local refinement for regression change points detection.
 }
 \examples{
 data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-cpt.init = part2local(DP.regression(2, 5, data$y, X = data$X, lambda = 2)$partition)
+cpt.init = part2local(DP.regression(data$y, X = data$X, gamma = 2, lambda = 2, delta = 5)$partition)
 local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
 }
 \author{

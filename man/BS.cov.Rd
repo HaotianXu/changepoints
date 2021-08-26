@@ -31,12 +31,12 @@ Perform binary Segmentation for covariance change points detection through Opera
 }
 \examples{
 p = 10
-A1 = gen.cov.mat(p, 1, 2)
-A2 = gen.cov.mat(p, 2, 1)
-A3 = gen.cov.mat(p, 3, 2)
+A1 = gen.cov.mat(p, 1, "equal")
+A2 = gen.cov.mat(p, 2, "diagonal")
+A3 = gen.cov.mat(p, 3, "power")
 X = cbind(t(mvrnorm(100, mu = rep(0, p), A1)), t(mvrnorm(150, mu = rep(0, p), A2)), t(mvrnorm(200, mu = rep(0, p), A3)))
 temp = BS.cov(X, 1, 450)
-BS.threshold(temp, 10)
+threshold.BS(temp, 10)
 }
 \author{
 Haotian Xu

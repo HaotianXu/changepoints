@@ -4,10 +4,10 @@
 \alias{part2local}
 \title{Partition to localization.}
 \usage{
-part2local(x)
+part2local(parti_vec)
 }
 \arguments{
-\item{x}{A \code{numeric} vector of observations.}
+\item{parti_vec}{A \code{numeric} vector of observations.}
 
 \item{...}{Additional arguments.}
 }

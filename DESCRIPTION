@@ -11,15 +11,15 @@ Author:
 Maintainer: Your Name <your@email.com>
 Description: TO COMPLETE
 Depends:
-    R (>= 3.5.0)
-Imports:
-    Rcpp, 
-    RcppArmadillo,
+    R (>= 3.5.0),
     gglasso,
     glmnet,
     penalized,
     ks,
     MASS
+Imports:
+    Rcpp, 
+    RcppArmadillo
 LinkingTo: Rcpp, RcppArmadillo
 License: AGPL-3
 RoxygenNote: 7.1.1

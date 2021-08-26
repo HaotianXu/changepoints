@@ -1,22 +1,22 @@
 #' @title Partition to localization.
 #' @description     Find change point locations from the best partition produced by dynamic programming.
-#' @param x         A \code{numeric} vector of observations.
-#' @param ...       Additional arguments.
-#' @return A vector of change point locations.
+#' @param parti_vec    A \code{numeric} vector of observations.
+#' @param ...          Additional arguments.
+#' @return  A vector of change point locations.
 #' @export
 #' @author Haotian Xu
 #' @examples
 #' y = c(rep(0, 100), rep(1, 100))
 #' part2local(DP.univar(y, 1, 4)$partition)
-part2local = function(x){
-  N = length(x)
+part2local = function(parti_vec){
+  N = length(parti_vec)
   localization = c()
   r = N
-  l = x[r]
+  l = parti_vec[r]
   localization = c(l, localization)
   while(r > 0){
     r = l
-    l = x[r]
+    l = parti_vec[r]
     localization = c(l, localization)
   }
   return(localization[-1])
@@ -27,7 +27,7 @@ part2local = function(x){
 #' @description     Compute the bidirectional Hausdorff distance between two sets.
 #' @param vec1      A \code{integer} vector forms a subset of {1, 2, ..., n}.
 #' @param vec2      A \code{integer} vector forms a subset of {1, 2, ..., n}.
-#' @param ...      Additional arguments.
+#' @param ...       Additional arguments.
 #' @return  An integer scalar.
 #' @export
 #' @author
@@ -69,7 +69,7 @@ Hausdorff.dist = function(vec1, vec2, ...){
 #' temp = BS.univar(y, 1, 300, 5)
 #' plot.ts(y)
 #' points(x = tail(temp$S[order(temp$Dval)],4), y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-#' threshold.BS(temp, 10)
+#' threshold.BS(temp, 20)
 threshold.BS = function(BS_object, tau, ...){
   level_unique = unique(BS_object$Level[order(BS_object$Level)])
   level_length = length(level_unique)

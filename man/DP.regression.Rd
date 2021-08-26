@@ -27,7 +27,8 @@ Perform dynamic programming algorithm for regression change points detection thr
 }
 \examples{
 data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-DP.regression(data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
+temp = DP.regression(data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
+part2local(temp$partition)
 }
 \author{
 

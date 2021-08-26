@@ -2,12 +2,12 @@
 % Please edit documentation in R/network.R
 \name{local.refine.network}
 \alias{local.refine.network}
-\title{Local refinement for network change points detection [7]}
+\title{Local refinement for network change points detection.}
 \usage{
 local.refine.network(cpt_init, DATA, tau1, tau2 = Inf, w = 1/3, ...)
 }
 \arguments{
-\item{cpt_init}{A \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
+\item{cpt_init}{A \code{integer} vector of initial change points estimation (sorted in strictly increasing order).}
 
 \item{DATA}{A \code{numeric} matrix of observations.}
 
@@ -20,10 +20,10 @@ local.refine.network(cpt_init, DATA, tau1, tau2 = Inf, w = 1/3, ...)
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{numeric} vector of locally refined changepoint locations.
+A \code{numeric} vector of locally refined change point locations.
 }
 \description{
-TO DO
+Perform local refinement for network change points detection.
 }
 \examples{
 TO DO

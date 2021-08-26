@@ -2,14 +2,14 @@
 % Please edit documentation in R/univariate_mean_online.R
 \name{online.univar.one2}
 \alias{online.univar.one2}
-\title{Online change point detection via CUSUM 2 (single change point)}
+\title{Online change point detection via CUSUM (single change point, type 2).}
 \usage{
 online.univar.one2(y_vec, gamma, tau_gamma, ...)
 }
 \arguments{
 \item{y_vec}{A \code{numeric} vector of observations.}
 
-\item{gamma}{A \code{integer} scalar of interval length (>= 2)}
+\item{gamma}{A \code{integer} scalar of interval length (>= 2).}
 
 \item{tau_gamma}{A \code{numeric} scalar of threshold.}
 
@@ -19,7 +19,7 @@ online.univar.one2(y_vec, gamma, tau_gamma, ...)
 An \code{integer} scalar of estimated change point location.
 }
 \description{
-TO DO
+Perform online change point detection via CUSUM (single change point, type 2).
 }
 \examples{
 TO DO

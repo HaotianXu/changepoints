@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean_online.R
 \name{online.univar.multi}
 \alias{online.univar.multi}
-\title{Online change point detection via CUSUM 4 (multiple change points).}
+\title{Online change point detection via CUSUM (multiple change points).}
 \usage{
 online.univar.multi(y_vec, tau_vec, ...)
 }
@@ -17,7 +17,7 @@ online.univar.multi(y_vec, tau_vec, ...)
 An \code{integer} scalar of estimated change point location.
 }
 \description{
-TO DO
+Perform Online change point detection via CUSUM (multiple change points).
 }
 \examples{
 TO DO

@@ -34,12 +34,12 @@ CUSUM.cov = function(X, s, e, t){
 #' @author Haotian Xu
 #' @examples
 #' p = 10
-#' A1 = gen.cov.mat(p, 1, 2)
-#' A2 = gen.cov.mat(p, 2, 1)
-#' A3 = gen.cov.mat(p, 3, 2)
+#' A1 = gen.cov.mat(p, 1, "equal")
+#' A2 = gen.cov.mat(p, 2, "diagonal")
+#' A3 = gen.cov.mat(p, 3, "power")
 #' X = cbind(t(mvrnorm(100, mu = rep(0, p), A1)), t(mvrnorm(150, mu = rep(0, p), A2)), t(mvrnorm(200, mu = rep(0, p), A3)))
 #' temp = BS.cov(X, 1, 450)
-#' BS.threshold(temp, 10)
+#' threshold.BS(temp, 10)
 BS.cov = function(X, s, e, level = 0, ...){
   p = dim(X)[1]
   n = dim(X)[2]
@@ -90,10 +90,11 @@ PC.cov = function(X, Alpha, Beta){
   for(m in 1:M){
     if(Beta[m] - Alpha[m] > delta){
       values = sapply(ceiling(Alpha[m]+p*log(n)):floor(Beta[m]-p*log(n)), function(x) norm(CUSUM.cov(X, Alpha[m], Beta[m], x), type = "2"))
-      best_t = which.max(values)
+      best_t = which.max(values) + ceiling(Alpha[m]+p*log(n)) - 1
       u_mat[,m] = (svd(CUSUM.cov(X, Alpha[m], Beta[m], best_t))$u)[,1]
     }
   }
+  return(u_mat)
 }
 
 
@@ -117,20 +118,15 @@ PC.cov = function(X, Alpha, Beta){
 #' @export
 #' @author Haotian Xu
 #' @examples
-#' y = c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))
-#' M = 120
-#' Alpha = sample.int(size = M, n = 300, replace = TRUE)
-#' Beta = sample.int(size = M, n = T, replace = TRUE)
-#' for(j in 1:M){
-#'   aux =  Alpha[j]
-#'   aux2 = Beta[j]
-#'   Alpha[j] = min(aux, aux2)
-#'   Beta[j] = max(aux, aux2)
-#' }
-#' temp = WBS.univar(y, 1, 300, Alpha, Beta, 5)
-#' plot.ts(y)
-#' points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
-#' BS.threshold(temp, 1.5)
+#' p = 5
+#' A1 = gen.cov.mat(p, 1, "equal")
+#' A2 = gen.cov.mat(p, 2, "diagonal")
+#' A3 = gen.cov.mat(p, 3, "power")
+#' X = cbind(t(mvrnorm(50, mu = rep(0, p), A1)), t(mvrnorm(50, mu = rep(0, p), A2)), t(mvrnorm(60, mu = rep(0, p), A3)))
+#' X_prime = cbind(t(mvrnorm(50, mu = rep(0, p), A1)), t(mvrnorm(50, mu = rep(0, p), A2)), t(mvrnorm(60, mu = rep(0, p), A3)))
+#' intervals = WBS.intervals(M = 120, lower = 1, upper = dim(X)[2])
+#' temp = WBSIP.cov(X, X_prime, 1, dim(X)[2], intervals$Alpha, intervals$Beta, delta = 5)
+#' threshold.BS(temp, 5)
 WBSIP.cov = function(X, X_prime, s, e, Alpha, Beta, delta, level = 0){
   S = NULL
   Dval = NULL
@@ -139,8 +135,8 @@ WBSIP.cov = function(X, X_prime, s, e, Alpha, Beta, delta, level = 0){
   n = dim(X)[2]
   M = length(Alpha)
   u_mat = PC.cov(X_prime, Alpha, Beta)
-  y_mat = matrix(NA, nrow = M, ncol = e-s+1)
-  for(i in s:e){
+  y_mat = matrix(NA, nrow = M, ncol = n)
+  for(i in 1:n){
     for(m in 1:M){
       y_mat[m, i-s+1] = (t(u_mat[,m]) %*% X[,i])^2
     }

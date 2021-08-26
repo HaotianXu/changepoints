@@ -2,7 +2,7 @@
 % Please edit documentation in R/network.R
 \name{BS.network}
 \alias{BS.network}
-\title{Binary segmentation for network change points detection}
+\title{Binary segmentation for network change points detection.}
 \usage{
 BS.network(data_mat1, data_mat2, s, e, delta, level = 0, ...)
 }
@@ -24,15 +24,14 @@ BS.network(data_mat1, data_mat2, s, e, delta, level = 0, ...)
 \value{
 A \code{list} with the structure:
 \itemize{
- \item S           A vector of estimated changepoints (sorted in strictly increasing order).
- \item Dval        A vector of values of CUSUM statistic based on KS distance.
- \item Level       A vector representing the levels at which each change point is detected.
- \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
- \item ...         Additional parameters.
+ \item S:           A vector of estimated changepoints (sorted in strictly increasing order).
+ \item Dval:        A vector of values of CUSUM statistic based on KS distance.
+ \item Level:       A vector representing the levels at which each change point is detected.
+ \item Parent:      A matrix with the starting indices on the first row and the ending indices on the second row.
 }
 }
 \description{
-TO DO
+Perform binary segmentation for network change points detection.
 }
 \examples{
 y = c(rnorm(100, 0, 1), rnorm(100, 10, 10), rnorm(100, 40, 10))

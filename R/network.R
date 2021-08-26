@@ -1,5 +1,5 @@
-#' @title Simulate a Stochastic Block Model (without change point)
-#' @description TO DO
+#' @title Simulate a Stochastic Block Model (without change point).
+#' @description  Simulate a Stochastic Block Model (without change point).
 #' @param connec_mat  A \code{integer} matrix representing the connectivity matrix (symmetric matrix with dimension being the number of blocks, and entries being 0 or 1).
 #' @param can_vec     A \code{integer} p-dim vector representing the candidate vector.
 #' @param n           A \code{integer} scalar representing the number of observations.
@@ -64,25 +64,22 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 }
 
 
-#Binary Segmentation code 
-#this function assume that cusum norm can be computed at every t\in (s,e]
-#tau is the threshold
-#' @title Binary segmentation for network change points detection
-#' @description TO DO
+
+#' @title Binary segmentation for network change points detection.
+#' @description  Perform binary segmentation for network change points detection.
 #' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.
 #' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension (data_mat1 and data_mat2 are independent and have the same dimensions ).
-#' @param s         A \code{integer} scalar of starting index.
-#' @param e         A \code{integer} scalar of ending index.
-#' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @param level     Should be fixed as 0.
-#' @param ...      Additional arguments.
+#' @param s          A \code{integer} scalar of starting index.
+#' @param e          A \code{integer} scalar of ending index.
+#' @param delta      A positive \code{integer} scalar of minimum spacing.
+#' @param level      Should be fixed as 0.
+#' @param ...        Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
-#'  \item S           A vector of estimated changepoints (sorted in strictly increasing order).
-#'  \item Dval        A vector of values of CUSUM statistic based on KS distance.
-#'  \item Level       A vector representing the levels at which each change point is detected.
-#'  \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
-#'  \item ...         Additional parameters.
+#'  \item S:           A vector of estimated changepoints (sorted in strictly increasing order).
+#'  \item Dval:        A vector of values of CUSUM statistic based on KS distance.
+#'  \item Level:       A vector representing the levels at which each change point is detected.
+#'  \item Parent:      A matrix with the starting indices on the first row and the ending indices on the second row.
 #' } 
 #' @export
 #' @author
@@ -108,22 +105,22 @@ BS.network = function(data_mat1, data_mat2, s, e, delta, level = 0, ...){
     Level = c(temp1$Level, level, temp2$Level)
     Parent = cbind(temp1$Parent, parent, temp2$Parent)
     result = list(S = S, Dval = Dval, Level = Level, Parent = Parent)
-    class(result) = append(class(result), "BS")
+    class(result) = "BS"
     return(result)
   }
 }
 
 
 
-#' @title Local refinement for network change points detection [7] 
-#' @description TO DO
-#' @param cpt_init  A \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
+#' @title Local refinement for network change points detection.
+#' @description Perform local refinement for network change points detection.
+#' @param cpt_init  A \code{integer} vector of initial change points estimation (sorted in strictly increasing order).
 #' @param DATA      A \code{numeric} matrix of observations.
 #' @param tau1      A \code{numeric} scalar corresponding to the first parameter of the USVT.
 #' @param tau2      A \code{numeric} scalar corresponding to the second parameter of the USVT.
 #' @param w         A \code{numeric} scalar of weight for interpolation of starting and ending indices.
 #' @param ...       Additional arguments.
-#' @return  A \code{numeric} vector of locally refined changepoint locations.
+#' @return  A \code{numeric} vector of locally refined change point locations.
 #' @export
 #' @author 
 #' @examples

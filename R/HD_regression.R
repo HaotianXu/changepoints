@@ -11,7 +11,8 @@
 #' @author
 #' @examples
 #' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-#' DP.regression(data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
+#' temp = DP.regression(data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
+#' part2local(temp$partition)
 DP.regression = function(y, X, gamma, lambda, delta, ...){
   N = length(y)
   bestvalue = rep(0,N+1)
@@ -45,9 +46,9 @@ DP.regression = function(y, X, gamma, lambda, delta, ...){
 #' @title Simulate sparse regression model with changepoints in coefficients.
 #' @description      Simulate sparse regression model with changepoints in coefficients under the setting of Simulations 4.2 [10].
 #' @param d0         A \code{numeric} scalar of number of nonzero coefficients.
-#' @param cpt.ture   A \code{integer} vector of true changepoints (sorted in strictly increasing order).
-#' @param p          A \code{integer} scalar of dimensionality.
-#' @param n          A \code{integer} scalar of sample size.
+#' @param cpt.ture   An \code{integer} vector of true changepoints (sorted in strictly increasing order).
+#' @param p          An \code{integer} scalar of dimensionality.
+#' @param n          An \code{integer} scalar of sample size.
 #' @param sigma      A \code{numeric} scalar of error standard deviation.
 #' @param kappa      A \code{numeric} scalar of minimum jump size in terms of the l2 norm.
 #' @param ...        Additional arguments.
@@ -62,7 +63,7 @@ DP.regression = function(y, X, gamma, lambda, delta, ...){
 #' @export
 #' @author 
 #' @examples
-#' TO DO
+#' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 simu.change.regression = function(d0, cpt.true, p, n, sigma, kappa){
   #seed = 10
   if(d0 >= p){
@@ -102,8 +103,8 @@ simu.change.regression = function(d0, cpt.true, p, n, sigma, kappa){
 
 
 #' @title Internal Function: Prediction error in squared l2 norm for the lasso [10] 
-#' @param s         A \code{integer} scalar of starting index.
-#' @param e         A \code{integer} scalar of ending index.
+#' @param s         An \code{integer} scalar of starting index.
+#' @param e         An \code{integer} scalar of ending index.
 #' @param y         A \code{numeric} vector of response variable.
 #' @param X         A \code{numeric} matrix of covariates.
 #' @param lambda    A \code{numeric} scalar of tuning parameter for lasso penalty.
@@ -139,7 +140,7 @@ error.pred.seg.regression = function(s, e, y, X, lambda, delta){
 
 #' @title Local refinement for regression change points detection.
 #' @description     Perform local refinement for regression change points detection.
-#' @param cpt.init  A \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
+#' @param cpt.init  An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
 #' @param y         A \code{numeric} vector of response variable.
 #' @param X         A \code{numeric} matrix of covariates.
 #' @param zeta      A \code{numeric} scalar of lasso penalty.
@@ -150,7 +151,7 @@ error.pred.seg.regression = function(s, e, y, X, lambda, delta){
 #' @author 
 #' @examples
 #' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-#' cpt.init = part2local(DP.regression(2, 5, data$y, X = data$X, lambda = 2)$partition)
+#' cpt.init = part2local(DP.regression(data$y, X = data$X, gamma = 2, lambda = 2, delta = 5)$partition)
 #' local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
 local.refine.regression = function(cpt.init, y, X, zeta, w = 1/3){
   n = ncol(X)
@@ -211,7 +212,7 @@ X.glasso.converter.regression = function(X, eta, s_ceil){
 
 
 
-#' @title Cross-validation of dynamic programming algorithm for regression change points detection through l0 penalty.
+#' @title Internal function: Cross-validation of dynamic programming algorithm for regression change points detection through l0 penalty.
 #' @description     Perform cross-validation of dynamic programming algorithm for regression change points detection through l0 penalty.
 #' @param y         A \code{numeric} vector of observations.
 #' @param X         A \code{numeric} matrix of covariates.
@@ -219,11 +220,14 @@ X.glasso.converter.regression = function(X, eta, s_ceil){
 #' @param lambda    A \code{numeric} scalar of tuning parameter for the lasso penalty.
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
 #' @param ...      Additional arguments.
-#' @return TO DO.
-#' @export
-#' @author
-#' @examples
-#' TO DO
+#' @return  A \code{list} with the structure:
+#' \itemize{
+#'  \item{cpt_hat}: A list of vector of estimated change points locations (sorted in strictly increasing order).
+#'  \item{K_hat}: A list of scalar of number of estimated change points.
+#'  \item{test_error}: A list of vector of testing errors.
+#'  \item{train_error}: A list of vector of training errors.
+#' } 
+#' @noRd
 CV.DP.regression = function(y, X, gamma, lambda, delta, ...){
   N = ncol(X)
   even_indexes = seq(2, N, 2)
@@ -288,11 +292,20 @@ error.test.regression = function(lower, upper, y, X, beta.hat){
 #' @param lambda.set    A \code{numeric} vector of candidate tuning parameter for the lasso penalty.
 #' @param delta         A strictly \code{integer} scalar of minimum spacing.
 #' @param ...           Additional arguments.
-#' @return TO DO.
+#' @return  A \code{list} with the structure:
+#' \itemize{
+#'  \item{cpt_hat}: A list of vector of estimated change points locations (sorted in strictly increasing order).
+#'  \item{K_hat}: A list of scalar of number of estimated change points.
+#'  \item{test_error}: A list of vector of testing errors.
+#'  \item{train_error}: A list of vector of training errors.
+#' } 
 #' @export
-#' @author
+#' @author Daren Wang
 #' @examples
-#' TO DO
+#' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
+#' CV.search.DP.regression(data$y, data$X, gamma.set = 1:5, lambda.set = 1:5, delta = 5)
+#' cpt.init = part2local(DP.regression(data$y, X = data$X, gamma = 4, lambda = 2, delta = 5)$partition)
+#' local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
 CV.search.DP.regression = function(y, X, gamma.set, lambda.set, delta){
   output = sapply(1:length(lambda.set), function(i) sapply(1:length(gamma.set), 
                                                            function(j) CV.DP.regression(y, X, gamma.set[j], lambda.set[i], delta)))

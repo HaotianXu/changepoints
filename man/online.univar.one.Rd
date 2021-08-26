@@ -17,7 +17,7 @@ online.univar.one(y_vec, tau_vec, ...)
 An \code{integer} scalar of estimated change point location.
 }
 \description{
-TO DO
+Perform online change point detection via CUSUM (single change point).
 }
 \examples{
 TO DO

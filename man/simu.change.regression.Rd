@@ -9,15 +9,15 @@ simu.change.regression(d0, cpt.true, p, n, sigma, kappa)
 \arguments{
 \item{d0}{A \code{numeric} scalar of number of nonzero coefficients.}
 
-\item{p}{A \code{integer} scalar of dimensionality.}
+\item{p}{An \code{integer} scalar of dimensionality.}
 
-\item{n}{A \code{integer} scalar of sample size.}
+\item{n}{An \code{integer} scalar of sample size.}
 
 \item{sigma}{A \code{numeric} scalar of error standard deviation.}
 
 \item{kappa}{A \code{numeric} scalar of minimum jump size in terms of the l2 norm.}
 
-\item{cpt.ture}{A \code{integer} vector of true changepoints (sorted in strictly increasing order).}
+\item{cpt.ture}{An \code{integer} vector of true changepoints (sorted in strictly increasing order).}
 
 \item{...}{Additional arguments.}
 }
@@ -35,7 +35,7 @@ A \code{list} with the structure:
 Simulate sparse regression model with changepoints in coefficients under the setting of Simulations 4.2 [10].
 }
 \examples{
-TO DO
+data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 }
 \author{
 

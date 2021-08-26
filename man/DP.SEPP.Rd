@@ -2,7 +2,7 @@
 % Please edit documentation in R/SEPP.R
 \name{DP.SEPP}
 \alias{DP.SEPP}
-\title{Dynamic programming for VAR1 change points detection by l0 penalty}
+\title{Dynamic programming for VAR1 change points detection through l0 penalty.}
 \usage{
 DP.SEPP(gamma, delta, delta2, DATA, intercept, lambda, threshold, ...)
 }
@@ -21,7 +21,7 @@ DP.SEPP(gamma, delta, delta2, DATA, intercept, lambda, threshold, ...)
 TO DO.
 }
 \description{
-TO DO
+Perform dynamic programming for VAR1 change points detection through l0 penalty.
 }
 \examples{
 parti = DP.SEPP(gamma = 1, delta = 5, delta2 = 600, DATA, intercept = 1/2, lambda = 100, threshold = 6)$partition

@@ -1,5 +1,5 @@
 #' @title Online change point detection via CUSUM (single change point).
-#' @description TO DO
+#' @description Perform online change point detection via CUSUM (single change point).
 #' @param y_vec       A \code{numeric} vector of observations.
 #' @param tau_vec     A \code{numeric} vector of thresholds at time t>= 2.
 #' @param ...         Additional arguments.
@@ -23,10 +23,10 @@ online.univar.one = function(y_vec, tau_vec, ...){
 }
 
 
-#' @title Online change point detection via CUSUM 2 (single change point)
-#' @description TO DO
+#' @title Online change point detection via CUSUM (single change point, type 2).
+#' @description  Perform online change point detection via CUSUM (single change point, type 2).
 #' @param y_vec       A \code{numeric} vector of observations.
-#' @param gamma       A \code{integer} scalar of interval length (>= 2)
+#' @param gamma       A \code{integer} scalar of interval length (>= 2).
 #' @param tau_gamma   A \code{numeric} scalar of threshold.
 #' @param ...         Additional arguments.
 #' @return  An \code{integer} scalar of estimated change point location.
@@ -48,8 +48,8 @@ online.univar.one2 = function(y_vec, gamma, tau_gamma, ...){
 
 
 
-#' @title Online change point detection via CUSUM 3 (single change point).
-#' @description TO DO
+#' @title Online change point detection via CUSUM (single change point, type 3).
+#' @description Perform online change point detection via CUSUM (single change point, type 3).
 #' @param y_vec       A \code{numeric} vector of observations.
 #' @param tau_vec     A \code{numeric} vector of thresholds at time t>= 1.
 #' @param ...         Additional arguments.
@@ -79,8 +79,8 @@ online.univar.one3 = function(y_vec, tau_vec, ...){
 }
 
 
-#' @title Online change point detection via CUSUM 4 (multiple change points).
-#' @description TO DO
+#' @title Online change point detection via CUSUM (multiple change points).
+#' @description Perform Online change point detection via CUSUM (multiple change points).
 #' @param y_vec       A \code{numeric} vector of observations.
 #' @param tau_vec     A \code{numeric} vector of thresholds at time t>= 2.
 #' @param ...         Additional arguments.

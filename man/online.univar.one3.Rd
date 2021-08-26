@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean_online.R
 \name{online.univar.one3}
 \alias{online.univar.one3}
-\title{Online change point detection via CUSUM 3 (single change point).}
+\title{Online change point detection via CUSUM (single change point, type 3).}
 \usage{
 online.univar.one3(y_vec, tau_vec, ...)
 }
@@ -17,7 +17,7 @@ online.univar.one3(y_vec, tau_vec, ...)
 An \code{integer} scalar of estimated change point location.
 }
 \description{
-TO DO
+Perform online change point detection via CUSUM (single change point, type 3).
 }
 \examples{
 TO DO

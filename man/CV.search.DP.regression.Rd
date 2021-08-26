@@ -20,14 +20,23 @@ CV.search.DP.regression(y, X, gamma.set, lambda.set, delta)
 \item{...}{Additional arguments.}
 }
 \value{
-TO DO.
+A \code{list} with the structure:
+\itemize{
+ \item{cpt_hat}: A list of vector of estimated change points locations (sorted in strictly increasing order).
+ \item{K_hat}: A list of scalar of number of estimated change points.
+ \item{test_error}: A list of vector of testing errors.
+ \item{train_error}: A list of vector of training errors.
+}
 }
 \description{
 TO DO
 }
 \examples{
-TO DO
+data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
+CV.search.DP.regression(data$y, data$X, gamma.set = 1:5, lambda.set = 1:5, delta = 5)
+cpt.init = part2local(DP.regression(data$y, X = data$X, gamma = 4, lambda = 2, delta = 5)$partition)
+local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
 }
 \author{
-
+Daren Wang
 }

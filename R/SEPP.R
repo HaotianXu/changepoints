@@ -1,10 +1,10 @@
-#' @title Simulate a (stable) SEPP model (without change point)
-#' @description TO DO
+#' @title Simulate a (stable) SEPP model (without change point).
+#' @description Simulate a (stable) SEPP model (without change point).
 #' @param intercept  A \code{numeric} scalar representing the intercept of the model.
-#' @param M          A \code{integer} scalar representing dimensionality.
+#' @param M          An \code{integer} scalar representing dimensionality.
 #' @param A          A \code{numeric} M-by_M matrix representing the coefficient matrix.
 #' @param threshold  A \code{numeric} scalar representing the upper bound for each coordinate of X_t (for stability).
-#' @param n          A \code{integer} scalar representing sample size.
+#' @param n          An \code{integer} scalar representing sample size.
 #' @param vzero      A \code{numeric} vector representing the observation at time 0.
 #' @param ...        Additional arguments.
 #' @return  A p-by-n matrix.
@@ -42,8 +42,8 @@ simu.SEPP = function(intercept, M, A, threshold, n, vzero = NULL, ...){
 }
 
 
-#' @title Dynamic programming for VAR1 change points detection by l0 penalty
-#' @description TO DO
+#' @title Dynamic programming for VAR1 change points detection through l0 penalty.
+#' @description Perform dynamic programming for VAR1 change points detection through l0 penalty.
 #' @param DATA      A \code{numeric} matrix of observations.
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
@@ -89,7 +89,7 @@ DP.SEPP = function(gamma, delta, delta2, DATA, intercept, lambda, threshold, ...
 #' @param lambda    A \code{numeric} scalar of lasso penalty.
 #' @param threshold A \code{numeric} scalar representing the upper bound for each coordinate of X_t (for stability).
 #' @param delta     A \code{integer} scalar of minimum spacing.
-#' @param delta2    A \code{integer} scalar representing the maximal of the changepoint spacing (for reducing computation cost).
+#' @param delta2    A \code{integer} scalar representing the maximal of the change point spacing (for reducing computation cost).
 #' @return  A \code{numeric} scalar of prediction error in terms of poisson log-likelihood function.
 #' @noRd
 error.seg.SEPP = function(s, e, DATA, intercept, lambda, threshold, delta, delta2, ...){
