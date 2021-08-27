@@ -2,18 +2,18 @@
 % Please edit documentation in R/VAR.R
 \name{simu.VAR1}
 \alias{simu.VAR1}
-\title{Simulate a VAR1 model (without change point)}
+\title{Simulate from a VAR1 model (without change point).}
 \usage{
 simu.VAR1(sigma, p, n, A, vzero = NULL, ...)
 }
 \arguments{
-\item{sigma}{A \code{numeric} scalar representing error standard deviation.}
+\item{sigma}{A \code{numeric} scalar representing the standard deviation of error terms.}
 
-\item{p}{A \code{integer} scalar representing dimensionality.}
+\item{p}{An \code{integer} scalar representing dimension.}
 
-\item{n}{A \code{integer} scalar representing sample size.}
+\item{n}{An \code{integer} scalar representing sample size.}
 
-\item{A}{A \code{numeric} p-by-p matrix representing transition matrix of VAR1 model.}
+\item{A}{A \code{numeric} p-by-p matrix representing the transition matrix of the VAR1 model.}
 
 \item{vzero}{A \code{numeric} vector representing the observation at time 0.}
 
@@ -23,7 +23,7 @@ simu.VAR1(sigma, p, n, A, vzero = NULL, ...)
 A p-by-n matrix.
 }
 \description{
-TO DO
+Simulate data of size n and dimension p from a VAR1 model (without change point) with Gaussian i.i.d. error terms.
 }
 \examples{
 p = 20
@@ -33,5 +33,5 @@ A = matrix(rnorm(p*p), nrow = p)
 simu.VAR1(sigma, p, n, A)
 }
 \author{
-
+Daren Wang
 }

@@ -1,14 +1,14 @@
-#' @title Simulate a VAR1 model (without change point)
-#' @description TO DO
-#' @param sigma      A \code{numeric} scalar representing error standard deviation.
-#' @param p          A \code{integer} scalar representing dimensionality.
-#' @param n          A \code{integer} scalar representing sample size.
-#' @param A          A \code{numeric} p-by-p matrix representing transition matrix of VAR1 model.
+#' @title Simulate from a VAR1 model (without change point).
+#' @description Simulate data of size n and dimension p from a VAR1 model (without change point) with Gaussian i.i.d. error terms.
+#' @param sigma      A \code{numeric} scalar representing the standard deviation of error terms.
+#' @param p          An \code{integer} scalar representing dimension.
+#' @param n          An \code{integer} scalar representing sample size.
+#' @param A          A \code{numeric} p-by-p matrix representing the transition matrix of the VAR1 model.
 #' @param vzero      A \code{numeric} vector representing the observation at time 0.
 #' @param ...        Additional arguments.
 #' @return  A p-by-n matrix.
 #' @export
-#' @author 
+#' @author  Daren Wang
 #' @examples
 #' p = 20
 #' sigma = 1
@@ -28,6 +28,12 @@ simu.VAR1= function(sigma, p, n, A, vzero = NULL, ...){
     X[,t] = rnorm(p, mean = A%*%X[,t-1], sd = sigma)
   }
   return(X)
+}
+
+
+#' @export
+error_pred_seg_VAR1 <- function(X_futu, X_curr, s, e, alpha, lambda, delta) {
+  .Call('_changepoints_rcpp_error_pred_seg_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, s, e, alpha, lambda, delta)
 }
 
 
@@ -68,20 +74,26 @@ error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
 }
 
 
-#' @title Dynamic programming for VAR1 change points detection by l0 penalty
-#' @description TO DO
-#' @param DATA      A \code{numeric} matrix of observations.
-#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
-#' @param delta     A strictly \code{integer} scalar of minimum spacing.
-#' @param lambda    A \code{numeric} scalar of tuning parameter for lasso penalty.
-#' @param ...      Additional arguments.
-#' @return TO DO.
 #' @export
-#' @author Haotian Xu
+DP_VAR1 <- function(X_futu, X_curr, alpha, gamma, lambda, delta) {
+  .Call('_changepoints_rcpp_DP_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, alpha, gamma, lambda, delta)
+}
+
+#' @title Dynamic programming for VAR1 change points detection through l0 penalty.
+#' @description Perform dynamic programming for VAR1 change points detection through l0 penalty.
+#' @param X_futu    A \code{numeric} matrix of time series at one step ahead.
+#' @param X_curr    A \code{numeric} matrix of time series at current step.
+#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
+#' @param lambda    A \code{numeric} scalar of tuning parameter for lasso penalty.
+#' @param delta     A strictly \code{integer} scalar of minimum spacing.
+#' @param ...      Additional arguments.
+#' @return partition: A vector of the best partition.
+#' @export
+#' @author Daren Wang, Haotian Xu
 #' @examples
-#' p = 20
+#' p = 10
 #' sigma = 1
-#' n = 30
+#' n = 5
 #' v1 = 2*(seq(1,p,1)%%2) - 1
 #' v2 = -v1
 #' AA = matrix(0, nrow = p, ncol = p-2)
@@ -89,13 +101,13 @@ error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
 #' A2=cbind(v2,v1,AA)
 #' A3=A1
 #' data = simu.VAR1(sigma, p, 2*n+1, A1)
-#' data = cbind(simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
-#' data = cbind(simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
+#' data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
+#' data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
 #' N = ncol(data)
 #' X_curr = data[,1:(N-1)]
 #' X_futu = data[,2:N]
 #' parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
-#' localization = part2local(parti)
+#' part2local(parti)
 DP.VAR1 = function(X_futu, X_curr, gamma, lambda, delta, ...){
   p = nrow(X_futu)
   N = ncol(X_futu) + 1

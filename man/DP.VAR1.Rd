@@ -2,11 +2,15 @@
 % Please edit documentation in R/VAR.R
 \name{DP.VAR1}
 \alias{DP.VAR1}
-\title{Dynamic programming for VAR1 change points detection by l0 penalty}
+\title{Dynamic programming for VAR1 change points detection through l0 penalty.}
 \usage{
 DP.VAR1(X_futu, X_curr, gamma, lambda, delta, ...)
 }
 \arguments{
+\item{X_futu}{A \code{numeric} matrix of time series at one step ahead.}
+
+\item{X_curr}{A \code{numeric} matrix of time series at current step.}
+
 \item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
 
 \item{lambda}{A \code{numeric} scalar of tuning parameter for lasso penalty.}
@@ -14,19 +18,17 @@ DP.VAR1(X_futu, X_curr, gamma, lambda, delta, ...)
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
 
 \item{...}{Additional arguments.}
-
-\item{DATA}{A \code{numeric} matrix of observations.}
 }
 \value{
-TO DO.
+partition: A vector of the best partition.
 }
 \description{
-TO DO
+Perform dynamic programming for VAR1 change points detection through l0 penalty.
 }
 \examples{
-p = 20
+p = 10
 sigma = 1
-n = 30
+n = 5
 v1 = 2*(seq(1,p,1)\%\%2) - 1
 v2 = -v1
 AA = matrix(0, nrow = p, ncol = p-2)
@@ -34,14 +36,14 @@ A1=cbind(v1,v2,AA)
 A2=cbind(v2,v1,AA)
 A3=A1
 data = simu.VAR1(sigma, p, 2*n+1, A1)
-data = cbind(simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
-data = cbind(simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
+data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
+data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
 N = ncol(data)
 X_curr = data[,1:(N-1)]
 X_futu = data[,2:N]
 parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
-localization = part2local(parti)
+part2local(parti)
 }
 \author{
-Haotian Xu
+Daren Wang, Haotian Xu
 }
