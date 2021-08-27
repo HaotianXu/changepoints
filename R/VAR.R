@@ -47,23 +47,14 @@ error_pred_seg_VAR1 <- function(X_futu, X_curr, s, e, alpha, lambda, delta) {
 #' @return  A \code{numeric} scalar of prediction error in Frobenius norm.
 #' @noRd
 error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
-  #options(warn = -1)
   n = ncol(X_curr)
   p = nrow(X_curr)
   if(e > n | s > e | s < 1){
     stop("s and e are not correctly specified.")
   }
   if(e-s > delta){
-    estimate = matrix(0, nrow=p, ncol=p)
-    for(m in 1:p){
-      # obtain Lasso estimator of each row of transition matrix
-      out = glmnet(x = t(X_curr[,s:e]), y = X_curr[m,s:e], family=c("gaussian"),
-                   alpha = 1, lambda = lambda/sqrt(e-s))#,intercept=F)
-      estimate[m,] = as.vector(out$beta)
-    }
-    #norm(estimate-A1, type="F")
-    #norm(A1, type="F")
-    X_futu_hat = estimate%*%X_curr[,s:e]
+    estimate = as.matrix(do.call(cbind, sapply(1:p, function(m) glmnet(x = t(X_curr[,s:e]), y = X_curr[m,s:e], family=c("gaussian"), alpha = 1, lambda = lambda/sqrt(e-s))$beta)))
+    X_futu_hat = t(estimate) %*% X_curr[,s:e]
     d = norm(X_futu_hat - X_futu[,s:e], type = "F")
   }else{
     estimate = NA
@@ -162,7 +153,7 @@ local.refine.VAR1 = function(cpt.init, DATA, zeta.group, w = 1/3, ...){
     e.inter = (1-w)*cpt.init.ext[k+1] + w*cpt.init.ext[k+2]
     lower = ceiling(s.inter) + 1
     upper = floor(e.inter) - 1
-    b = sapply(lower:upper, function(eta)obj.func.lr.VAR1(s.inter, e.inter, eta, X_futu, X_curr, zeta.group))
+    b = sapply(lower:upper, function(eta)obj.func.lr.VAR1(ceiling(s.inter), floor(e.inter), eta, X_futu, X_curr, zeta.group))
     cpt.refined[k+1] = ceiling(s.inter) + which.min(b)
   }
   return(cpt.refined[-1])
@@ -177,20 +168,18 @@ local.refine.VAR1 = function(cpt.init, DATA, zeta.group, w = 1/3, ...){
 #' @param X_curr     A \code{numeric} matrix of time series at current step.
 #' @param zeta.group A \code{numeric} scalar of tuning parameter for the group lasso.
 #' @noRd
-obj.func.lr.VAR1 = function(s.inter, e.inter, eta, X_futu, X_curr, zeta.group){
+obj.func.lr.VAR1 = function(s.inter.ceil, e.inter.floor, eta, X_futu, X_curr, zeta.group){
   n = ncol(X_futu)
   p = nrow(X_futu)
   btemp = rep(NA, p)
   group = rep(1:p, 2)
-  X.convert = X.glasso.converter.VAR1(X_curr[,(ceiling(s.inter)):(floor(e.inter))], eta, ceiling(s.inter))
+  X.convert = X.glasso.converter.VAR1(X_curr[,s.inter.ceil:e.inter.floor], eta, s.inter.ceil)
   for(m in 1:p){
-    y.convert = X_futu[m, (ceiling(s.inter)):(floor(e.inter))]
+    y.convert = X_futu[m, s.inter.ceil:e.inter.floor]
     auxfit = gglasso(x = X.convert, y = y.convert, group = group, loss="ls",
-                     lambda = zeta.group/(floor(e.inter)-ceiling(s.inter)+1), intercept = FALSE, eps = 0.001)
+                     lambda = zeta.group/(e.inter.floor-s.inter.ceil+1), intercept = FALSE, eps = 0.001)
     coef = as.vector(auxfit$beta)
-    coef1 = coef[1:p]
-    coef2 = coef[(p+1):(2*p)]
-    btemp[m] = norm(y.convert - X.convert %*% coef, type = "2")^2 + zeta.group*sum(sqrt(coef1^2 + coef2^2))
+    btemp[m] = norm(y.convert - X.convert %*% coef, type = "2")^2
   }
   return(sum(btemp))
 }
@@ -214,18 +203,13 @@ X.glasso.converter.VAR1 = function(X, eta, s_ceil){
 
 
 
-#' @title Cross-Validation of Dynamic Programming algorithm for VAR1 change points detection via l0 penalty
-#' @description TO DO
+#' @title Internal function: Cross-Validation of Dynamic Programming algorithm for VAR1 change points detection via l0 penalty
 #' @param DATA      A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.
 #' @param gamma     A positive \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param lambda    A positive \code{numeric} scalar of tuning parameter for the lasso penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param ...      Additional arguments.
-#' @return TO DO.
-#' @export
-#' @author
-#' @examples
-#' TO DO
+#' @noRd
 CV.DP.VAR1 = function(DATA, gamma, lambda, delta, ...){
   DATA.temp = DATA
   if (ncol(DATA)%%2 == 0){
@@ -250,12 +234,11 @@ CV.DP.VAR1 = function(DATA, gamma, lambda, delta, ...){
       interval[j,] = c(init_cpt_long[j-1]+1, init_cpt_long[j])
     }
   }
-
   trainmat = sapply(1:(len+1), function(index) error.pred.seg.VAR1(interval[index,1], interval[index,2], X_futu.train, X_curr.train, lambda, delta))
   transition.list = vector("list", len+1)
   training_loss = matrix(0, nrow = 1, ncol = len+1)
   for(col in 1:(len+1)){
-    transition.list[[col]] = as.numeric(trainmat[2,col]$transition.hat)
+    transition.list[[col]] = trainmat[2,col]$transition.hat
     training_loss[,col] = as.numeric(trainmat[1,col]$MSE)
   }
   validationmat = sapply(1:(len+1), function(index) error.test.VAR1(interval[index,1], interval[index,2], X_futu.test, X_curr.test, transition.list[[index]]))
@@ -285,7 +268,7 @@ error.test.VAR1 = function(lower, upper, X_futu, X_curr, transition.hat){
 #' @param lambda.set    A \code{numeric} vector of candidate tuning parameter for the lasso penalty.
 #' @param delta         A strictly \code{integer} scalar of minimum spacing.
 #' @param ...           Additional arguments.
-#' @return TO DO.
+#' @return Row: lambda.set; column: lambda.set
 #' @export
 #' @author
 #' @examples
@@ -302,4 +285,72 @@ CV.search.DP.VAR1 = function(DATA, gamma.set, lambda.set, delta, ...){
 }
 
 
+#' @title Internal function: Cross-Validation of local refinement for VAR1 change points detection via l0 penalty
+#' @param DATA      A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.
+#' @param gamma     A positive \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
+#' @param lambda    A positive \code{numeric} scalar of tuning parameter for the lasso penalty.
+#' @param delta     A positive \code{integer} scalar of minimum spacing.
+#' @param ...      Additional arguments.
+#' @noRd
+CV.lr.VAR1 = function(DATA, gamma, lambda, delta, ...){
+  DATA.temp = DATA
+  if (ncol(DATA)%%2 == 0){
+    DATA.temp = DATA[,2:ncol(DATA)]
+  }
+  N = ncol(DATA.temp)
+  p = nrow(DATA.temp)
+  X_curr = DATA.temp[,1:(N-1)]
+  X_futu = DATA.temp[,2:N]
+  X_curr.train = X_curr[,seq(1,N-1,2)]
+  X_curr.test = X_curr[,seq(2,N-1,2)]
+  X_futu.train = X_futu[,seq(1,N-1,2)]
+  X_futu.test = X_futu[,seq(2,N-1,2)]
+  init_cpt_train = part2local(DP.VAR1(X_futu.train, X_curr.train, gamma, lambda, delta)$partition)
+  init_cpt = 2*init_cpt_train
+  len = length(init_cpt)
+  init_cpt_long = c(init_cpt_train, ncol(X_curr.train))
+  interval = matrix(0, nrow = len+1, ncol = 2)
+  interval[1,] = c(1, init_cpt_long[1])
+  if(len > 0){
+    for(j in 2:(1+len)){
+      interval[j,] = c(init_cpt_long[j-1]+1, init_cpt_long[j])
+    }
+  }
+  trainmat = sapply(1:(len+1), function(index) error.pred.seg.VAR1(interval[index,1], interval[index,2], X_futu.train, X_curr.train, lambda, delta))
+  transition.list = vector("list", len+1)
+  training_loss = matrix(0, nrow = 1, ncol = len+1)
+  for(col in 1:(len+1)){
+    transition.list[[col]] = trainmat[2,col]$transition.hat
+    training_loss[,col] = as.numeric(trainmat[1,col]$MSE)
+  }
+  validationmat = sapply(1:(len+1), function(index) error.test.VAR1(interval[index,1], interval[index,2], X_futu.test, X_curr.test, transition.list[[index]]))
+  result = list(cpt_hat = init_cpt, K_hat = len, test_error = sum(validationmat), train_error = sum(training_loss))
+  return(result)
+}
 
+
+
+glasso.error.test = function(s, e, X.train, Y.train, X.test, Y.test, delta.local, zeta_group_set){
+  len = length(zeta_group_set)
+  estimate_temp = rep(0, len)
+  test_error_temp = rep(0, len)
+  for(ll in 1:len){
+    estimate_temp[ll] = find.one.change.grouplasso(s, e, X.train, Y.train, delta.local, zeta_group_set[ll])
+    test_error_temp[ll] = sum(sapply(1:p, function(m) 
+                              test.res.glasso(estimate_temp[ll] - s + 2 , y = Y.train[m,s:e], X= X.train[,s:e], 
+                                              y.test = Y.test[m,s:e], X.test = X.test[,s:e], zeta_group_set[ll])))
+  }
+  return(lambda.group.list[which.min(test.errors.temp)])
+}
+
+obj.func.lr.VAR1()
+
+test.res.glasso = function(eta, X.train, y.train, X.test, y.test, zeta.group){
+  group = rep(1:p, each=2)
+  X.convert = X.glasso.converter.VAR1(X.train, eta, 1)
+  out = gglasso(x = X.convert, y = y.train, group=group, loss="ls",
+                lambda = zeta.group/ncol(X.train), intercept = FALSE, eps = 0.001)
+  coef = as.vector(out$beta)
+  res = sum((y.test - X.glasso.converter.VAR1(X.test, eta, 1) %*% coef)^2)
+  return(res)
+}

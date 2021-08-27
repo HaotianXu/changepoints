@@ -42,11 +42,11 @@ simu.SEPP = function(intercept, M, A, threshold, n, vzero = NULL, ...){
 }
 
 
-#' @title Dynamic programming for VAR1 change points detection through l0 penalty.
-#' @description Perform dynamic programming for VAR1 change points detection through l0 penalty.
+#' @title Dynamic programming for SEPP change points detection through l0 penalty.
+#' @description Perform dynamic programming for SEPP change points detection through l0 penalty.
 #' @param DATA      A \code{numeric} matrix of observations.
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
-#' @param delta     A strictly \code{integer} scalar of minimum spacing.
+#' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param lambda    A \code{numeric} scalar of tuning parameter for lasso penalty.
 #' @param ...      Additional arguments.
 #' @return TO DO.

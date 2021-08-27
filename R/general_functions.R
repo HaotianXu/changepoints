@@ -37,8 +37,8 @@ part2local = function(parti_vec){
 #' Hausdorff.dist(vec1, vec2)
 Hausdorff.dist = function(vec1, vec2, ...){
   vec = c(vec1, vec2)
-  if(!all(c(vec == floor(vec)), vec >= 1)){
-    stop("vec1 and vec2 should be subsets of {1, 2, ..., n}")
+  if(!all(c(vec == floor(vec)), vec >= 0)){
+    stop("vec1 and vec2 should be subsets of {0, 1, ...}")
   }
   dist = matrix(0, nrow = length(vec1), ncol = length(vec2))
   for (i in 1:nrow(dist)){

@@ -2,14 +2,14 @@
 % Please edit documentation in R/SEPP.R
 \name{DP.SEPP}
 \alias{DP.SEPP}
-\title{Dynamic programming for VAR1 change points detection through l0 penalty.}
+\title{Dynamic programming for SEPP change points detection through l0 penalty.}
 \usage{
 DP.SEPP(gamma, delta, delta2, DATA, intercept, lambda, threshold, ...)
 }
 \arguments{
 \item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
 
-\item{delta}{A strictly \code{integer} scalar of minimum spacing.}
+\item{delta}{A positive \code{integer} scalar of minimum spacing.}
 
 \item{DATA}{A \code{numeric} matrix of observations.}
 
@@ -21,7 +21,7 @@ DP.SEPP(gamma, delta, delta2, DATA, intercept, lambda, threshold, ...)
 TO DO.
 }
 \description{
-Perform dynamic programming for VAR1 change points detection through l0 penalty.
+Perform dynamic programming for SEPP change points detection through l0 penalty.
 }
 \examples{
 parti = DP.SEPP(gamma = 1, delta = 5, delta2 = 600, DATA, intercept = 1/2, lambda = 100, threshold = 6)$partition
