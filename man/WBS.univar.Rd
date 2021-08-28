@@ -36,13 +36,13 @@ A \code{list} with the structure:
 Perform wild binary segmentation for univariate mean change points detection.
 }
 \examples{
-y = c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))
-intervals = WBS.intervals(M = 120, lower = 1, upper = length(y))
-temp = WBS.univar(y, 1, length(y), intervals$Alpha, intervals$Beta, delta = 5)
+y = c(rnorm(100, 0, 1), rnorm(100, 1, 1), rnorm(100, 0, 1))
+intervals = WBS.intervals(M = 300, lower = 1, upper = length(y))
+temp = WBS.univar(y, 1, length(y), intervals$Alpha, intervals$Beta, delta = 10)
 plot.ts(y)
 points(x = tail(temp$S[order(temp$Dval)], 4),
        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-threshold.BS(temp, 100)
+threshold.BS(temp, 3)
 }
 \author{
 Haotian Xu

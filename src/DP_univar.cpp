@@ -15,7 +15,7 @@ Rcpp::List rcpp_DP_univar(const arma::vec& y, double gamma, int delta) {
   for(int r = 1; r < N+1; ++r){
     bestvalue(r) = std::numeric_limits<int>::max();
     for(int l = 1; l < r+1; ++l){
-      if(r - l > delta){
+      if(r - l > 2*delta){
         dist = arma::norm(y.subvec(l-1,r-1) - mean(y.subvec(l-1,r-1)), 2);
         b = bestvalue(l-1) + gamma + dist*dist;
       }else{

@@ -28,8 +28,11 @@ A \code{list} with the structure:
 Perform grid search for Cross-Validation of Dynamic Programming for univariate mean change points detection through l0 penalty
 }
 \examples{
-y = rnorm(300) + c(rep(0,130),rep(-1,20),rep(1,20),rep(0,130))
-CV.search.DP.univar(y, gamma.set = 3:6, delta = 5)
+y = rnorm(300) + c(rep(0,130),rep(1,20),rep(0,20),rep(1,130))
+gamma.set = 3:9
+DP_result = CV.search.DP.univar(y, gamma.set, delta = 5)
+min_idx = which.min(DP_result$test_error)
+part2local(DP.univar(y, gamma.set[min_idx], delta = 5)$partition)
 }
 \author{
 Daren Wang and Haotian Xu

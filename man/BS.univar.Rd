@@ -32,12 +32,12 @@ A \code{list} with the structure:
 Perform standard binary segmentation for univariate mean change points detection
 }
 \examples{
-y = c(rnorm(100, 0, 1), rnorm(100, 10, 10), rnorm(100, 40, 10))
-temp = BS.univar(y, 1, length(y), delta = 5)
+y = c(rnorm(100, 0, 1), rnorm(100, 1, 1), rnorm(100, 0, 1))
+temp = BS.univar(y, 1, length(y), delta = 10)
 plot.ts(y)
 points(x = tail(temp$S[order(temp$Dval)],4),
        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-threshold.BS(temp, 20)
+threshold.BS(temp, 2)
 }
 \author{
 Haotian Xu

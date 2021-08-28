@@ -12,8 +12,8 @@
 #' @export
 #' @author Haotian Xu
 #' @examples
-#' y = rnorm(300) + c(rep(0,130),rep(-1,20),rep(1,20),rep(0,130))
-#' DP.univar(y, 1, 5)
+#' y = rnorm(300) + c(rep(0,130),rep(1,20),rep(0,20),rep(1,130))
+#' part2local(DP.univar(y, 3, 5)$partition)
 DP.univar <- function(y, gamma, delta, ...) {
   .Call('_changepoints_rcpp_DP_univar', PACKAGE = 'changepoints', y, gamma, delta)
 }
@@ -27,7 +27,7 @@ DP.univar <- function(y, gamma, delta, ...) {
 #   for(r in 1:N){
 #     bestvalue[r+1] = Inf
 #     for(l in 1:r){
-#       if(r - l > delta){
+#       if(r - l > 2*delta){
 #         b = bestvalue[l] + gamma + (norm(y[l:r] - mean(y[l:r]), type = "2"))^2 
 #       }else{
 #         b = Inf
@@ -114,8 +114,11 @@ CV.DP.univar = function(y, gamma, delta, ...){
 #' @export
 #' @author  Daren Wang and Haotian Xu
 #' @examples
-#' y = rnorm(300) + c(rep(0,130),rep(-1,20),rep(1,20),rep(0,130))
-#' CV.search.DP.univar(y, gamma.set = 3:6, delta = 5)
+#' y = rnorm(300) + c(rep(0,130),rep(1,20),rep(0,20),rep(1,130))
+#' gamma.set = 3:9
+#' DP_result = CV.search.DP.univar(y, gamma.set, delta = 5)
+#' min_idx = which.min(DP_result$test_error)
+#' part2local(DP.univar(y, gamma.set[min_idx], delta = 5)$partition)
 CV.search.DP.univar = function(y, gamma.set, delta, ...){
   output = sapply(1:length(gamma.set), function(j) CV.DP.univar(y, gamma.set[j], delta))
   print(output)
@@ -146,28 +149,28 @@ CV.search.DP.univar = function(y, gamma.set, delta, ...){
 #' @export
 #' @author Haotian Xu
 #' @examples
-#' y = c(rnorm(100, 0, 1), rnorm(100, 10, 10), rnorm(100, 40, 10))
-#' temp = BS.univar(y, 1, length(y), delta = 5)
+#' y = c(rnorm(100, 0, 1), rnorm(100, 1, 1), rnorm(100, 0, 1))
+#' temp = BS.univar(y, 1, length(y), delta = 10)
 #' plot.ts(y)
 #' points(x = tail(temp$S[order(temp$Dval)],4),
 #'        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-#' threshold.BS(temp, 20)
+#' threshold.BS(temp, 2)
 BS.univar = function(y, s, e, delta = 2, level = 0, ...){
   S = NULL
   Dval = NULL
   Level = NULL
   Parent = NULL
-  if(e-s <= delta){
+  if(e-s <= 2*delta){
     return(list(S = S, Dval = Dval, Level = Level, Parent = Parent))
   }else{
     level = level + 1
     parent = matrix(c(s, e), nrow = 2)
-    a = rep(0, e-s-1)
-    for(t in (s+1):(e-1)){
-      a[t-s] = sqrt((t-s) * (e-t) / (e-s)) * abs(mean(y[(s+1):t]) - mean(y[(t+1):e]))
+    a = rep(0, e-s-2*delta+1)
+    for(t in (s+delta):(e-delta)){
+      a[t-s-delta+1] = sqrt((t-s) * (e-t) / (e-s)) * abs(mean(y[(s+1):t]) - mean(y[(t+1):e]))
     }
     best_value = max(a)
-    best_t = which.max(a) + s
+    best_t = which.max(a) + s + delta - 1
     temp1 = BS.univar(y, s, best_t-1, delta, level)
     temp2 = BS.univar(y, best_t, e, delta, level)
     S = c(temp1$S, best_t, temp2$S)
@@ -201,17 +204,17 @@ BS.univar = function(y, s, e, delta = 2, level = 0, ...){
 #' @export
 #' @author Haotian Xu
 #' @examples
-#' y = c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))
-#' intervals = WBS.intervals(M = 120, lower = 1, upper = length(y))
-#' temp = WBS.univar(y, 1, length(y), intervals$Alpha, intervals$Beta, delta = 5)
+#' y = c(rnorm(100, 0, 1), rnorm(100, 1, 1), rnorm(100, 0, 1))
+#' intervals = WBS.intervals(M = 300, lower = 1, upper = length(y))
+#' temp = WBS.univar(y, 1, length(y), intervals$Alpha, intervals$Beta, delta = 10)
 #' plot.ts(y)
 #' points(x = tail(temp$S[order(temp$Dval)], 4),
 #'        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-#' threshold.BS(temp, 100)
+#' threshold.BS(temp, 3)
 WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){ 
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
-  idx = which(Beta_new - Alpha_new > delta)
+  idx = which(Beta_new - Alpha_new > 2*delta)
   Alpha_new = Alpha_new[idx]
   Beta_new = Beta_new[idx]
   M = length(Alpha_new)
@@ -236,12 +239,12 @@ WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){
     a = rep(0, M)
     b = rep(0, M)
     for(m in 1:M){
-      temp = rep(0, Beta_new[m] - Alpha_new[m] - 1)
-      for(t in (Alpha_new[m]+1):(Beta_new[m]-1)){
-        temp[t-(Alpha_new[m])] = sqrt((t-Alpha_new[m]) * (Beta_new[m]-t) / (Beta_new[m]-Alpha_new[m])) * abs(mean(y[(Alpha_new[m]+1):t]) - mean(y[(t+1):Beta_new[m]]))
+      temp = rep(0, Beta_new[m] - Alpha_new[m] - 2*delta + 1)
+      for(t in (Alpha_new[m]+delta):(Beta_new[m]-delta)){
+        temp[t-(Alpha_new[m]+delta)+1] = sqrt((t-Alpha_new[m]) * (Beta_new[m]-t) / (Beta_new[m]-Alpha_new[m])) * abs(mean(y[(Alpha_new[m]+1):t]) - mean(y[(t+1):Beta_new[m]]))
       }
       best_value = max(temp)
-      best_t = which.max(temp) + Alpha_new[m]
+      best_t = which.max(temp) + Alpha_new[m] + delta - 1
       a[m] = best_value
       b[m] = best_t
     }

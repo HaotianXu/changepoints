@@ -56,7 +56,7 @@ for(candidate in 1:ll){
     start.time <- Sys.time()
     dp_result = CV.search.DP.VAR1(data, lambda_lasso_set, gamma_set, delta1)
     end.time <- Sys.time(); time.taken <- end.time - start.time; print(time.taken)
-    min_idx = as.vector(arrayInd(which.min(dp_estimate$test_error), dim(dp_estimate$test_error)))
+    min_idx = as.vector(arrayInd(which.min(dp_result$test_error), dim(dp_result$test_error)))
     X_curr = data[,1:(N-1)]
     X_futu = data[,2:N]
     dp_estimate = part2local(DP.VAR1(X_futu, X_curr, gamma = gamma_set[min_idx[2]], lambda = lambda_lasso_set[min_idx[1]], delta = delta1)$partition)

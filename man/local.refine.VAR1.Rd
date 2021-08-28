@@ -2,7 +2,7 @@
 % Please edit documentation in R/VAR.R
 \name{local.refine.VAR1}
 \alias{local.refine.VAR1}
-\title{Local refinement for VAR1 change points detection [11]}
+\title{Local refinement for VAR1 change points detection.}
 \usage{
 local.refine.VAR1(cpt.init, DATA, zeta.group, w = 1/3, ...)
 }
@@ -18,15 +18,30 @@ local.refine.VAR1(cpt.init, DATA, zeta.group, w = 1/3, ...)
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{numeric} scalar of prediction error in l2 norm.
+An \code{integer} vector of locally refined change points estimation.
 }
 \description{
-TO DO
+Perform local refinement for VAR1 change points detection.
 }
 \examples{
-#TODO data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-cpt.init = part2local(DP.regression(2, 5, data$y, X = data$X, lambda = 2)$partition)$cpt
-local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
+p = 10
+sigma = 1
+n = 5
+v1 = 2*(seq(1,p,1)\%\%2) - 1
+v2 = -v1
+AA = matrix(0, nrow = p, ncol = p-2)
+A1=cbind(v1,v2,AA)
+A2=cbind(v2,v1,AA)
+A3=A1
+data = simu.VAR1(sigma, p, 2*n+1, A1)
+data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
+data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
+N = ncol(data)
+X_curr = data[,1:(N-1)]
+X_futu = data[,2:N]
+parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
+cpt.init = part2local(parti)
+local.refine.VAR1(cpt.init, data, 1, 1/3)
 }
 \author{
 

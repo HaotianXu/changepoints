@@ -26,8 +26,8 @@ A \code{list} with the structure:
 Perform dynamic programming for univariate mean change points detection through l0 penalty
 }
 \examples{
-y = rnorm(300) + c(rep(0,130),rep(-1,20),rep(1,20),rep(0,130))
-DP.univar(y, 1, 5)
+y = rnorm(300) + c(rep(0,130),rep(1,20),rep(0,20),rep(1,130))
+part2local(DP.univar(y, 3, 5)$partition)
 }
 \author{
 Haotian Xu

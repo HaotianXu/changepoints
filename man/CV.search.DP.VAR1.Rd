@@ -18,7 +18,7 @@ CV.search.DP.VAR1(DATA, gamma.set, lambda.set, delta, ...)
 \item{...}{Additional arguments.}
 }
 \value{
-TO DO.
+Row: lambda.set; column: lambda.set
 }
 \description{
 TO DO
