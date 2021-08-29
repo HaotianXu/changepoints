@@ -31,10 +31,10 @@ simu.VAR1= function(sigma, p, n, A, vzero = NULL, ...){
 }
 
 
-#' @export
-error_pred_seg_VAR1 <- function(X_futu, X_curr, s, e, alpha, lambda, delta) {
-  .Call('_changepoints_rcpp_error_pred_seg_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, s, e, alpha, lambda, delta)
-}
+# # in cpp
+# error_pred_seg_VAR1 <- function(X_futu, X_curr, s, e, alpha, lambda, delta) {
+#   .Call('_changepoints_rcpp_error_pred_seg_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, s, e, alpha, lambda, delta)
+# }
 
 
 #' @title Internal Function: Prediction error in squared Frobenius norm for the lasso estimator of transition matrix[11] 
@@ -65,10 +65,10 @@ error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
 }
 
 
-#' @export
-DP_VAR1 <- function(X_futu, X_curr, alpha, gamma, lambda, delta) {
-  .Call('_changepoints_rcpp_DP_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, alpha, gamma, lambda, delta)
-}
+# # in cpp
+# DP_VAR1 <- function(X_futu, X_curr, alpha, gamma, lambda, delta) {
+#   .Call('_changepoints_rcpp_DP_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, alpha, gamma, lambda, delta)
+# }
 
 #' @title Dynamic programming for VAR1 change points detection through l0 penalty.
 #' @description Perform dynamic programming for VAR1 change points detection through l0 penalty.
@@ -361,7 +361,7 @@ local.refine.CV.VAR1 = function(cpt.init, DATA, zeta_group_set, delta.local, w =
       cpt_hat_train_ext[kk+1] = round(temp_estimate/2)
     }
   }
-  return(2*cpt_hat_train_ext[-c(1, length(cpt_hat_ext))])
+  return(2*cpt_hat_train_ext[-c(1, length(cpt_hat_train_ext))])
 }
 
 

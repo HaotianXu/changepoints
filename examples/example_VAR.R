@@ -5,12 +5,13 @@ set.seed(1)
 #START define parameters
 rho_can = c(0.1, 0.4)#candidate of rho (rho can not be too large so that the time series is stable)
 ll = length(rho_can)
+RR = 2# 100 # number of repetition
 p = 5 # 20 # dimension
 sigma = 1 # standard deviation of error terms
-delta1 = 10
-delta.local = 10
+delta1 = 5 # 10
+delta.local = 5 # 10
 # construct true transition matrices
-n = 10 # 30
+n = 10#30
 v1 = 2*(seq(1,p,1)%%2) - 1
 v2 = -v1 
 AA = matrix(0, nrow = p, ncol = p-2)
@@ -70,13 +71,13 @@ for(candidate in 1:ll){
     
     zeta_group_set = c(0.5, 1, 1.5)
     #START  local refinement#include X and Y
-    lr.estimate = local.main.function(data,delta.local, lambda.group.list,dp.estimate)
-    
+    lr_estimate = local.refine.CV.VAR1(dp_estimate, data, zeta_group_set, delta.local, w = 1/3)
+    lr_estimate_ext = c(0, lr_estimate, 6*n)
     print( "lr=")
-    print(lr.estimate)
-    lr.rec[[candidate]][[rr]]=list(lr.estimate[-c(1,length(lr.estimate))])
-    haus2[candidate]=haus2[candidate]+hausdorff.distance(lr.estimate,c(0, 2*n,4*n,6*n) )
-    print(haus2/rr)
+    print(lr_estimate_ext)
+    lr_rec[[candidate]][[rr]] = list(lr_estimate)
+    haus_lr[candidate] = haus_lr[candidate] + Hausdorff.dist(lr_estimate_ext, c(0, 2*n,4*n,6*n) )
+    print(haus_lr/rr)
     #END local refinement
   }
 }
