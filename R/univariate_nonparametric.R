@@ -22,22 +22,22 @@
 #' temp = NBS(Y, 1, 300, N, 5)
 #' plot.ts(t(Y))
 #' points(x = tail(temp$S[order(temp$Dval)],4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
-NBS = function(Y, s, e, N, delta = 2, level = 0, ...){
+NBS = function(Y, s, e, N, delta, level = 0, ...){
   S = NULL
   Dval = NULL
   Level = NULL
   Parent = NULL
-  if(e-s <= delta){
+  if(e-s <= 2*delta){
     return(list(S = S, Dval = Dval, Level = Level, Parent = Parent))
   }else{
     level = level + 1
     parent = matrix(c(s, e), nrow = 2)
-    a = rep(0, e-s-1)
-    for(t in (s+1):(e-1)){
-      a[t-s] = CUSUM.KS(Y, s, e, t, N)
+    a = rep(0, e-s-2*delta+1)
+    for(t in (s+delta):(e-delta)){
+      a[t-s-delta+1] = CUSUM.KS(Y, s, e, t, N)
     }
     best_value = max(a)
-    best_t = which.max(a) + s
+    best_t = which.max(a) + s + delta - 1
     temp1 = NBS(Y, s, best_t-1, N, delta, level)
     temp2 = NBS(Y, best_t, e, N, delta, level)
     S = c(temp1$S, best_t, temp2$S)
@@ -51,6 +51,42 @@ NBS = function(Y, s, e, N, delta = 2, level = 0, ...){
 }
 
 
+#' @export
+NBS.tune = function(Y, W, N, delta){
+  n = max(N)
+  len_time = ncol(Y)
+  temp1 = NBS(W, 1, len_time, N, delta, level = 0)  
+  Dval = temp1$Dval
+  aux = sort(Dval, decreasing = TRUE)
+  tau_grid = rev(aux[1:min(20,length(Dval))]-10^{-5})
+  tau_grid = c(tau_grid, 10)
+  B_list =  c()
+  for(j in 1:length(tau_grid)){
+    aux = threshold.BS(temp1, tau_grid[j])$change_points[,1]
+    if(length(aux) == 0){
+      break;
+    }
+    B_list[[j]] = sort(aux)
+  }
+  B_list = unique(B_list)
+  O_set = B_list[[1]]
+  for(m in 1:(length(B_list)-1)){
+    eta = min(setdiff(O_set, B_list[[m+1]]))
+    k = which.max(B_list[[m+1]] < eta)
+    eta1 = B_list[[m+1]][k]
+    eta2 = B_list[[m+1]][k+1]
+    z_hat = as.vector(Y[,eta1:eta2])[which.max(CUSUM.KS(Y, eta1, eta2, eta, N, vector = TRUE))]
+    lambda = log(sum(N))/1.5#2.5#1.5#2#2.555#
+    if(error.ECDF(Y, eta1, eta, N, z_hat) + error.ECDF(Y, eta+1, eta2, N, z_hat) - error.ECDF(Y, eta1, eta2, N, z_hat) > lambda){
+      O_set = B_list[[m+1]]
+    }else{
+      break;
+    }
+  }
+  return(O_set)
+}
+
+
 
 #' @title Internal Function: Compute the CUSUM statistic based on KS distance.
 #' @param Y         A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being multiple observations on each time point.
@@ -58,26 +94,41 @@ NBS = function(Y, s, e, N, delta = 2, level = 0, ...){
 #' @param e         A \code{integer} scalar of ending index.
 #' @param t         A \code{integer} scalar of splitting index.
 #' @param N         A \code{integer} vector representing number of multiple observations on each time point.
+#' @param vector    If TRUE, return a CUSUM vector of empirical distribution function evaluated at the vectorized Y[,s:e]; otherwise, return a scalar representing the maximum of the CUSUM vector.
 #' @return  A \code{numeric} scalar of the CUSUM statistic based on KS distance.
 #' @noRd
-CUSUM.KS = function(Y, s, e, t, N){
-  n_st = sum(N[(s+1):t])
-  n_se = sum(N[(s+1):e])
+CUSUM.KS = function(Y, s, e, t, N, vector = FALSE){
+  n_st = sum(N[s:t])
+  n_se = sum(N[s:e])
   n_te = sum(N[(t+1):e])
-  aux = Y[, (s+1):t]
+  aux = as.vector(Y[,s:t])
   aux = aux[which(is.na(aux)==FALSE)]
   temp = ecdf(aux)
-  vec_y = Y[, s:e]
+  vec_y = as.vector(Y[,s:e])
   vec_y = vec_y[which(is.na(vec_y)==FALSE)]
   Fhat_st = temp(vec_y)# temp(grid)
-  aux = Y[, (t+1):e]
+  aux = as.vector(Y[,(t+1):e])
   aux = aux[which(is.na(aux)==FALSE)]
   temp = ecdf(aux)
   Fhat_te = temp(vec_y)# temp(grid)
-  result = sqrt(n_st * n_te / n_se) * max(abs(Fhat_te - Fhat_st))
+  if(vector == TRUE){
+    result = sqrt(n_st * n_te / n_se) * abs(Fhat_te - Fhat_st)
+  }else{
+    result = sqrt(n_st * n_te / n_se) * max(abs(Fhat_te - Fhat_st)) 
+  }
   return(result)
 }
 
+
+#' @noRd
+error.ECDF = function(Y, s, e, N, z){
+  aux = as.vector(Y[,s:e])
+  aux = aux[which(is.na(aux)==FALSE)]
+  temp = ecdf(aux)
+  Fhat = temp(z)
+  result = sum(((Y[,s:e] <= z) - Fhat)^2)
+  return(result)
+}
 
 
 #' @title Wild binary segmentation for univariate nonparametric change points detection.
@@ -102,23 +153,16 @@ CUSUM.KS = function(Y, s, e, t, N){
 #' @author Oscar Hernan Madrid Padilla, Haotian Xu
 #' @examples
 #' Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))
-#' M =   120
-#' Alpha = sample.int(size = M, n = 300, replace = TRUE)
-#' Beta = sample.int(size = M, n = T, replace = TRUE)
-#' for(j in 1:M){
-#'   aux =  Alpha[j]
-#'   aux2 = Beta[j]
-#'   Alpha[j] = min(aux, aux2)
-#'   Beta[j] = max(aux, aux2)
-#' }
-#' temp = NWBS(Y, 1, 300, Alpha, Beta, N, 5)
+#' M = 120
+#' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y))
+#' temp = NWBS(Y, 1, 300, intervals$Alpha, intervals$Beta, N, 5)
 #' plot.ts(t(Y))
 #' points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
-#' BS.threshold(temp, 1.5)
-NWBS = function(Y, s, e, Alpha, Beta, N, delta = 2, level = 0, ...){ 
+#' threshold.BS(temp, 1)
+NWBS = function(Y, s, e, Alpha, Beta, N, delta, level = 0, ...){ 
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
-  idx = which(Beta_new - Alpha_new > delta)
+  idx = which(Beta_new - Alpha_new > 2*delta)
   Alpha_new = Alpha_new[idx]
   Beta_new = Beta_new[idx]
   M = length(Alpha_new)
@@ -143,12 +187,12 @@ NWBS = function(Y, s, e, Alpha, Beta, N, delta = 2, level = 0, ...){
     a = rep(0, M)
     b = rep(0, M)
     for(m in 1:M){
-      temp = rep(0, Beta_new[m] - Alpha_new[m] - 1)
-      for(t in (Alpha_new[m]+1):(Beta_new[m]-1)){
-        temp[t-(Alpha_new[m])] = CUSUM.KS(Y, Alpha_new[m], Beta_new[m], t, N)
+      temp = rep(0, Beta_new[m] - Alpha_new[m] - 2*delta + 1)
+      for(t in (Alpha_new[m]+delta):(Beta_new[m]-delta)){
+        temp[t-(Alpha_new[m]+delta)+1] = CUSUM.KS(Y, Alpha_new[m], Beta_new[m], t, N)
       }
       best_value = max(temp)
-      best_t = which.max(temp) + Alpha_new[m]
+      best_t = which.max(temp) + Alpha_new[m] + delta - 1
       a[m] = best_value
       b[m] = best_t
     }
@@ -166,3 +210,38 @@ NWBS = function(Y, s, e, Alpha, Beta, N, delta = 2, level = 0, ...){
 }
 
 
+
+#' @export
+NWBS.tune = function(Y, W, Alpha, Beta, N, delta){
+  n = max(N)
+  len_time = ncol(Y)
+  temp1 = NWBS(W, 1, len_time, Alpha, Beta, N, delta, level = 0)  
+  Dval = temp1$Dval
+  aux = sort(Dval, decreasing = TRUE)
+  tau_grid = rev(aux[1:min(20,length(Dval))]-10^{-5})
+  tau_grid = c(tau_grid, 10)
+  B_list =  c()
+  for(j in 1:length(tau_grid)){
+    aux = threshold.BS(temp1, tau_grid[j])$change_points[,1]
+    if(length(aux) == 0){
+      break;
+    }
+    B_list[[j]] = sort(aux)
+  }
+  B_list = unique(B_list)
+  O_set = B_list[[1]]
+  for(m in 1:(length(B_list)-1)){
+    eta = min(setdiff(O_set, B_list[[m+1]]))
+    k = which.max(B_list[[m+1]] < eta)
+    eta1 = B_list[[m+1]][k]
+    eta2 = B_list[[m+1]][k+1]
+    z_hat = as.vector(Y[,eta1:eta2])[which.max(CUSUM.KS(Y, eta1, eta2, eta, N, vector = TRUE))]
+    lambda = log(sum(N))/1.5#2.5#1.5#2#2.555#
+    if(error.ECDF(Y, eta1, eta, N, z_hat) + error.ECDF(Y, eta+1, eta2, N, z_hat) - error.ECDF(Y, eta1, eta2, N, z_hat) > lambda){
+      O_set = B_list[[m+1]]
+    }else{
+      break;
+    }
+  }
+  return(O_set)
+}

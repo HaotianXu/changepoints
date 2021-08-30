@@ -18,7 +18,7 @@ Rcpp::List rcpp_DP_poly(const arma::vec& y, int r, double gamma, int delta){
   for(int i = 1; i < n+1; ++i){
     bestvalue(i) = std::numeric_limits<int>::max();
     for(int l = 1; l < i+1; ++l){
-      if(i - l > delta){
+      if(i - l > 2*delta){
         u_mat = rcpp_basis_poly(n, l, i, r);
         proj_mat = u_mat * (u_mat.t() * u_mat).i() * u_mat.t();
         dist = arma::norm(y.subvec(l-1,i-1) - proj_mat * y.subvec(l-1,i-1), 2);

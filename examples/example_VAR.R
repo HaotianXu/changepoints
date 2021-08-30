@@ -5,8 +5,8 @@ set.seed(1)
 #START define parameters
 rho_can = c(0.1, 0.4)#candidate of rho (rho can not be too large so that the time series is stable)
 ll = length(rho_can)
-RR = 2# 100 # number of repetition
-p = 5 # 20 # dimension
+RR = 5# 100 # number of repetition
+p = 2 # 20 # dimension
 sigma = 1 # standard deviation of error terms
 delta1 = 5 # 10
 delta.local = 5 # 10

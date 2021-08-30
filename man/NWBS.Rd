@@ -4,7 +4,7 @@
 \alias{NWBS}
 \title{Wild binary segmentation for univariate nonparametric change points detection.}
 \usage{
-NWBS(Y, s, e, Alpha, Beta, N, delta = 2, level = 0, ...)
+NWBS(Y, s, e, Alpha, Beta, N, delta, level = 0, ...)
 }
 \arguments{
 \item{Y}{A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being multiple observations on each time point.}
@@ -39,19 +39,12 @@ Perform wild binary segmentation for univariate nonparametric change points dete
 }
 \examples{
 Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))
-M =   120
-Alpha = sample.int(size = M, n = 300, replace = TRUE)
-Beta = sample.int(size = M, n = T, replace = TRUE)
-for(j in 1:M){
-  aux =  Alpha[j]
-  aux2 = Beta[j]
-  Alpha[j] = min(aux, aux2)
-  Beta[j] = max(aux, aux2)
-}
-temp = NWBS(Y, 1, 300, Alpha, Beta, N, 5)
+M = 120
+intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y))
+temp = NWBS(Y, 1, 300, intervals$Alpha, intervals$Beta, N, 5)
 plot.ts(t(Y))
 points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
-BS.threshold(temp, 1.5)
+threshold.BS(temp, 1)
 }
 \author{
 Oscar Hernan Madrid Padilla, Haotian Xu

@@ -14,7 +14,7 @@ double rcpp_error_pred_seg_VAR1(const arma::mat& X_futu, const arma::mat& X_curr
   Rcpp::Function lasso = glmnet["glmnet"];
   Rcpp::Environment stats("package:stats");
   Rcpp::Function coef = stats["coef"];
-  if(e - s > delta){
+  if(e - s > 2*delta){
     X = X_curr.cols(s-1, e-1).t();
     y = X.col(0);
     tran_hat = Rcpp::as<arma::sp_mat>(coef(lasso(X, y, Rcpp::Named("alpha", alpha), Rcpp::Named("lambda", lambda))));

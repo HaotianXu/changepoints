@@ -15,7 +15,7 @@ Rcpp::List rcpp_DP_VAR1(const arma::mat& X_futu, const arma::mat& X_curr, double
   for(int i = 1; i < n+1; ++i){
     bestvalue(i) = std::numeric_limits<int>::max();
     for(int l = 1; l < i+1; ++l){
-      if(i - l > delta){
+      if(i - l > 2*delta){
         dist = rcpp_error_pred_seg_VAR1(X_futu, X_curr, l, i, alpha, lambda, delta);
         b = bestvalue(l-1) + gamma + dist;
       }else{
