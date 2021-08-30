@@ -52,15 +52,15 @@ NBS = function(Y, s, e, N, delta, level = 0, ...){
 
 
 #' @export
-NBS.tune = function(Y, W, N, delta){
-  n = max(N)
+NBS.tune = function(Y, W, N, len_tau, delta){
+  #n = max(N)
   len_time = ncol(Y)
   temp1 = NBS(W, 1, len_time, N, delta, level = 0)  
   Dval = temp1$Dval
   aux = sort(Dval, decreasing = TRUE)
-  tau_grid = rev(aux[1:min(20,length(Dval))]-10^{-5})
+  tau_grid = rev(aux[1:min(len_tau,length(Dval))])
   tau_grid = c(tau_grid, 10)
-  B_list =  c()
+  B_list = c()
   for(j in 1:length(tau_grid)){
     aux = threshold.BS(temp1, tau_grid[j])$change_points[,1]
     if(length(aux) == 0){
@@ -70,13 +70,14 @@ NBS.tune = function(Y, W, N, delta){
   }
   B_list = unique(B_list)
   O_set = B_list[[1]]
+  lambda = log(sum(N))/1.5#2.5#1.5#2#2.555#
   for(m in 1:(length(B_list)-1)){
     eta = min(setdiff(O_set, B_list[[m+1]]))
-    k = which.max(B_list[[m+1]] < eta)
-    eta1 = B_list[[m+1]][k]
-    eta2 = B_list[[m+1]][k+1]
+    B_set_ext = c(1, B_list[[m+1]], len_time)
+    k = which.max(B_set_ext < eta)
+    eta1 = B_set_ext[k]
+    eta2 = B_set_ext[k+1]
     z_hat = as.vector(Y[,eta1:eta2])[which.max(CUSUM.KS(Y, eta1, eta2, eta, N, vector = TRUE))]
-    lambda = log(sum(N))/1.5#2.5#1.5#2#2.555#
     if(error.ECDF(Y, eta1, eta, N, z_hat) + error.ECDF(Y, eta+1, eta2, N, z_hat) - error.ECDF(Y, eta1, eta2, N, z_hat) > lambda){
       O_set = B_list[[m+1]]
     }else{
@@ -212,13 +213,13 @@ NWBS = function(Y, s, e, Alpha, Beta, N, delta, level = 0, ...){
 
 
 #' @export
-NWBS.tune = function(Y, W, Alpha, Beta, N, delta){
-  n = max(N)
+NWBS.tune = function(Y, W, Alpha, Beta, N, len_tau = 20, delta){
+  #n = max(N)
   len_time = ncol(Y)
   temp1 = NWBS(W, 1, len_time, Alpha, Beta, N, delta, level = 0)  
   Dval = temp1$Dval
   aux = sort(Dval, decreasing = TRUE)
-  tau_grid = rev(aux[1:min(20,length(Dval))]-10^{-5})
+  tau_grid = rev(aux[1:min(len_tau,length(Dval))]-10^{-5})
   tau_grid = c(tau_grid, 10)
   B_list =  c()
   for(j in 1:length(tau_grid)){
@@ -230,13 +231,13 @@ NWBS.tune = function(Y, W, Alpha, Beta, N, delta){
   }
   B_list = unique(B_list)
   O_set = B_list[[1]]
+  lambda = log(sum(N))/1.5#2.5#1.5#2#2.555#
   for(m in 1:(length(B_list)-1)){
     eta = min(setdiff(O_set, B_list[[m+1]]))
     k = which.max(B_list[[m+1]] < eta)
     eta1 = B_list[[m+1]][k]
     eta2 = B_list[[m+1]][k+1]
     z_hat = as.vector(Y[,eta1:eta2])[which.max(CUSUM.KS(Y, eta1, eta2, eta, N, vector = TRUE))]
-    lambda = log(sum(N))/1.5#2.5#1.5#2#2.555#
     if(error.ECDF(Y, eta1, eta, N, z_hat) + error.ECDF(Y, eta+1, eta2, N, z_hat) - error.ECDF(Y, eta1, eta2, N, z_hat) > lambda){
       O_set = B_list[[m+1]]
     }else{

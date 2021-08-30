@@ -65,7 +65,8 @@ DP.poly <- function(y, r, gamma, delta, ...) {
 # }
 
 
-#Two-step estimation
+
+#' @export
 local.refine.poly = function(cpt.init, y, w = 1/2){
   n = length(y)
   cpt_init_ext = c(0, cpt_init, n)

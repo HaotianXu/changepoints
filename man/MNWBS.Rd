@@ -4,10 +4,10 @@
 \alias{MNWBS}
 \title{Wild binary segmentation for multivariate nonparametric change points detection}
 \usage{
-MNWBS(Y, s, e, Alpha, Beta, h, level = 0, ...)
+MNWBS(Y, s, e, Alpha, Beta, h, delta = ceiling(max(p, h^(-p))), level = 0, ...)
 }
 \arguments{
-\item{Y}{A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being multiple observations on each time point.}
+\item{Y}{A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.}
 
 \item{s}{A \code{integer} scalar of starting index.}
 
@@ -17,7 +17,7 @@ MNWBS(Y, s, e, Alpha, Beta, h, level = 0, ...)
 
 \item{Beta}{A \code{integer} vector of ending indices of random intervals.}
 
-\item{h}{A \code{numeric} vector bandwidth parameter}
+\item{h}{A \code{numeric} scalar of bandwidth parameter.}
 
 \item{level}{Should be fixed as 0.}
 
@@ -26,11 +26,10 @@ MNWBS(Y, s, e, Alpha, Beta, h, level = 0, ...)
 \value{
 A \code{list} with the structure:
 \itemize{
- \item S           A vector of estimated changepoints (sorted in strictly increasing order).
- \item Dval        A vector of values of CUSUM statistic based on KS distance.
- \item Level       A vector representing the levels at which each change point is detected.
- \item Parent      A matrix with the starting indices on the first row and the ending indices on the second row.
- \item ...         Additional parameters.
+ \item S:           A vector of estimated changepoints (sorted in strictly increasing order).
+ \item Dval:        A vector of values of CUSUM statistic based on KS distance.
+ \item Level:       A vector representing the levels at which each change point is detected.
+ \item Parent:      A matrix with the starting indices on the first row and the ending indices on the second row.
 }
 }
 \description{
