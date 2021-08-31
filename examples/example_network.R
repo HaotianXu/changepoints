@@ -7,12 +7,11 @@ RR = 10 #number of repetition
 
 #error matrices
 dist_mat_com = list()
-count_mat = matrix(0, nrow = 4, ncol = RR)
 #candidate for length of time series
 N_candidate = c(80,100,120,140,160)*K
 #start simulation
 for(cc in 1:length(N_candidate)){
-  dist_mat_com[[cc]] = matrix(0, nrow = 4, ncol = RR)
+  dist_mat_com[[cc]] = matrix(0, nrow = 2, ncol = RR)
   #N is the length of time series
   N = N_candidate[cc]
   # spacing parameter, only used in computing errors
