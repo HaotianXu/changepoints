@@ -1,14 +1,15 @@
-#' @title Simulate a Stochastic Block Model (without change point).
-#' @description  Simulate a Stochastic Block Model (without change point).
-#' @param connec_mat  A \code{integer} matrix representing the connectivity matrix (symmetric matrix with dimension being the number of blocks, and entries being 0 or 1).
+#' @title Simulate a Stochastic Block Model (of symmetric type and without change point).
+#' @description  Simulate a Stochastic Block Model (without change point). The data generated are lower diagonal as the matrices are symmetry and 0 on the diagonal.
+#' @param connec_mat  A \code{numeric} symmetric matrix representing the connectivity matrix (entries in [0,1]).
 #' @param can_vec     A \code{integer} p-dim vector representing the candidate vector.
 #' @param n           A \code{integer} scalar representing the number of observations.
 #' @param ...        Additional arguments.
-#' @return  A p^2-by-n matrix.
+#' @return  A (p*(p-1)/2)-by-n matrix, with each column be the vectorized adjacency matrix.
 #' @export
 #' @author 
 #' @examples
 #' TO DO
+#' 
 simu.SBM = function(connec_mat, can_vec, n, ...){
   block_num = dim(connec_mat)[1]
   p = length(can_vec)
@@ -23,15 +24,14 @@ simu.SBM = function(connec_mat, can_vec, n, ...){
       SBM_mean_mat = SBM_mean_mat + connec_mat[i,j] * can_temp1 %*% t(can_temp2)
     }
   }
-  SBM_mean_mat[upper.tri(SBM_mean_mat, diag = T)] = 0
-  obs_mat = matrix(0, nrow = p^2, ncol = n)
-  obs_mat = t(sapply(as.vector(SBM_mean_mat), function(x) rbinom(n, 1, x)))
+  SBM_mean_vec = SBM_mean_mat[lower.tri(SBM_mean_mat, diag = F)]
+  obs_mat = t(sapply(SBM_mean_vec, function(x) rbinom(n, 1, x)))
   return(obs_mat)
 }
 
 
 #' @title Internal Function: Compute value of CUSUM statistic (multivariate).
-#' @param data_mat  A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.
+#' @param data_mat  A \code{numeric} matrix of observations with with horizontal axis being time.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
 #' @param t         A \code{integer} scalar of splitting index.
@@ -67,8 +67,8 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 
 #' @title Binary segmentation for network change points detection.
 #' @description  Perform binary segmentation for network change points detection.
-#' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.
-#' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension (data_mat1 and data_mat2 are independent and have the same dimensions ).
+#' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.
+#' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).
 #' @param s          A \code{integer} scalar of starting index.
 #' @param e          A \code{integer} scalar of ending index.
 #' @param delta      A positive \code{integer} scalar of minimum spacing.
@@ -183,12 +183,54 @@ USVT = function(symm_mat, tau1, tau2){
 #' @noRd
 USVT.norm = function(cusum_vec, tau1, tau2 = Inf){
   p = 1/2 + sqrt(2*length(cusum_vec) + 1/4) #obtain p
-  diff_mat = matrix(0, nrow = p, ncol=p)
-  diff_mat[gen.lower.coordinate(p)] = cusum_vec
-  diff_mat = diff_mat + t(diff_mat)
+  cusum_mat = matrix(0, nrow = p, ncol=p)
+  cusum_mat[gen.lower.coordinate(p)] = cusum_vec
+  cusum_mat = cusum_mat + t(cusum_mat)
   #tau1=sqrt(p*rho)/2
-  diff_mat_temp = USVT(diff_mat, tau1, tau2)
-  return(norm(diff_mat_temp, type="F"))
+  cusum_mat_temp = USVT(cusum_mat, tau1, tau2)
+  return(norm(cusum_mat_temp, type="F"))
+}
+
+
+
+
+online.network = function(data_mat1, data_mat2, b_vec, tau1_mat, tau2_mat, c, alpha){
+  p = sqrt(nrow(data_mat2))
+  t = 1
+  FLAG = 0
+  while(FLAG == 0){
+    t = t + 1
+    J = floor(log2(t))
+    j = 0
+    while(j < J & FLAG == 0){
+      s_j = t - 2^j
+      B_tilde_vec = as.vector(USVT(matrix(CUSUM.vec(data_mat2, 0, s_j, t), p, p), tau1_mat[s_j, t], tau2_mat[s_j, t]))
+      B_tilde_norm = sqrt(sum(B_tilde_vec^2))
+      FLAG = (sum(CUSUM.vec(data_mat2, 0, s_j, t) * B_tilde_vec)/B_tilde_norm > b_vec[t-1]) * (B_tilde_norm > c*sqrt(log(t/alpha))) 
+      j = j + 1
+    }
+  }
+  return(t)
+}
+
+
+online.network.variant = function(data_mat1, data_mat2, b_vec, tau1_mat, tau2_mat, c, gamma){
+  p = sqrt(nrow(data_mat2))
+  t = 1
+  FLAG = 0
+  while(FLAG == 0){
+    t = t + 1
+    J = floor(log2(t))
+    j = 0
+    while(j < J & FLAG == 0){
+      s_j = t - 2^j
+      B_tilde_vec = as.vector(USVT(matrix(CUSUM.vec(data_mat2, 0, s_j, t), p, p), tau1_mat[s_j, t], tau2_mat[s_j, t]))
+      B_tilde_norm = sqrt(sum(B_tilde_vec^2))
+      FLAG = (sum(CUSUM.vec(data_mat2, 0, s_j, t) * B_tilde_vec)/B_tilde_norm > b_vec[t-1]) * (B_tilde_norm > c*sqrt(log(gamma))) 
+      j = j + 1
+    }
+  }
+  return(t)
 }
 
 

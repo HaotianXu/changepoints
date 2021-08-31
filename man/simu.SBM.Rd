@@ -2,12 +2,12 @@
 % Please edit documentation in R/network.R
 \name{simu.SBM}
 \alias{simu.SBM}
-\title{Simulate a Stochastic Block Model (without change point).}
+\title{Simulate a Stochastic Block Model (of symmetric type and without change point).}
 \usage{
 simu.SBM(connec_mat, can_vec, n, ...)
 }
 \arguments{
-\item{connec_mat}{A \code{integer} matrix representing the connectivity matrix (symmetric matrix with dimension being the number of blocks, and entries being 0 or 1).}
+\item{connec_mat}{A \code{numeric} symmetric matrix representing the connectivity matrix (entries in [0,1]).}
 
 \item{can_vec}{A \code{integer} p-dim vector representing the candidate vector.}
 
@@ -16,13 +16,14 @@ simu.SBM(connec_mat, can_vec, n, ...)
 \item{...}{Additional arguments.}
 }
 \value{
-A p^2-by-n matrix.
+A (p*(p-1)/2)-by-n matrix, with each column be the vectorized adjacency matrix.
 }
 \description{
-Simulate a Stochastic Block Model (without change point).
+Simulate a Stochastic Block Model (without change point). The data generated are lower diagonal as the matrices are symmetry and 0 on the diagonal.
 }
 \examples{
 TO DO
+
 }
 \author{
 

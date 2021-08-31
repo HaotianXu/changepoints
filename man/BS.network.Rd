@@ -7,9 +7,9 @@
 BS.network(data_mat1, data_mat2, s, e, delta, level = 0, ...)
 }
 \arguments{
-\item{data_mat1}{A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.}
+\item{data_mat1}{A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.}
 
-\item{data_mat2}{A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension (data_mat1 and data_mat2 are independent and have the same dimensions ).}
+\item{data_mat2}{A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).}
 
 \item{s}{A \code{integer} scalar of starting index.}
 
