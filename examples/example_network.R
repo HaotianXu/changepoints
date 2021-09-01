@@ -31,7 +31,7 @@ for(cc in 1:length(N_candidate)){
       if(i %% 2 == 0){
         tem_mat = A2
       }
-      con_mat_list[[i]] = rho * tem_mat # change connectivity matrix
+      con_mat_list[[i]] = rho * tem_mat # connectivity matrix
       data = cbind(data, simu.SBM(con_mat_list[[i]] , can_vec, n))
     }
     data_mat = data

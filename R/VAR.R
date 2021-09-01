@@ -290,7 +290,7 @@ error.test.VAR1 = function(lower, upper, X_futu, X_curr, transition.hat){
 #' @param lambda.set    A \code{numeric} vector of candidate tuning parameter for the lasso penalty.
 #' @param delta         A strictly \code{integer} scalar of minimum spacing.
 #' @param ...           Additional arguments.
-#' @return Row: lambda.set; column: lambda.set
+#' @return Row: lambda.set; column: gamma.set
 #' @export
 #' @author
 #' @examples
@@ -354,10 +354,11 @@ local.refine.CV.VAR1 = function(cpt.init, DATA, zeta_group_set, delta.local, w =
   KK = length(cpt.init)
   if(KK > 0){
     for(kk in 1:KK){
+      # find the zeta which gives the smallest testing error 
       zeta_temp = glasso.error.test(s = cpt_hat_train_ext[kk], e = cpt_hat_train_ext[kk+2], X_futu.train, X_curr.train, X_futu.test, X_curr.test, delta.local, zeta_group_set)
       s.inter = w*cpt_hat_train_ext[kk] + (1-w)*cpt_hat_train_ext[kk+1]
       e.inter = (1-w)*cpt_hat_train_ext[kk+1] + w*cpt_hat_train_ext[kk+2]
-      temp_estimate = find.one.change.grouplasso(s = ceiling(2*s.inter), e = floor(2*e.inter), X_futu, X_curr, delta.local, zeta.group = zeta_temp)
+      temp_estimate = find.one.change.grouplasso.VAR1(s = ceiling(2*s.inter), e = floor(2*e.inter), X_futu, X_curr, delta.local, zeta.group = zeta_temp)
       cpt_hat_train_ext[kk+1] = round(temp_estimate/2)
     }
   }
@@ -365,6 +366,7 @@ local.refine.CV.VAR1 = function(cpt.init, DATA, zeta_group_set, delta.local, w =
 }
 
 
+# return best zeta
 #' @noRd
 glasso.error.test = function(s, e, Y.train, X.train, Y.test, X.test, delta.local, zeta_group_set){
   p = nrow(Y.train)
@@ -372,7 +374,7 @@ glasso.error.test = function(s, e, Y.train, X.train, Y.test, X.test, delta.local
   estimate_temp = rep(0, len)
   test_error_temp = rep(0, len)
   for(ll in 1:len){
-    estimate_temp[ll] = find.one.change.grouplasso(s, e, Y.train, X.train, delta.local, zeta_group_set[ll])
+    estimate_temp[ll] = find.one.change.grouplasso.VAR1(s, e, Y.train, X.train, delta.local, zeta_group_set[ll])
     test_error_temp[ll] = sum(sapply(1:p, function(m)
                               test.res.glasso(estimate_temp[ll] - s + 2 , Y.train[m,s:e], X.train[,s:e],
                                               Y.test[m,s:e], X.test[,s:e], zeta_group_set[ll])))
@@ -380,9 +382,9 @@ glasso.error.test = function(s, e, Y.train, X.train, Y.test, X.test, delta.local
   return(zeta_group_set[which.min(test_error_temp)])
 }
 
-
+# return the best split location
 #' @noRd
-find.one.change.grouplasso = function(s, e, Y.train, X.train, delta.local, zeta.group){
+find.one.change.grouplasso.VAR1 = function(s, e, Y.train, X.train, delta.local, zeta.group){
   estimate = (s+e)/2
   if(e-s > 2*delta.local){
     can.vec = c((s+delta.local):(e-delta.local))

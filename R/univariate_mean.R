@@ -131,6 +131,38 @@ CV.search.DP.univar = function(y, gamma.set, delta, ...){
 }
 
 
+#' @title Local refinement for regression change points detection.
+#' @description     Perform local refinement for regression change points detection.
+#' @param cpt.init  An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
+#' @param y         A \code{numeric} vector of response variable.
+#' @param X         A \code{numeric} matrix of covariates.
+#' @param zeta      A \code{numeric} scalar of lasso penalty.
+#' @param w         A \code{numeric} scalar of weight for interpolation.
+#' @param ...       Additional arguments.
+#' @return  A \code{numeric} scalar of prediction error in l2 norm.
+#' @export
+#' @author 
+#' @examples
+#' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
+#' cpt.init = part2local(DP.regression(data$y, X = data$X, gamma = 2, lambda = 2, delta = 5)$partition)
+#' local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
+local.refine.univar = function(cpt.init, y, w = 1/3){
+  n = length(y)
+  cpt.init.ext = c(0, cpt.init, n)
+  cpt.init.numb = length(cpt.init)
+  cpt.refined = rep(0, cpt.init.numb+1)
+  for (k in 1:cpt.init.numb){
+    s = w*cpt.init.ext[k] + (1-w)*cpt.init.ext[k+1]
+    e = (1-w)*cpt.init.ext[k+1] + w*cpt.init.ext[k+2]
+    lower = ceiling(s) + 1
+    upper = floor(e) - 1
+    b = sapply(lower:upper, function(eta) sum((y[ceiling(s):eta] - mean(y[ceiling(s):eta]))^2) + sum((y[(eta+1):floor(e)] - mean(y[(eta+1):floor(e)]))^2))
+    cpt.refined[k+1] = ceiling(s) + which.min(b)
+  }
+  return(cpt.refined[-1])
+}
+
+
 #' @title Standard binary segmentation for univariate mean change points detection.
 #' @description     Perform standard binary segmentation for univariate mean change points detection
 #' @param y         A \code{numeric} vector of observations.

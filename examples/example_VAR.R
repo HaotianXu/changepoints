@@ -1,17 +1,17 @@
 rm(list = ls())
 
-set.seed(1)
+set.seed(123)
 
 #START define parameters
 rho_can = c(0.1, 0.4)#candidate of rho (rho can not be too large so that the time series is stable)
 ll = length(rho_can)
-RR = 5# 100 # number of repetition
-p = 2 # 20 # dimension
+RR = 3# 100 # number of repetition
+p = 20 # dimension
 sigma = 1 # standard deviation of error terms
-delta1 = 5 # 10
-delta.local = 5 # 10
+delta1 = 10 # 10
+delta.local = 10 # 10
 # construct true transition matrices
-n = 10#30
+n = 30
 v1 = 2*(seq(1,p,1)%%2) - 1
 v2 = -v1 
 AA = matrix(0, nrow = p, ncol = p-2)

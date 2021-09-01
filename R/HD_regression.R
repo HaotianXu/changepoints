@@ -163,7 +163,7 @@ local.refine.regression = function(cpt.init, y, X, zeta, w = 1/3){
     e = (1-w)*cpt.init.ext[k+1] + w*cpt.init.ext[k+2]
     lower = ceiling(s) + 1
     upper = floor(e) - 1
-    b = sapply(lower:upper, function(eta)obj.func.lr.regression(s, e, eta, y, X, zeta))
+    b = sapply(lower:upper, function(eta)obj.func.lr.regression(ceiling(s), floor(e), eta, y, X, zeta))
     cpt.refined[k+1] = ceiling(s) + which.min(b)
   }
   return(cpt.refined[-1])
@@ -181,17 +181,41 @@ obj.func.lr.regression = function(s.inter, e.inter, eta, y, X, zeta){
   n = ncol(X)
   p = nrow(X)
   group = rep(1:p, 2)
-  X.convert = X.glasso.converter.regression(X[,(ceiling(s.inter)):(floor(e.inter))], eta, ceiling(s.inter))
-  y.convert = y[(ceiling(s.inter)):(floor(e.inter))]
+  X.convert = X.glasso.converter.regression(X[,s.inter:e.inter], eta, s.inter)
+  y.convert = y[s.inter:e.inter]
   lambda.LR = zeta*sqrt(log(max(n, p)))
   auxfit = gglasso(x = X.convert, y = y.convert, group = group, loss="ls",
-                   lambda = lambda.LR/(floor(e.inter)-ceiling(s.inter)+1), intercept = FALSE, eps = 0.001)
+                   lambda = lambda.LR/(e.inter-s.inter+1), intercept = FALSE, eps = 0.001)
   coef = as.vector(auxfit$beta)
   coef1 = coef[1:p]
   coef2 = coef[(p+1):(2*p)]
-  btemp = norm(y.convert - X.convert %*% coef, type = "2")^2 + lambda.LR*sum(sqrt(coef1^2 + coef2^2))
+  btemp = norm(y.convert - X.convert %*% coef, type = "2")^2
   return(btemp)
 }
+
+
+# local.refine.CV.regression = function(cpt.init, y, X, zeta_group_set, delta.local, w = 1/3, ...){
+#   N = ncol(X)
+#   even_indexes = seq(2, N, 2)
+#   odd_indexes = seq(1, N, 2)
+#   train.X = X[,odd_indexes]
+#   train.y = y[odd_indexes]
+#   validation.X = X[,even_indexes]
+#   validation.y = y[even_indexes]
+#   cpt_hat_train_ext = c(1, round(cpt.init/2), floor(ncol(X_curr)/2))
+#   KK = length(cpt.init)
+#   if(KK > 0){
+#     for(kk in 1:KK){
+#       # find the zeta which gives the smallest testing error 
+#       zeta_temp = glasso.error.test(s = cpt_hat_train_ext[kk], e = cpt_hat_train_ext[kk+2], X_futu.train, X_curr.train, X_futu.test, X_curr.test, delta.local, zeta_group_set)
+#       s.inter = w*cpt_hat_train_ext[kk] + (1-w)*cpt_hat_train_ext[kk+1]
+#       e.inter = (1-w)*cpt_hat_train_ext[kk+1] + w*cpt_hat_train_ext[kk+2]
+#       temp_estimate = find.one.change.grouplasso(s = ceiling(2*s.inter), e = floor(2*e.inter), X_futu, X_curr, delta.local, zeta.group = zeta_temp)
+#       cpt_hat_train_ext[kk+1] = round(temp_estimate/2)
+#     }
+#   }
+#   return(2*cpt_hat_train_ext[-c(1, length(cpt_hat_train_ext))])
+# }
 
 
 #' @title Internal Function: Convert a p-by-n design submatrix X with partial consecutive observations into a n-by-(2p) matrix, which fits the group lasso, see eq(4) in [10]
