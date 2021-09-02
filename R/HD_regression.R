@@ -61,7 +61,7 @@ DP.regression = function(y, X, gamma, lambda, delta, ...){
 #'  \item ...         Additional parameters.
 #' }
 #' @export
-#' @author 
+#' @author Daren Wang
 #' @examples
 #' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 simu.change.regression = function(d0, cpt.true, p, n, sigma, kappa){

@@ -1,5 +1,5 @@
-#' @title Dynamic programming for univariate mean change points detection.
-#' @description     Perform dynamic programming for univariate mean change points detection through l0 penalty
+#' @title Dynamic programming for univariate mean changepoints detection.
+#' @description     Perform dynamic programming for univariate mean changepoints detection through l0 penalty
 #' @param y         A \code{numeric} vector of observations.
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
@@ -98,8 +98,8 @@ CV.DP.univar = function(y, gamma, delta, ...){
 }
 
 
-#' @title Grid search for cross-validation of dynamic programming for univariate mean change points detection.
-#' @description Perform grid search for Cross-Validation of Dynamic Programming for univariate mean change points detection through l0 penalty
+#' @title Grid search for dynamic programming to select the tuning parameter through Cross-Validation.
+#' @description Perform grid search for dynamic programming to select the tuning parameter through Cross-Validation.
 #' @param gamma.set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
 #' @param y             A \code{numeric} vector of observations.
 #' @param delta         A positive \code{integer} scalar of minimum spacing.
@@ -131,21 +131,18 @@ CV.search.DP.univar = function(y, gamma.set, delta, ...){
 }
 
 
-#' @title Local refinement for regression change points detection.
-#' @description     Perform local refinement for regression change points detection.
+#' @title Local refinement for univariate mean changepoint detection.
+#' @description     Perform local refinement for univariate mean changepoint detection.
 #' @param cpt.init  An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
-#' @param y         A \code{numeric} vector of response variable.
-#' @param X         A \code{numeric} matrix of covariates.
+#' @param y         A \code{numeric} vector of univariate time series.
 #' @param zeta      A \code{numeric} scalar of lasso penalty.
 #' @param w         A \code{numeric} scalar of weight for interpolation.
 #' @param ...       Additional arguments.
-#' @return  A \code{numeric} scalar of prediction error in l2 norm.
+#' @return  An \code{integer} vector of locally refined changepoint estimation.
 #' @export
 #' @author 
 #' @examples
-#' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-#' cpt.init = part2local(DP.regression(data$y, X = data$X, gamma = 2, lambda = 2, delta = 5)$partition)
-#' local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
+#' TO DO
 local.refine.univar = function(cpt.init, y, w = 1/3){
   n = length(y)
   cpt.init.ext = c(0, cpt.init, n)
@@ -164,7 +161,7 @@ local.refine.univar = function(cpt.init, y, w = 1/3){
 
 
 #' @title Standard binary segmentation for univariate mean change points detection.
-#' @description     Perform standard binary segmentation for univariate mean change points detection
+#' @description     Perform standard binary segmentation for univariate mean change points detection.
 #' @param y         A \code{numeric} vector of observations.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
@@ -216,8 +213,8 @@ BS.univar = function(y, s, e, delta = 2, level = 0, ...){
 }
 
 
-#' @title Wild binary segmentation for univariate mean change points detection.
-#' @description     Perform wild binary segmentation for univariate mean change points detection.
+#' @title Wild binary segmentation for univariate mean changepoint detection.
+#' @description     Perform wild binary segmentation for univariate mean changepoint detection.
 #' @param y         A \code{numeric} vector of observations.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.

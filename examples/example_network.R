@@ -32,7 +32,7 @@ for(cc in 1:length(N_candidate)){
         tem_mat = A2
       }
       con_mat_list[[i]] = rho * tem_mat # connectivity matrix
-      data = cbind(data, simu.SBM(con_mat_list[[i]] , can_vec, n))
+      data = cbind(data, simu.SBM(con_mat_list[[i]] , can_vec, n)$obs_mat)
     }
     data_mat = data
     #data splitting

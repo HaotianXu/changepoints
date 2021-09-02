@@ -1,10 +1,10 @@
 #' @title Simulate a Stochastic Block Model (of symmetric type and without change point).
 #' @description  Simulate a Stochastic Block Model (without change point). The data generated are lower diagonal as the matrices are symmetry and 0 on the diagonal.
 #' @param connec_mat  A \code{numeric} symmetric matrix representing the connectivity matrix (entries in [0,1]).
-#' @param can_vec     A \code{integer} p-dim vector representing the candidate vector.
+#' @param can_vec     A \code{integer} p-dim vector of node indices. Dividing can_vec into "block_num" of subvectors, and each subvector corresponding to a block.
 #' @param n           A \code{integer} scalar representing the number of observations.
 #' @param ...        Additional arguments.
-#' @return  A (p*(p-1)/2)-by-n matrix, with each column be the vectorized adjacency matrix.
+#' @return  A (p*(p-1)/2)-by-n matrix, with each column be the vectorized adjacency matrix. And a graphon matrix.
 #' @export
 #' @author 
 #' @examples
@@ -24,9 +24,10 @@ simu.SBM = function(connec_mat, can_vec, n, ...){
       SBM_mean_mat = SBM_mean_mat + connec_mat[i,j] * can_temp1 %*% t(can_temp2)
     }
   }
+  diag(SBM_mean_mat) = 0 # no self-loop
   SBM_mean_vec = SBM_mean_mat[lower.tri(SBM_mean_mat, diag = F)]
   obs_mat = t(sapply(SBM_mean_vec, function(x) rbinom(n, 1, x)))
-  return(obs_mat)
+  return(list(obs_mat = obs_mat, graphon_mat = SBM_mean_mat))
 }
 
 
