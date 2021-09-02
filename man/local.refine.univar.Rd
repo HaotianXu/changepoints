@@ -2,33 +2,29 @@
 % Please edit documentation in R/univariate_mean.R
 \name{local.refine.univar}
 \alias{local.refine.univar}
-\title{Local refinement for regression change points detection.}
+\title{Local refinement for univariate mean changepoint detection.}
 \usage{
 local.refine.univar(cpt.init, y, w = 1/3)
 }
 \arguments{
 \item{cpt.init}{An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
 
-\item{y}{A \code{numeric} vector of response variable.}
+\item{y}{A \code{numeric} vector of univariate time series.}
 
 \item{w}{A \code{numeric} scalar of weight for interpolation.}
-
-\item{X}{A \code{numeric} matrix of covariates.}
 
 \item{zeta}{A \code{numeric} scalar of lasso penalty.}
 
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{numeric} scalar of prediction error in l2 norm.
+An \code{integer} vector of locally refined changepoint estimation.
 }
 \description{
-Perform local refinement for regression change points detection.
+Perform local refinement for univariate mean changepoint detection.
 }
 \examples{
-data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-cpt.init = part2local(DP.regression(data$y, X = data$X, gamma = 2, lambda = 2, delta = 5)$partition)
-local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
+TO DO
 }
 \author{
 

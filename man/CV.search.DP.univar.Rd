@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean.R
 \name{CV.search.DP.univar}
 \alias{CV.search.DP.univar}
-\title{Grid search for cross-validation of dynamic programming for univariate mean change points detection.}
+\title{Grid search for dynamic programming to select the tuning parameter through Cross-Validation.}
 \usage{
 CV.search.DP.univar(y, gamma.set, delta, ...)
 }
@@ -25,7 +25,7 @@ A \code{list} with the structure:
 }
 }
 \description{
-Perform grid search for Cross-Validation of Dynamic Programming for univariate mean change points detection through l0 penalty
+Perform grid search for dynamic programming to select the tuning parameter through Cross-Validation.
 }
 \examples{
 y = rnorm(300) + c(rep(0,130),rep(1,20),rep(0,20),rep(1,130))

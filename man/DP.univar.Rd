@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean.R
 \name{DP.univar}
 \alias{DP.univar}
-\title{Dynamic programming for univariate mean change points detection.}
+\title{Dynamic programming for univariate mean changepoints detection.}
 \usage{
 DP.univar(y, gamma, delta, ...)
 }
@@ -23,7 +23,7 @@ A \code{list} with the structure:
 }
 }
 \description{
-Perform dynamic programming for univariate mean change points detection through l0 penalty
+Perform dynamic programming for univariate mean changepoints detection through l0 penalty
 }
 \examples{
 y = rnorm(300) + c(rep(0,130),rep(1,20),rep(0,20),rep(1,130))

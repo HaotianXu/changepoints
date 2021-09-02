@@ -29,7 +29,7 @@ A \code{list} with the structure:
 }
 }
 \description{
-Perform standard binary segmentation for univariate mean change points detection
+Perform standard binary segmentation for univariate mean change points detection.
 }
 \examples{
 y = c(rnorm(100, 0, 1), rnorm(100, 1, 1), rnorm(100, 0, 1))

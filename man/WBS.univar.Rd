@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean.R
 \name{WBS.univar}
 \alias{WBS.univar}
-\title{Wild binary segmentation for univariate mean change points detection.}
+\title{Wild binary segmentation for univariate mean changepoint detection.}
 \usage{
 WBS.univar(y, s, e, Alpha, Beta, delta = 2, level = 0)
 }
@@ -33,7 +33,7 @@ A \code{list} with the structure:
 }
 }
 \description{
-Perform wild binary segmentation for univariate mean change points detection.
+Perform wild binary segmentation for univariate mean changepoint detection.
 }
 \examples{
 y = c(rnorm(100, 0, 1), rnorm(100, 1, 1), rnorm(100, 0, 1))
