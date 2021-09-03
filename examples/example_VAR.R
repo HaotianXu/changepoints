@@ -1,5 +1,3 @@
-rm(list = ls())
-
 set.seed(123)
 
 #START define parameters
@@ -55,7 +53,7 @@ for(candidate in 1:ll){
     gamma_set = seq(1, 50,2) 
     #START: CV for DP
     start.time <- Sys.time()
-    dp_result = CV.search.DP.VAR1(data, lambda_lasso_set, gamma_set, delta1)
+    dp_result = CV.search.DP.VAR1(data, gamma_set, lambda_lasso_set, delta1)
     end.time <- Sys.time(); time.taken <- end.time - start.time; print(time.taken)
     min_idx = as.vector(arrayInd(which.min(dp_result$test_error), dim(dp_result$test_error)))
     X_curr = data[,1:(N-1)]

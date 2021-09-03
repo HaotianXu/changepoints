@@ -13,6 +13,7 @@ Description: TO COMPLETE
 Depends:
     R (>= 3.5.0),
     gglasso,
+    grplasso,
     glmnet,
     penalized,
     ks,
@@ -20,6 +21,8 @@ Depends:
 Imports:
     Rcpp, 
     RcppArmadillo
+Suggests:
+    abind
 LinkingTo: Rcpp, RcppArmadillo
 License: AGPL-3
 RoxygenNote: 7.1.1
