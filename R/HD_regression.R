@@ -26,7 +26,11 @@ DP.regression = function(y, X, gamma, lambda, delta, ...){
   for(r in 1:N){
     bestvalue[r+1] = Inf
     for(l in 1:r){
-      b = bestvalue[l] + gamma*log(max(N,p)) + error.pred.seg.regression(l, r, y, X, lambda, delta)$MSE
+      if(r - l > 2*delta){
+        b = bestvalue[l] + gamma*log(max(N,p)) + error.pred.seg.regression(l, r, y, X, lambda, delta)$MSE
+      }else{
+        b = Inf
+      }
       if(b < bestvalue[r+1]){
         bestvalue[r+1] = b
         partition[r] = l-1
@@ -122,18 +126,18 @@ error.pred.seg.regression = function(s, e, y, X, lambda, delta){
   if(e > n | s > e | s < 1){
     stop("s and e are not correctly specified.")
   }
-  if (e-s > delta){
+  if (e-s > 2*delta){
     fit = glmnet(x = t(X[,s:e]), y = y[s:e], family = c("gaussian"),
                  alpha = 1, lambda = lambda*sqrt(max(log(max(n,p)), e-s))*sqrt(log(max(n,p)))/(e-s),intercept=F)
     coef_est = as.vector(fit$beta)
     yhat = t(X[,s:e])%*%coef_est
-    d = norm(y[s:e] - yhat, type = "2")
+    d = sum((y[s:e] - yhat)^2)
   }
   else{
     coef_est = NA
     d = Inf
   }
-  result = list(MSE = d^2, beta.hat = coef_est)
+  result = list(MSE = d, beta.hat = coef_est)
   return(result)
 }
 
