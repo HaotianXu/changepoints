@@ -207,7 +207,7 @@ online.network = function(data_mat1, data_mat2, b_vec, tau1_mat, tau2_mat, c, al
       s_j = t - 2^j
       B_tilde_vec = as.vector(USVT(matrix(CUSUM.vec(data_mat2, 0, s_j, t), p, p), tau1_mat[s_j, t], tau2_mat[s_j, t]))
       B_tilde_norm = sqrt(sum(B_tilde_vec^2))
-      FLAG = (sum(CUSUM.vec(data_mat2, 0, s_j, t) * B_tilde_vec)/B_tilde_norm > b_vec[t-1]) * (B_tilde_norm > c*sqrt(log(t/alpha))) 
+      FLAG = (sum(CUSUM.vec(data_mat1, 0, s_j, t) * B_tilde_vec)/B_tilde_norm > b_vec[t-1]) * (B_tilde_norm > c*sqrt(log(t/alpha))) 
       j = j + 1
     }
   }
@@ -227,7 +227,7 @@ online.network.variant = function(data_mat1, data_mat2, b_vec, tau1_mat, tau2_ma
       s_j = t - 2^j
       B_tilde_vec = as.vector(USVT(matrix(CUSUM.vec(data_mat2, 0, s_j, t), p, p), tau1_mat[s_j, t], tau2_mat[s_j, t]))
       B_tilde_norm = sqrt(sum(B_tilde_vec^2))
-      FLAG = (sum(CUSUM.vec(data_mat2, 0, s_j, t) * B_tilde_vec)/B_tilde_norm > b_vec[t-1]) * (B_tilde_norm > c*sqrt(log(gamma))) 
+      FLAG = (sum(CUSUM.vec(data_mat1, 0, s_j, t) * B_tilde_vec)/B_tilde_norm > b_vec[t-1]) * (B_tilde_norm > c*sqrt(log(gamma))) 
       j = j + 1
     }
   }
