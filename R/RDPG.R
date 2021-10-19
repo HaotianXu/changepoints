@@ -88,7 +88,6 @@ simu.RDPG.SBM = function(P_mat, rho, n, symm = TRUE, self = FALSE, Azero_mat = N
   return(obs_array)
 }
 
-
 # data1_array = simu.RDPG.SBM(P_mat, rho, n, symm = TRUE, self = FALSE, Azero_mat = NULL)
 # data2_array = simu.RDPG.SBM(Q_mat, rho, n, symm = TRUE, self = FALSE, Azero_mat = data1_array[,,n])
 # data3_array = simu.RDPG.SBM(P_mat, rho, n, symm = TRUE, self = FALSE, Azero_mat = data2_array[,,n])
@@ -98,6 +97,32 @@ simu.RDPG.SBM = function(P_mat, rho, n, symm = TRUE, self = FALSE, Azero_mat = N
 # data[,t] = as.vector(A)
 # temp = svd(A)
 # xhat[t,,] =  temp$u[,1:d] %*%  diag( sqrt(temp$d[1:d]) ) 
+
+
+
+#
+p = 100 # number of nodes
+lat_dim_num = 5
+x_mat = matrix(runif(p*lat_dim_num), nrow = p, ncol = lat_dim_num)
+x_tilde_mat = matrix(runif(p*lat_dim_num), nrow = p, ncol = lat_dim_num)
+
+
+x_l2_vec = apply(x_mat, 1, function(x) (sum(x^2))^(1/2))
+x_l2prod_mat = x_l2_vec %*% t(x_l2_vec)
+x_cross_mat = x_mat %*% t(x_mat)
+ratio_x_mat = x_cross_mat/x_l2prod_mat
+diag(ratio_x_mat) = 1
+
+y_mat = rbind(x_tilde_mat[1:floor(p/4),], x_mat[(floor(p/4)+1):p,])
+y_l2_vec = apply(y_mat, 1, function(x) (sum(x^2))^(1/2))
+y_l2prod_mat = y_l2_vec %*% t(y_l2_vec)
+y_cross_mat = y_mat %*% t(y_mat)
+ratio_y_mat = y_cross_mat/y_l2prod_mat
+diag(ratio_y_mat) = 1
+
+A1_mat = matrix(rbinom(matrix(1,p,p), matrix(1,p,p), ratio_x_mat), p, p)
+A2_mat = matrix(rbinom(matrix(1,p,p), matrix(1,p,p), ratio_y_mat), p, p)
+
 
 
 #scaled PCA
