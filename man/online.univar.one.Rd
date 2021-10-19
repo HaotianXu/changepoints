@@ -20,6 +20,10 @@ online.univar.one(
 
 \item{train_vec}{A \code{numeric} vector of training data from a pre-change distribution, which is only needed to when b_t is NULL in order to calibrate b_t.}
 
+\item{alpha}{A \code{numeric} scalar of desired false alarm rate.}
+
+\item{permu_num}{An \code{integer} scalar of number of random permutation for calibration.}
+
 \item{...}{Additional arguments.}
 }
 \value{

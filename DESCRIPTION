@@ -1,6 +1,6 @@
 Package: changepoints
 Type: Package
-Title: What the Package Does in One 'Title Case' Line
+Title: A collections of change-point detection methods
 Version: 1.0
 Date: 2021-07-27
 Author:
