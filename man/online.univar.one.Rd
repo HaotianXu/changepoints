@@ -4,12 +4,21 @@
 \alias{online.univar.one}
 \title{Online change point detection via CUSUM (single change point).}
 \usage{
-online.univar.one(y_vec, tau_vec, ...)
+online.univar.one(
+  y_vec,
+  b_vec,
+  train_vec = NULL,
+  alpha = 0.05,
+  permu_num = 100,
+  ...
+)
 }
 \arguments{
 \item{y_vec}{A \code{numeric} vector of observations.}
 
-\item{tau_vec}{A \code{numeric} vector of thresholds at time t>= 2.}
+\item{b_vec}{A \code{numeric} vector of thresholds b_t with t >= 2.}
+
+\item{train_vec}{A \code{numeric} vector of training data from a pre-change distribution, which is only needed to when b_t is NULL in order to calibrate b_t.}
 
 \item{...}{Additional arguments.}
 }
