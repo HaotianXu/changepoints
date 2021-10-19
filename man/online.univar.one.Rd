@@ -6,7 +6,7 @@
 \usage{
 online.univar.one(
   y_vec,
-  b_vec,
+  b_vec = NULL,
   train_vec = NULL,
   alpha = 0.05,
   permu_num = 100,

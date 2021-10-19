@@ -9,12 +9,15 @@
 #' @author Haotian Xu
 #' @examples
 #' TO DO
-online.univar.one = function(y_vec, b_vec, train_vec = NULL, alpha = 0.05, permu_num = 100, ...){
+online.univar.one = function(y_vec, b_vec = NULL, train_vec = NULL, alpha = 0.05, permu_num = 100, ...){
   if(!is.null(b_vec)){
     if(length(y_vec) - length(b_vec) != 1){
       stop("b_vec should be the vector of thresholds b_t with t >= 2.")
     }
   }else{
+    if(is.null(train_vec)){
+      stop("Given b_vec is missing, train_vec should be provided to calibrate b_vec.")
+    }
     obs_train = length(train_vec)
     obs_data = length(y_vec)
     if(obs_train > obs_data){
@@ -42,7 +45,7 @@ online.univar.one = function(y_vec, b_vec, train_vec = NULL, alpha = 0.05, permu
     cusum_vec = sapply(1:(t-1), function(s) sqrt((t-s)*s/t) * abs(mean(y_vec[1:s]) - mean(y_vec[(s+1):t])))
     FLAG = 1 - prod(cusum_vec <= b_vec[t-1])
   }
-  return(t)
+  return(list(cpt_hat = t, b_vec = b_vec))
 }
 
 

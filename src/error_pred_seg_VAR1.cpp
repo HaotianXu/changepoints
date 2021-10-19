@@ -5,7 +5,7 @@
 
 // [[Rcpp::export]]
 double rcpp_error_pred_seg_VAR1(const arma::mat& X_futu, const arma::mat& X_curr, int s, int e, double alpha, double lambda, int delta){
-  arma::uword p = X_curr.n_rows;
+  int p = X_curr.n_rows;
   arma::sp_mat tran_hat;
   arma::mat X;
   arma::vec y;

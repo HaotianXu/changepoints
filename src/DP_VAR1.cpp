@@ -6,7 +6,7 @@
 
 // [[Rcpp::export]]
 Rcpp::List rcpp_DP_VAR1(const arma::mat& X_futu, const arma::mat& X_curr, double alpha, double gamma, double lambda, int delta){
-  arma::uword n = X_curr.n_cols;
+  int n = X_curr.n_cols;
   double b = 0;
   double dist = 0;
   arma::vec bestvalue = arma::zeros<arma::vec>(n+1);

@@ -25,5 +25,5 @@ Suggests:
     abind
 LinkingTo: Rcpp, RcppArmadillo
 License: AGPL-3
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Encoding: UTF-8
