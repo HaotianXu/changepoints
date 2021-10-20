@@ -2,14 +2,15 @@
 % Please edit documentation in R/univariate_mean_online.R
 \name{online.univar.one}
 \alias{online.univar.one}
-\title{Online change point detection via CUSUM (single change point).}
+\title{Online change point detection with controlled false alarm rate or average run length.}
 \usage{
 online.univar.one(
   y_vec,
   b_vec = NULL,
   train_vec = NULL,
-  alpha = 0.05,
-  permu_num = 100,
+  alpha = NULL,
+  gamma = NULL,
+  permu_num = NULL,
   ...
 )
 }
@@ -22,18 +23,33 @@ online.univar.one(
 
 \item{alpha}{A \code{numeric} scalar of desired false alarm rate.}
 
+\item{gamma}{An \code{integer} scalar of desired average run length.}
+
 \item{permu_num}{An \code{integer} scalar of number of random permutation for calibration.}
 
 \item{...}{Additional arguments.}
 }
 \value{
-An \code{integer} scalar of estimated change point location.
+A \code{list} with the structure:
+\itemize{
+ \item cpt_hat:     An \code{integer} scalar of estimated change point location.
+ \item b_vec:       A \code{numeric} vector of thresholds b_t with t >= 2.
+}
+
+
 }
 \description{
-Perform online change point detection via CUSUM (single change point).
+Perform online change point detection with controlled false alarm rate or average run length.
 }
 \examples{
-TO DO
+y_vec = rnorm(300) + c(rep(0, 150), rep(1, 150))
+train_vec = rnorm(200)
+temp1 = online.univar.one(y_vec = y_vec, train_vec = train_vec, alpha = 0.05, permu_num = 100)
+temp1$cpt_hat
+temp1$b_vec
+temp2 = online.univar.one(y_vec = y_vec, train_vec = train_vec, gamma = 300, permu_num = 100)
+temp2$cpt_hat
+temp2$b_vec
 }
 \author{
 Haotian Xu
