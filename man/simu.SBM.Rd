@@ -2,28 +2,43 @@
 % Please edit documentation in R/network.R
 \name{simu.SBM}
 \alias{simu.SBM}
-\title{Simulate a Stochastic Block Model (of symmetric type and without change point).}
+\title{Simulate a Stochastic Block Model (without change point).}
 \usage{
-simu.SBM(connec_mat, can_vec, n, ...)
+simu.SBM(connec_mat, can_vec, n, symm = FALSE, self = TRUE, ...)
 }
 \arguments{
-\item{connec_mat}{A \code{numeric} symmetric matrix representing the connectivity matrix (entries in [0,1]).}
+\item{connec_mat}{A \code{numeric} symmetric matrix representing the connectivity matrix (each entry takes value in [0,1]).}
 
-\item{can_vec}{A \code{integer} p-dim vector of node indices. Dividing can_vec into "block_num" of subvectors, and each subvector corresponding to a block.}
+\item{can_vec}{A \code{integer} p-dim vector of node indices. can_vec is then divided into subvectors corresponding to blocks.}
 
 \item{n}{A \code{integer} scalar representing the number of observations.}
+
+\item{symm}{A \code{logic} scalar indicating if adjacency matrices are required to be symmetric.}
+
+\item{self}{A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.}
 
 \item{...}{Additional arguments.}
 }
 \value{
-A (p*(p-1)/2)-by-n matrix, with each column be the vectorized adjacency matrix. And a graphon matrix.
+A \code{list} with the structure:
+\itemize{
+ \item obs_mat:       A matrix, with each column be the vectorized adjacency (sub)matrix.
+ \item graphon_mat:   Underlying graphon matrix.
+}
 }
 \description{
-Simulate a Stochastic Block Model (without change point). The data generated are lower diagonal as the matrices are symmetry and 0 on the diagonal.
+Simulate a Stochastic Block Model (without change point). The generated data is a matrix with each column corresponding to the vectorized adjacency (sub)matrix at a time point. For example, if the network matrix is required to be symmetric and without self-loop, only the strictly lower diagonal entries are considered.
 }
 \examples{
-TO DO
-
+d = 100 # number of nodes
+rho = 0.5 # sparsity parameter
+block_num = 3 # number of groups for SBM
+n = 150 # sample size for each segment
+conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) # connectivity matrix for the first and the third segments
+conn2_mat = rho * matrix(c(0.6,0.5,0.6,0.5,0.6,1,0.6,1,0.6), nrow = 3) # connectivity matrix for the second segment
+set.seed(1)
+can_vec = sample(1:d, replace = F) # randomly assign nodes into groups
+sbm = simu.SBM(conn1_mat, can_vec, train_obs_num, symm = TRUE, self = TRUE)
 }
 \author{
 
