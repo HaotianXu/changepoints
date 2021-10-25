@@ -11,7 +11,5 @@ output: html_document
   + univariate_polynomial: gamma of l0 for DP
   + SEPP: gamma of l0 and lambda of lasso for DP
   + HD_covariance: threshold parameter for BS.cov and WBSIP.cov
-  + univariate_mean_online: threshold parameters tau_vec for several online algorithms
   + network: tuning parameters
 
-2. nonparametric random dot product graphs
