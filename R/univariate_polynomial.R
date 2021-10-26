@@ -65,6 +65,83 @@ DP.poly <- function(y, r, gamma, delta, ...) {
 # }
 
 
+#' @title Internal function: Cross-Validation of Dynamic Programming algorithm for univariate polynomials change points detection.
+#' @description     Perform cross-validation by sample splitting. Using the sample with odd indices as training data to estimate the changepoints, then computing sample estimation for each segment within two consecutive changepoints, and computing the validation error based on the sample with even indices.
+#' @param y         A \code{numeric} vector of observations.
+#' @param r         An \code{integer} scalar order of polynomials.
+#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
+#' @param delta     A positive \code{integer} scalar of minimum spacing.
+#' @param ...       Additional arguments.
+#' @return  A \code{list} with the structure:
+#' \itemize{
+#'  \item{cpt_hat}: A vector of estimated change points locations (sorted in strictly increasing order).
+#'  \item{K_hat}: A scalar of number of estimated change points.
+#'  \item{test_error}: A vector of testing errors.
+#'  \item{train_error}: A vector of training errors.
+#' } 
+#' @noRd
+CV.DP.poly = function(y, r, gamma, delta, ...){
+  N = length(y)
+  even_indexes = seq(2, N, 2)
+  odd_indexes = seq(1, N, 2)
+  train.y = y[odd_indexes]
+  validation.y = y[even_indexes]
+  temp = DP.poly(train.y, r, gamma, delta)
+  init_cpt_train = part2local(temp$partition)
+  y_hat_train = temp$yhat
+  init_cpt_train.long = c(0, init_cpt_train, length(train.y))
+  diff.point = diff(init_cpt_train.long)
+  if (length(which(diff.point == 1)) > 0){
+    print(paste("gamma =", gamma, ".", "Warning: Consecutive points detected. Try a larger gamma."))
+    init_cpt = odd_indexes[init_cpt_train]
+    len = length(init_cpt)
+    result = list(cpt_hat = init_cpt, K_hat = len, test_error = Inf, train_error = Inf)
+  }
+  else{
+    init_cpt = odd_indexes[init_cpt_train]
+    len = length(init_cpt)
+    train_error = norm(train.y - y_hat_train, type = "2")
+    test_error = norm(validation.y - y_hat_train[1:length(validation.y)], type = "2")
+    result = list(cpt_hat = init_cpt, K_hat = len, test_error, train_error)
+  }
+  return(result)
+}
+
+
+#' @title Grid search for dynamic programming to select the tuning parameter through Cross-Validation.
+#' @description Perform grid search for dynamic programming to select the tuning parameter through Cross-Validation.
+#' @param gamma.set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
+#' @param y             A \code{numeric} vector of observations.
+#' @param r             An \code{integer} scalar order of polynomials.
+#' @param delta         A positive \code{integer} scalar of minimum spacing.
+#' @param ...           Additional arguments.
+#' @return  A \code{list} with the structure:
+#' \itemize{
+#'  \item{cpt_hat}: A list of vector of estimated change points locations (sorted in strictly increasing order).
+#'  \item{K_hat}: A list of scalar of number of estimated change points.
+#'  \item{test_error}: A list of vector of testing errors.
+#'  \item{train_error}: A list of vector of training errors.
+#' } 
+#' @export
+#' @author  Daren Wang and Haotian Xu
+#' @examples
+#' y = rnorm(300) + c(rep(0,130),rep(1,20),rep(0,20),rep(1,130))
+#' gamma.set = 3:9
+#' DP_result = CV.search.DP.univar(y, gamma.set, delta = 5)
+#' min_idx = which.min(DP_result$test_error)
+#' part2local(DP.univar(y, gamma.set[min_idx], delta = 5)$partition)
+CV.search.DP.poly = function(y, r, gamma.set, delta, ...){
+  output = sapply(1:length(gamma.set), function(j) CV.DP.poly(y, r, gamma.set[j], delta))
+  print(output)
+  cpt_hat = output[1,]## estimated change points
+  K_hat = output[2,]## number of estimated change points
+  test_error = output[3,]## validation loss
+  train_error = output[4,]## training loss                                                      
+  result = list(cpt_hat = cpt_hat, K_hat = K_hat, test_error = test_error, train_error = train_error)
+  return(result)
+}
+
+
 
 #' @export
 local.refine.poly = function(cpt.init, y, w = 1/2){

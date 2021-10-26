@@ -17,7 +17,7 @@ CUSUM.cov = function(X, s, e, t){
 
 
 #' @title Binary Segmentation for covariance change points detection through Operator Norm.
-#' @description Perform binary Segmentation for covariance change points detection through Operator Norm.
+#' @description Perform binary segmentation for covariance change points detection through Operator Norm.
 #' @param X         A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
@@ -101,6 +101,7 @@ PC.cov = function(X, Alpha, Beta){
 #' @title Wild binary segmentation for covariance change points detection through Independent Projection.
 #' @description  Perform wild binary segmentation for covariance change points detection through Independent Projection
 #' @param X         A \code{numeric} vector of observations.
+#' @param X_prime   A \code{numeric} vector of observations which are independent copy of X.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
 #' @param Alpha     A \code{integer} vector of starting indices of random intervals.

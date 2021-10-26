@@ -7,7 +7,6 @@ output: html_document
 
 1. Selecting tuning parameters
   + HD_regression: zeta of group lasso for local refinement
-  + univariate_polynomial: gamma of l0 for DP
   + SEPP: gamma of l0 and lambda of lasso for DP
   + HD_covariance: threshold parameter for BS.cov and WBSIP.cov
   + network: tuning parameters

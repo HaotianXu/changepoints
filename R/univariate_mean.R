@@ -50,7 +50,7 @@ DP.univar <- function(y, gamma, delta, ...) {
 
 
 #' @title Internal function: Cross-Validation of Dynamic Programming algorithm for univariate mean change points detection.
-#' @description     Perform cross-validation for Dynamic Programming algorithm for univariate mean change points detection through l0 penalty.
+#' @description     Perform cross-validation by sample splitting. Using the sample with odd indices as training data to estimate the changepoints, then computing sample mean for each segment within two consecutive changepoints, and computing the validation error based on the sample with even indices.
 #' @param y         A \code{numeric} vector of observations.
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
@@ -377,7 +377,8 @@ BS.univar.CPD = function(y, delta){
 
 
 
-#' @title sSIC
+#' @title Strengthened Schwarz information criterion (sSIC)
+#' @references Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection,  Ann. Statist. 42(6): 2243-2281 (December 2014). DOI: 10.1214/14-AOS1245
 #' @noRd
 sSIC.obj = function(y, S){
   K = length(S)

@@ -9,6 +9,8 @@ WBSIP.cov(X, X_prime, s, e, Alpha, Beta, delta, level = 0)
 \arguments{
 \item{X}{A \code{numeric} vector of observations.}
 
+\item{X_prime}{A \code{numeric} vector of observations which are independent copy of X.}
+
 \item{s}{A \code{integer} scalar of starting index.}
 
 \item{e}{A \code{integer} scalar of ending index.}

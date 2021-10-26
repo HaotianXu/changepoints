@@ -24,7 +24,7 @@ A \code{numeric} vector of estimated changepoint locations.
 Perform Univariate mean change point detection based on standard binary segmentation. The threshold parameter tau for BS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
 }
 \examples{
-y = c(rnorm(100, 0, 1), rnorm(100, 1, 1), rnorm(100, 0, 1))
+y = c(rnorm(100, 0, 1), rnorm(100, 2, 1), rnorm(100, 0, 1))
 temp = BS.univar.CPD(y, delta = 5)
 plot.ts(y)
 points(x = temp, y = y[temp], col = "red")

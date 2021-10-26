@@ -27,7 +27,7 @@ A \code{list} with the structure:
 }
 }
 \description{
-Perform binary Segmentation for covariance change points detection through Operator Norm.
+Perform binary segmentation for covariance change points detection through Operator Norm.
 }
 \examples{
 p = 10
