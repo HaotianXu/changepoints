@@ -291,4 +291,105 @@ WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){
 }
 
 
+#' @title Univariate mean change point detection based on wild binary segmentation with tuning parameter selected by sSIC.
+#' @description Perform Univariate mean change point detection based on wild binary segmentation. The threshold parameter tau for WBS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
+#' @param y         A \code{numeric} vector of observations.
+#' @param Alpha     A \code{integer} vector of starting indices of random intervals.
+#' @param Beta      A \code{integer} vector of ending indices of random intervals.
+#' @param delta     A positive \code{integer} scalar of minimum spacing.
+#' @param ...      Additional arguments.
+#' @return  A \code{numeric} vector of estimated changepoint locations.
+#' @export
+#' @author Haotian Xu
+#' @references Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection,  Ann. Statist. 42(6): 2243-2281 (December 2014). DOI: 10.1214/14-AOS1245
+#' @examples
+#' y = c(rnorm(100, 0, 1), rnorm(100, 1, 1), rnorm(100, 0, 1))
+#' intervals = WBS.intervals(M = 500, lower = 1, upper = length(y))
+#' temp = WBS.univar.CPD(y, intervals$Alpha, intervals$Beta, delta = 5)
+#' plot.ts(y)
+#' points(x = temp, y = y[temp], col = "red")
+#' 
+WBS.univar.CPD = function(y, Alpha, Beta, delta){
+  obs_num = length(y)
+  temp1 = WBS.univar(y, s = 1, e = obs_num, Alpha, Beta, delta)
+  Dval = temp1$Dval
+  aux = sort(Dval, decreasing = TRUE)
+  tau_grid = rev(aux[1:100]-10^{-4})
+  tau_grid = tau_grid[which(is.na(tau_grid)==FALSE)]
+  tau_grid = c(tau_grid,10)
+  S = c()
+  for(j in 1:length(tau_grid)){
+    aux = threshold.BS(temp1, tau_grid[j])$change_points[,1]
+    if(length(aux) == 0)
+      break;
+    S[[j]] = sort(aux)
+  }
+  S = unique(S)
+  score = rep(0, length(S))
+  for(j in 1:length(S)){
+    score[j] = sSIC.obj(y, S[[j]])
+  }
+  best_ind = which.min(score)
+  return(S[[best_ind]])
+}
+
+
+#' @title Univariate mean change point detection based on standard binary segmentation with tuning parameter selected by sSIC.
+#' @description Perform Univariate mean change point detection based on standard binary segmentation. The threshold parameter tau for BS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
+#' @param y         A \code{numeric} vector of observations.
+#' @param Alpha     A \code{integer} vector of starting indices of random intervals.
+#' @param Beta      A \code{integer} vector of ending indices of random intervals.
+#' @param delta     A positive \code{integer} scalar of minimum spacing.
+#' @param ...      Additional arguments.
+#' @return  A \code{numeric} vector of estimated changepoint locations.
+#' @export
+#' @author Haotian Xu
+#' @references Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection,  Ann. Statist. 42(6): 2243-2281 (December 2014). DOI: 10.1214/14-AOS1245
+#' @examples
+#' y = c(rnorm(100, 0, 1), rnorm(100, 2, 1), rnorm(100, 0, 1))
+#' temp = BS.univar.CPD(y, delta = 5)
+#' plot.ts(y)
+#' points(x = temp, y = y[temp], col = "red")
+#' 
+BS.univar.CPD = function(y, delta){
+  obs_num = length(y)
+  temp1 = BS.univar(y, s = 1, e = obs_num, delta)
+  Dval = temp1$Dval
+  aux = sort(Dval, decreasing = TRUE)
+  tau_grid = rev(aux[1:100]-10^{-4})
+  tau_grid = tau_grid[which(is.na(tau_grid)==FALSE)]
+  tau_grid = c(tau_grid,10)
+  S = c()
+  for(j in 1:length(tau_grid)){
+    aux = threshold.BS(temp1, tau_grid[j])$change_points[,1]
+    if(length(aux) == 0)
+      break;
+    S[[j]] = sort(aux)
+  }
+  S = unique(S)
+  score = rep(0, length(S))
+  for(j in 1:length(S)){
+    score[j] = sSIC.obj(y, S[[j]])
+  }
+  best_ind = which.min(score)
+  return(S[[best_ind]])
+}
+
+
+
+#' @title sSIC
+#' @noRd
+sSIC.obj = function(y, S){
+  K = length(S)
+  obs_num = length(y)
+  S_ext = c(0, S, obs_num)
+  f_hat = NULL
+  for(i in 1:(K+1)){
+    f_hat = c(f_hat, rep(mean(y[(S_ext[i]+1):S_ext[i+1]]), S_ext[i+1]-S_ext[i]))
+  }
+  sigma_hat = sum((y - f_hat)^2)/obs_num
+  ssic = obs_num/2*log(sigma_hat) + K*(log(obs_num))^(1.01)
+  return(ssic)
+}
+
 

@@ -23,7 +23,7 @@ NonPar.RDPG.CPD(data_mat, d, Alpha, Beta, delta)
 A \code{numeric} vector of estimated changepoint locations.
 }
 \description{
-Perform Change point detection for dependent dynamic random dot product graph models.
+Perform Change point detection for dependent dynamic random dot product graph models. The tuning parameter tau for WBS is automatically selected based on the BIC-type scores defined in Equation (2.4) in Zou et al. (2014).
 }
 \examples{
 ### generate data 
@@ -88,6 +88,9 @@ for(t in 1:obs_num){
 intervals = WBS.intervals(M = M, lower = 1, upper = obs_num)
 cpt_hat = NonPar.RDPG.CPD(data_mat, d, Alpha = intervals$Alpha, Beta = intervals$Beta, delta)
 
+}
+\references{
+Zou et al. (2014), Nonparametric maximum likelihood approach to multiple change-point problems,  Ann. Statist. 42(3): 970-1002 (June 2014). DOI: 10.1214/14-AOS1210
 }
 \author{
 Oscar Hernan Madrid Padilla, Haotian Xu

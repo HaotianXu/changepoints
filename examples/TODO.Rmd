@@ -6,7 +6,6 @@ output: html_document
 ---
 
 1. Selecting tuning parameters
-  + univariate_mean: threshold parameter for BS and WBS 
   + HD_regression: zeta of group lasso for local refinement
   + univariate_polynomial: gamma of l0 for DP
   + SEPP: gamma of l0 and lambda of lasso for DP
