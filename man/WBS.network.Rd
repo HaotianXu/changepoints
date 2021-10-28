@@ -38,7 +38,26 @@ A \code{list} with the structure:
 Perform wild binary segmentation for network change points detection.
 }
 \examples{
-y = c(rnorm(100, 0, 1), rnorm(100, 10, 10), rnorm(100, 40, 10))
+p = 100 # number of nodes
+rho = 0.5 # sparsity parameter
+block_num = 3 # number of groups for SBM
+n = 150 # sample size for each segment
+conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) # connectivity matrix for the first and the third segments
+conn2_mat = rho * matrix(c(0.6,0.5,0.6,0.5,0.6,1,0.6,1,0.6), nrow = 3) # connectivity matrix for the second segment
+set.seed(1)
+can_vec = sample(1:p, replace = F) # randomly assign nodes into groups
+sbm1 = simu.SBM(conn1_mat, can_vec, n, symm = TRUE, self = TRUE)
+sbm2 = simu.SBM(conn2_mat, can_vec, n, symm = TRUE, self = TRUE)
+data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
+data_mat1 = data_mat[,seq(1,ncol(data_mat),2)]
+data_mat2 = data_mat[,seq(2,ncol(data_mat),2)]
+M = 120
+intervals = WBS.intervals(M = M, lower = 1, upper = ncol(data_mat1))
+temp = WBS.network(data_mat1, data_mat2, 1, ncol(data_mat1), intervals$Alpha, intervals$Beta, delta = 5)
+rho_hat = quantile(rowMeans(data_mat), 0.95)
+tau = p*rho_hat*(log(n))^2/20 # default threshould given in the paper
+cpt_init = unlist(threshold.BS(temp, tau)$change_points[1])
+local.refine.network(cpt_init, data_mat1, data_mat2, self = FALSE, tau2 = p*rho_hat/3, tau3 = Inf)
 }
 \references{
 Wang D, Yu Y, Rinaldo A. Optimal change point detection and localization in sparse dynamic networks. The Annals of Statistics. 2021 Feb;49(1):203-32.

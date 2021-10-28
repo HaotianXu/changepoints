@@ -14,15 +14,17 @@
 #' @export
 #' @author 
 #' @examples
-#' d = 100 # number of nodes
+#' p = 100 # number of nodes
 #' rho = 0.5 # sparsity parameter
 #' block_num = 3 # number of groups for SBM
 #' n = 150 # sample size for each segment
 #' conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) # connectivity matrix for the first and the third segments
 #' conn2_mat = rho * matrix(c(0.6,0.5,0.6,0.5,0.6,1,0.6,1,0.6), nrow = 3) # connectivity matrix for the second segment
 #' set.seed(1)
-#' can_vec = sample(1:d, replace = F) # randomly assign nodes into groups
-#' sbm = simu.SBM(conn1_mat, can_vec, train_obs_num, symm = TRUE, self = TRUE)
+#' can_vec = sample(1:p, replace = F) # randomly assign nodes into groups
+#' sbm1 = simu.SBM(conn1_mat, can_vec, n, symm = TRUE, self = TRUE)
+#' sbm2 = simu.SBM(conn2_mat, can_vec, n, symm = TRUE, self = TRUE)
+#' data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
 simu.SBM = function(connec_mat, can_vec, n, symm = FALSE, self = TRUE, ...){
   block_num = dim(connec_mat)[1]
   p = length(can_vec)
@@ -110,7 +112,28 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 #' @author  Daren Wang & Haotian Xu
 #' @references Wang D, Yu Y, Rinaldo A. Optimal change point detection and localization in sparse dynamic networks. The Annals of Statistics. 2021 Feb;49(1):203-32.
 #' @examples
-#' y = c(rnorm(100, 0, 1), rnorm(100, 10, 10), rnorm(100, 40, 10))
+#' p = 100 # number of nodes
+#' rho = 0.5 # sparsity parameter
+#' block_num = 3 # number of groups for SBM
+#' n = 150 # sample size for each segment
+#' conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) # connectivity matrix for the first and the third segments
+#' conn2_mat = rho * matrix(c(0.6,0.5,0.6,0.5,0.6,1,0.6,1,0.6), nrow = 3) # connectivity matrix for the second segment
+#' set.seed(1)
+#' can_vec = sample(1:p, replace = F) # randomly assign nodes into groups
+#' sbm1 = simu.SBM(conn1_mat, can_vec, n, symm = TRUE, self = TRUE)
+#' sbm2 = simu.SBM(conn2_mat, can_vec, n, symm = TRUE, self = TRUE)
+#' data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
+#' data_mat1 = data_mat[,seq(1,ncol(data_mat),2)]
+#' data_mat2 = data_mat[,seq(2,ncol(data_mat),2)]
+#' M = 120
+#' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(data_mat1))
+#' temp = WBS.network(data_mat1, data_mat2, 1, ncol(data_mat1), intervals$Alpha, intervals$Beta, delta = 5)
+#' rho_hat = quantile(rowMeans(data_mat), 0.95)
+#' tau = p*rho_hat*(log(n))^2/20 # default threshould given in the paper
+#' cpt_init = unlist(threshold.BS(temp, tau)$change_points[1])
+#' cpt_refined = local.refine.network(cpt_init, data_mat1, data_mat2, self = FALSE, tau2 = p*rho_hat/3, tau3 = Inf)
+#' cpt_WBS = 2*cpt_init
+#' cpt_refin = 2*cpt_refined
 WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0, ...){
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
@@ -135,6 +158,7 @@ WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0
     a = rep(0, M)
     b = rep(0, M)
     for(m in 1:M){
+      temp = rep(0, Beta_new[m] - Alpha_new[m] - 2*delta + 1)
       for(t in (Alpha_new[m]+delta):(Beta_new[m]-delta)){
         temp[t-(Alpha_new[m]+delta)+1] = changepoints:::CUSUM.innerprod(data_mat1,data_mat2, Alpha_new[m], Beta_new[m], t)
       }
@@ -203,6 +227,9 @@ USVT = function(cusum_vec, self = FALSE, tau2, tau3){
     p = 1/2 + sqrt(2*length(cusum_vec) + 1/4) #obtain p
     cusum_mat = lowertri2mat(cusum_vec, p, diag = self)
   }
+  if(p != round(p)){
+    stop("Either cusum_vec or self is not correctly specified.")
+  }
   result_mat = matrix(0, nrow = p, ncol = p)
   re = eigen(cusum_mat, symmetric = TRUE)
   kk1 = length(which(re$values > tau2))
@@ -239,13 +266,11 @@ USVT.norm = function(cusum_vec1, cusum_vec2, self = FALSE, tau2, tau3 = Inf){
   if(self == TRUE){
     p = sqrt(2*length(cusum_vec1) + 1/4) - 1/2
     cusum_mat1 = lowertri2mat(cusum_vec1, p, diag = self)
-    cusum_mat2 = lowertri2mat(cusum_vec2, p, diag = self)
   }else{
     p = 1/2 + sqrt(2*length(cusum_vec1) + 1/4) #obtain p
     cusum_mat1 = lowertri2mat(cusum_vec1, p, diag = self)
-    cusum_mat2 = lowertri2mat(cusum_vec2, p, diag = self)
   }
-  Theta_mat2 = USVT(cusum_mat2, tau2, tau3)
+  Theta_mat2 = USVT(cusum_vec2, self = FALSE, tau2, tau3)
   return(sum(cusum_mat1*Theta_mat2))
 }
 
