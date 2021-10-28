@@ -22,7 +22,7 @@ simu.SBM(connec_mat, can_vec, n, symm = FALSE, self = TRUE, ...)
 \value{
 A \code{list} with the structure:
 \itemize{
- \item obs_mat:       A matrix, with each column be the vectorized adjacency (sub)matrix.
+ \item obs_mat:       A matrix, with each column be the vectorized adjacency (sub)matrix. For example, if "symm = TRUE" and "self = FALSE", only the strictly lower triangular matrix is considered.
  \item graphon_mat:   Underlying graphon matrix.
 }
 }

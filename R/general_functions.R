@@ -166,6 +166,30 @@ WBS.intervals = function(M, lower = 1, upper, ...){
 
 
 
+#' @title Transform a vector containing lower diagonal entries into a symmetric matrix of dimension p.
+#' @param lowertri_vec  A \code{numeric} vector containing lower diagonal entries.
+#' @param p             A \code{integer} scalar of dimensionality.
+#' @param diag          A \code{logic} scalar indicating if the diagonal entries are contained in lowertri_vec.
+#' @return   A \code{numeric} p x p symmetric matrix.
+#' @export
+#' @author    Haotian Xu
+#' @examples
+#' A = matrix(1:16, 4, 4)
+#' B = lowertri2mat(A[lower.tri(A)], 4, diag = FALSE)
+#' C = lowertri2mat(A[lower.tri(A, diag = TRUE)], 4, diag = TRUE)
+lowertri2mat = function(lowertri_vec, p, diag = FALSE){
+  aux_mat = matrix(0, nrow = p, ncol = p)
+  if(diag == FALSE){
+    aux_mat[lower.tri(aux_mat)] = lowertri_vec
+    aux_mat[upper.tri(aux_mat)] = t(aux_mat)[upper.tri(aux_mat)]
+  }else{
+    aux_mat[lower.tri(aux_mat, diag = TRUE)] = lowertri_vec
+    aux_mat[upper.tri(aux_mat)] = t(aux_mat)[upper.tri(aux_mat)]
+  }
+  return(aux_mat)
+}
+
+
 
 #' @title Generate coordinates of lower triangular matrix of dimension p.
 #' @param p   A \code{integer} scalar of dimensionality.

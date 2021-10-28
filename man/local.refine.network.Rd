@@ -4,18 +4,28 @@
 \alias{local.refine.network}
 \title{Local refinement for network change points detection.}
 \usage{
-local.refine.network(cpt_init, DATA, tau1, tau2 = Inf, w = 1/3, ...)
+local.refine.network(
+  cpt_init,
+  data_mat1,
+  data_mat2,
+  self = FALSE,
+  tau2,
+  tau3 = Inf,
+  ...
+)
 }
 \arguments{
 \item{cpt_init}{A \code{integer} vector of initial change points estimation (sorted in strictly increasing order).}
 
-\item{DATA}{A \code{numeric} matrix of observations.}
+\item{data_mat1}{A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.}
 
-\item{tau1}{A \code{numeric} scalar corresponding to the first parameter of the USVT.}
+\item{data_mat2}{A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).}
 
-\item{tau2}{A \code{numeric} scalar corresponding to the second parameter of the USVT.}
+\item{self}{A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.}
 
-\item{w}{A \code{numeric} scalar of weight for interpolation of starting and ending indices.}
+\item{tau2}{A \code{numeric} scalar corresponding to the first parameter of the USVT.}
+
+\item{tau3}{A \code{numeric} scalar corresponding to the second parameter of the USVT.}
 
 \item{...}{Additional arguments.}
 }

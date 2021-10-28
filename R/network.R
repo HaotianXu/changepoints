@@ -8,7 +8,7 @@
 #' @param ...        Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
-#'  \item obs_mat:       A matrix, with each column be the vectorized adjacency (sub)matrix.
+#'  \item obs_mat:       A matrix, with each column be the vectorized adjacency (sub)matrix. For example, if "symm = TRUE" and "self = FALSE", only the strictly lower triangular matrix is considered.
 #'  \item graphon_mat:   Underlying graphon matrix.
 #' } 
 #' @export
@@ -88,12 +88,14 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 
 
 
-#' @title Binary segmentation for network change points detection.
-#' @description  Perform binary segmentation for network change points detection.
+#' @title Wild binary segmentation for network change points detection.
+#' @description  Perform wild binary segmentation for network change points detection.
 #' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.
 #' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).
 #' @param s          A \code{integer} scalar of starting index.
 #' @param e          A \code{integer} scalar of ending index.
+#' @param Alpha      A \code{integer} vector of starting indices of random intervals.
+#' @param Beta       A \code{integer} vector of ending indices of random intervals.
 #' @param delta      A positive \code{integer} scalar of minimum spacing.
 #' @param level      Should be fixed as 0.
 #' @param ...        Additional arguments.
@@ -105,79 +107,106 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 #'  \item Parent:      A matrix with the starting indices on the first row and the ending indices on the second row.
 #' } 
 #' @export
-#' @author
+#' @author  Daren Wang & Haotian Xu
+#' @references Wang D, Yu Y, Rinaldo A. Optimal change point detection and localization in sparse dynamic networks. The Annals of Statistics. 2021 Feb;49(1):203-32.
 #' @examples
 #' y = c(rnorm(100, 0, 1), rnorm(100, 10, 10), rnorm(100, 40, 10))
-BS.network = function(data_mat1, data_mat2, s, e, delta, level = 0, ...){
+WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0, ...){
+  Alpha_new = pmax(Alpha, s)
+  Beta_new = pmin(Beta, e)
+  xi = 1/64 #using the shrunk constant given in the paper
+  Alpha_new2 = Alpha_new
+  Beta_new2 = Beta_new
+  Alpha_new = ceiling((1-xi)*Alpha_new2 + xi*Beta_new2)
+  Beta_new = ceiling((1-xi)*Beta_new2 + xi*Alpha_new2)
+  idx = which(Beta_new - Alpha_new > 2*delta)
+  Alpha_new = Alpha_new[idx]
+  Beta_new = Beta_new[idx]
+  M = length(Alpha_new)
   S = NULL
   Dval = NULL
   Level = NULL
   Parent = NULL
-  if(e-s <= delta){
+  if(M == 0){
     return(list(S = S, Dval = Dval, Level = Level, Parent = Parent))
   }else{
     level = level + 1
     parent = matrix(c(s, e), nrow = 2)
-    a = sapply(seq((s+1), (e-1), 1), function(x) changepoints:::CUSUM.innerprod(data_mat1,data_mat2, s, e, x))
-    best_value = max(a)
-    best_t = which.max(a) + s
-    temp1 = BS.network(data_mat1, data_mat2, s, best_t-1, delta, level)
-    temp2 = BS.network(data_mat1, data_mat2, best_t, e, delta, level)
-    S = c(temp1$S, best_t, temp2$S)
-    Dval = c(temp1$Dval, best_value, temp2$Dval)
-    Level = c(temp1$Level, level, temp2$Level)
-    Parent = cbind(temp1$Parent, parent, temp2$Parent)
-    result = list(S = S, Dval = Dval, Level = Level, Parent = Parent)
-    class(result) = "BS"
-    return(result)
+    a = rep(0, M)
+    b = rep(0, M)
+    for(m in 1:M){
+      for(t in (Alpha_new[m]+delta):(Beta_new[m]-delta)){
+        temp[t-(Alpha_new[m]+delta)+1] = changepoints:::CUSUM.innerprod(data_mat1,data_mat2, Alpha_new[m], Beta_new[m], t)
+      }
+      best_value = max(temp)
+      best_t = which.max(temp) + Alpha_new[m] + delta - 1
+      a[m] = best_value
+      b[m] = best_t
+    }
+    m_star = which.max(a)
   }
+  temp1 = WBS.network(data_mat1, data_mat2, s, b[m_star]-1, Alpha, Beta, delta, level)
+  temp2 = WBS.network(data_mat1, data_mat2, b[m_star], e, Alpha, Beta, delta, level)
+  S = c(temp1$S, b[m_star], temp2$S)
+  Dval = c(temp1$Dval, a[m_star], temp2$Dval)
+  Level = c(temp1$Level, level, temp2$Level)
+  Parent = cbind(temp1$Parent, parent, temp2$Parent)
+  result = list(S = S, Dval = Dval, Level = Level, Parent = Parent)
+  class(result) = "BS"
+  return(result)
 }
 
 
 
 #' @title Local refinement for network change points detection.
 #' @description Perform local refinement for network change points detection.
-#' @param cpt_init  A \code{integer} vector of initial change points estimation (sorted in strictly increasing order).
-#' @param DATA      A \code{numeric} matrix of observations.
-#' @param tau1      A \code{numeric} scalar corresponding to the first parameter of the USVT.
-#' @param tau2      A \code{numeric} scalar corresponding to the second parameter of the USVT.
-#' @param w         A \code{numeric} scalar of weight for interpolation of starting and ending indices.
+#' @param cpt_init   A \code{integer} vector of initial change points estimation (sorted in strictly increasing order).
+#' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.
+#' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).
+#' @param self       A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.
+#' @param tau2       A \code{numeric} scalar corresponding to the first parameter of the USVT.
+#' @param tau3       A \code{numeric} scalar corresponding to the second parameter of the USVT.
 #' @param ...       Additional arguments.
 #' @return  A \code{numeric} vector of locally refined change point locations.
 #' @export
 #' @author 
 #' @examples
 #' TO DO
-local.refine.network = function(cpt_init, DATA, tau1, tau2 = Inf, w = 1/3, ...){
-  n = ncol(DATA)
-  p = nrow(DATA)
-  cpt_init_ext = c(0, cpt_init, n)
+local.refine.network = function(cpt_init, data_mat1, data_mat2, self = FALSE, tau2, tau3 = Inf, ...){
+  obs_num = ncol(data_mat1)
+  cpt_init_ext = c(0, cpt_init, obs_num)
   K = length(cpt_init)
   cpt_refined = rep(0, K+1)
-  for (k in 1:K){
-    s_inter = w*cpt_init_ext[k] + (1-w)*cpt_init_ext[k+1]
-    e_inter = (1-w)*cpt_init_ext[k+1] + w*cpt_init_ext[k+2]
-    lower = ceiling(s_inter) + 1
-    upper = floor(e_inter) - 1
-    b_mat = sapply(lower:upper, function(eta) CUSUM.vec(DATA, s_inter, e_inter, eta))
-    cpt_refined[k+1] = ceiling(s_inter) + which.max(sapply(lower:upper, function(x) USVT.norm(b_mat[,x-lower+1], tau1, tau2)))
+  for(k in 1:K){
+    s_inter = ceiling(0.5*cpt_init_ext[k] + 0.5*cpt_init_ext[k+1])
+    e_inter = floor(0.5*cpt_init_ext[k+1] + 0.5*cpt_init_ext[k+2])
+    Delta_tilde = sqrt((e_inter-cpt_init_ext[k+1])*(cpt_init_ext[k+1]-s_inter)/(e_inter-s_inter))
+    A_tilde = sapply((s_inter + 1):(e_inter - 1), function(eta) CUSUM.vec(data_mat1, s_inter, e_inter, eta))
+    cpt_refined[k+1] = s_inter + which.max(sapply((s_inter + 1):(e_inter - 1), function(x) USVT.norm(A_tilde[,x-s_inter], CUSUM.vec(data_mat2, s_inter, e_inter, cpt_init_ext[k+1]), self, tau2, Delta_tilde*tau3)))
   }
   return(cpt_refined[-1])
 }
 
 
-#' @title Internal Function: Compute the Universal Singular Value Thresholding of a symmetric matrix.
-#' @param symm_mat   A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.
-#' @param tau1       A positive \code{numeric} scalar corresponding to the threshold for singular values of input matrix.
-#' @param tau2       A positive \code{numeric} scalar corresponding to the threshold for entries of output matrix.
+#' @title Internal Function: Compute the Universal Singular Value Thresholding (USVT) of a symmetric matrix.
+#' @param cusum_vec  A \code{numeric} vector corresponding to a cusum vector .
+#' @param self       A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.
+#' @param tau2       A positive \code{numeric} scalar corresponding to the threshold for singular values of input matrix.
+#' @param tau3       A positive \code{numeric} scalar corresponding to the threshold for entries of output matrix.
 #' @return  A \code{numeric} matrix.
 #' @noRd
-USVT = function(symm_mat, tau1, tau2){
-  p = dim(symm_mat)[1]
+USVT = function(cusum_vec, self = FALSE, tau2, tau3){
+  if(self == TRUE){
+    p = sqrt(2*length(cusum_vec) + 1/4) - 1/2
+    cusum_mat = lowertri2mat(cusum_vec, p, diag = self)
+  }else{
+    p = 1/2 + sqrt(2*length(cusum_vec) + 1/4) #obtain p
+    cusum_mat = lowertri2mat(cusum_vec, p, diag = self)
+  }
   result_mat = matrix(0, nrow = p, ncol = p)
-  re = eigen(symm_mat, symmetric = TRUE)
-  kk1 = length(which(re$values > tau1))
-  kk2 = length(which(re$values < (-1)*tau1)) 
+  re = eigen(cusum_mat, symmetric = TRUE)
+  kk1 = length(which(re$values > tau2))
+  kk2 = length(which(re$values < (-1)*tau2)) 
   if(kk1 + kk2 == 0){
     return(result_mat)
   }else{
@@ -192,26 +221,32 @@ USVT = function(symm_mat, tau1, tau2){
       }
     }
   }
-  result_mat[result_mat > tau2] = tau2
-  result_mat[result_mat < (-1)*tau2] = (-1)*tau2
+  result_mat[result_mat > tau3] = tau3
+  result_mat[result_mat < (-1)*tau3] = (-1)*tau3
   return(result_mat)
 }
 
 
-#' @title Internal Function: Compute the Frobenius norm of USVT matrix (only take the lower triangular part of the matrix to reduce computation complexity).
-#' @param cusum_vec  A \code{numeric} p*(p-1)/2-dim cusum vector.
-#' @param tau1       A positive \code{numeric} scalar corresponding to the threshold for singular values of input matrix.
-#' @param tau2       A positive \code{numeric} scalar corresponding to the threshold for entries of output matrix.
+#' @title Internal Function: Compute the Frobenius norm of USVT matrix.
+#' @param cusum_vec1  A \code{numeric} vector corresponding to a cusum vector computed based on data_mat1.
+#' @param cusum_vec2  A \code{numeric} vector corresponding to a cusum vector computed based on data_mat2.
+#' @param self        A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.
+#' @param tau2        A positive \code{numeric} scalar corresponding to the threshold for singular values of input matrix.
+#' @param tau3        A positive \code{numeric} scalar corresponding to the threshold for entries of output matrix.
 #' @return  A \code{numeric} scalar.
 #' @noRd
-USVT.norm = function(cusum_vec, tau1, tau2 = Inf){
-  p = 1/2 + sqrt(2*length(cusum_vec) + 1/4) #obtain p
-  cusum_mat = matrix(0, nrow = p, ncol=p)
-  cusum_mat[gen.lower.coordinate(p)] = cusum_vec
-  cusum_mat = cusum_mat + t(cusum_mat)
-  #tau1=sqrt(p*rho)/2
-  cusum_mat_temp = USVT(cusum_mat, tau1, tau2)
-  return(norm(cusum_mat_temp, type="F"))
+USVT.norm = function(cusum_vec1, cusum_vec2, self = FALSE, tau2, tau3 = Inf){
+  if(self == TRUE){
+    p = sqrt(2*length(cusum_vec1) + 1/4) - 1/2
+    cusum_mat1 = lowertri2mat(cusum_vec1, p, diag = self)
+    cusum_mat2 = lowertri2mat(cusum_vec2, p, diag = self)
+  }else{
+    p = 1/2 + sqrt(2*length(cusum_vec1) + 1/4) #obtain p
+    cusum_mat1 = lowertri2mat(cusum_vec1, p, diag = self)
+    cusum_mat2 = lowertri2mat(cusum_vec2, p, diag = self)
+  }
+  Theta_mat2 = USVT(cusum_mat2, tau2, tau3)
+  return(sum(cusum_mat1*Theta_mat2))
 }
 
 
