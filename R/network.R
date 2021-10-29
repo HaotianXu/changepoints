@@ -63,14 +63,14 @@ simu.SBM = function(connec_mat, can_vec, n, symm = FALSE, self = TRUE, ...){
 #' @return  A \code{numeric} vector of value of CUSUM statistic.
 #' @noRd
 CUSUM.vec = function(data_mat, s, e, t){
-  n_st = t - s
-  n_se = e - s
+  n_st = t - s + 1
+  n_se = e - s + 1
   n_te = e - t
   p = dim(data_mat)[1]
   if(t-s<3 | e-t<2){
     result_vec = rep(0, p)
   }else{
-    result_vec = sqrt(n_te/(n_se*n_st)) * rowSums(data_mat[,(s+1):t]) - sqrt(n_st/(n_se*n_te)) * rowSums(data_mat[,(t+1):e])
+    result_vec = sqrt(n_te/(n_se*n_st)) * rowSums(data_mat[,s:t]) - sqrt(n_st/(n_se*n_te)) * rowSums(data_mat[,(t+1):e])
   }
   return(result_vec)
 }
@@ -129,7 +129,7 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(data_mat1))
 #' temp = WBS.network(data_mat1, data_mat2, 1, ncol(data_mat1), intervals$Alpha, intervals$Beta, delta = 5)
 #' rho_hat = quantile(rowMeans(data_mat), 0.95)
-#' tau = p*rho_hat*(log(n))^2/20 # default threshould given in the paper
+#' tau = p*rho_hat*(log(n))^2/20 # default threshold given in the paper
 #' cpt_init = unlist(threshold.BS(temp, tau)$change_points[1])
 #' cpt_refined = local.refine.network(cpt_init, data_mat1, data_mat2, self = FALSE, tau2 = p*rho_hat/3, tau3 = Inf)
 #' cpt_WBS = 2*cpt_init
@@ -188,14 +188,36 @@ WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0
 #' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.
 #' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).
 #' @param self       A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.
-#' @param tau2       A \code{numeric} scalar corresponding to the first parameter of the USVT.
-#' @param tau3       A \code{numeric} scalar corresponding to the second parameter of the USVT.
+#' @param tau2       A positive \code{numeric} scalar for USVT corresponding to the threshold for singular values of input matrix.
+#' @param tau3       A positive \code{numeric} scalar for USVT corresponding to the threshold for entries of output matrix.
 #' @param ...       Additional arguments.
 #' @return  A \code{numeric} vector of locally refined change point locations.
 #' @export
-#' @author 
+#' @author  Daren Wang & Haotian Xu
+#' @references Wang D, Yu Y, Rinaldo A. Optimal change point detection and localization in sparse dynamic networks. The Annals of Statistics. 2021 Feb;49(1):203-32.
 #' @examples
-#' TO DO
+#' p = 100 # number of nodes
+#' rho = 0.5 # sparsity parameter
+#' block_num = 3 # number of groups for SBM
+#' n = 150 # sample size for each segment
+#' conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) # connectivity matrix for the first and the third segments
+#' conn2_mat = rho * matrix(c(0.6,0.5,0.6,0.5,0.6,1,0.6,1,0.6), nrow = 3) # connectivity matrix for the second segment
+#' set.seed(1)
+#' can_vec = sample(1:p, replace = F) # randomly assign nodes into groups
+#' sbm1 = simu.SBM(conn1_mat, can_vec, n, symm = TRUE, self = TRUE)
+#' sbm2 = simu.SBM(conn2_mat, can_vec, n, symm = TRUE, self = TRUE)
+#' data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
+#' data_mat1 = data_mat[,seq(1,ncol(data_mat),2)]
+#' data_mat2 = data_mat[,seq(2,ncol(data_mat),2)]
+#' M = 120
+#' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(data_mat1))
+#' temp = WBS.network(data_mat1, data_mat2, 1, ncol(data_mat1), intervals$Alpha, intervals$Beta, delta = 5)
+#' rho_hat = quantile(rowMeans(data_mat), 0.95)
+#' tau = p*rho_hat*(log(n))^2/20 # default threshold given in the paper
+#' cpt_init = unlist(threshold.BS(temp, tau)$change_points[1])
+#' cpt_refined = local.refine.network(cpt_init, data_mat1, data_mat2, self = FALSE, tau2 = p*rho_hat/3, tau3 = Inf)
+#' cpt_WBS = 2*cpt_init
+#' cpt_refin = 2*cpt_refined
 local.refine.network = function(cpt_init, data_mat1, data_mat2, self = FALSE, tau2, tau3 = Inf, ...){
   obs_num = ncol(data_mat1)
   cpt_init_ext = c(0, cpt_init, obs_num)
@@ -277,23 +299,80 @@ USVT.norm = function(cusum_vec1, cusum_vec2, self = FALSE, tau2, tau3 = Inf){
 
 
 
-online.network = function(data_mat1, data_mat2, b_vec, tau1_mat, tau2_mat, c, alpha){
-  p = sqrt(nrow(data_mat2))
-  t = 1
-  FLAG = 0
-  while(FLAG == 0){
-    t = t + 1
-    J = floor(log2(t))
-    j = 0
-    while(j < J & FLAG == 0){
-      s_j = t - 2^j
-      B_tilde_vec = as.vector(USVT(matrix(CUSUM.vec(data_mat2, 0, s_j, t), p, p), tau1_mat[s_j, t], tau2_mat[s_j, t]))
-      B_tilde_norm = sqrt(sum(B_tilde_vec^2))
-      FLAG = (sum(CUSUM.vec(data_mat1, 0, s_j, t) * B_tilde_vec)/B_tilde_norm > b_vec[t-1]) * (B_tilde_norm > c*sqrt(log(t/alpha))) 
-      j = j + 1
+
+
+#' @title Internal Function: Compute value of CUSUM statistic (multivariate) at the current time t and s being the splitting time point.
+#' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.
+#' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).
+#' @param self       A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.
+#' @param t          A \code{integer} scalar of current time index.
+#' @param s          A \code{integer} scalar of splitting index.
+#' @param C          A \code{numeric} scalar of tuning constant corresponding to the threshold for the frobenius norm of the USVT estimator.
+#' @param rho        A \code{numeric} scalar of sparsity parameter of the network data.
+#' @param alpha      A \code{numeric} scalar in (0,1) representing the level.
+#' @return  A \code{numeric} scalar of value of CUSUM statistic.
+#' @noRd
+data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, C, rho, alpha){
+  if(self == TRUE){
+    p = sqrt(2*nrow(data_mat1) + 1/4) - 1/2
+  }else{
+    p = 1/2 + sqrt(2*nrow(data_mat1) + 1/4) #obtain p
+  }
+  tau1 = 0.2*sqrt(p*rho) + sqrt(2*log(2*(t-s)*(t-s+1)/alpha))/15
+  tau2 = rho*sqrt((t-s)*s/t)
+  tau3 = C*sqrt(log(t/alpha))
+
+  vec1 = CUSUM.vec(data_mat1, 1, t, s)
+  vec2 = CUSUM.vec(data_mat2, 1, t, s)  
+  
+  mat1 = lowertri2mat(vec1, p, diag = self)
+  mat3 = USVT(vec2, self = FALSE, tau1, tau2)
+  frob_norm = sqrt(sum(as.vector(mat3)^2))
+  if(frob_norm < tau3){
+    return(0)
+  }
+  aux = sum(as.vector(mat1) * as.vector(mat3))/frob_norm
+  return(aux)
+}
+
+
+
+#' @title Online changepoint detection for network data by controlling the false alarm rate at level alpha.
+#' @description  Perform online changepoint detection for network data by controlling the false alarm rate at level alpha.
+#' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.
+#' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).
+#' @param b_vec      A \code{numeric} vector of thresholds b_t with t >= 2.
+#' @param C          A \code{numeric} scalar of tuning constant corresponding to the threshold for the frobenius norm of the USVT estimator.
+#' @param rho        A \code{numeric} scalar of sparsity parameter of the network data.
+#' @param alpha      A \code{numeric} scalar in (0,1) representing the level.
+#' @param ...        Additional arguments.
+#' @return  A \code{list} with the structure:
+#' \itemize{
+#'  \item t:           Estimated changepoint.
+#'  \item score:       A \code{numeric} vector of computed cumsum statistics.
+#'  \item b_vec        A \code{numeric} vector of thresholds b_t with t >= 2.
+#' } 
+#' @export
+online.network = function(data_mat1, data_mat2, b_vec, C = 32.1*(2^.25)*exp(2), rho, alpha, ...){
+  n = ncol(data_mat1)
+  p = sqrt(nrow(data_mat1))
+  score = rep(0, n)
+  for(t in 2:n){
+    if(t > 3){
+      m = floor(log(t)/log(2))-1
+      N_grid = as.matrix(2^{1:m})
+      aux = apply(N_grid, 1, function(par){data.split.statistic(data_mat1, data_mat2, self = FALSE, t, par, C, rho, alpha)})
+      score[t] = max(aux)
+    }
+    if(score[t] > b_vec[t]){
+      break
     }
   }
-  return(t)
+  #ind =  which(score/b >1)
+  if(score[t] > b_vec[t]){
+    return(list(t = t, score = score, b = b_vec))
+  }
+  return(list(t = Inf, score = score, b = b_vec))
 }
 
 
