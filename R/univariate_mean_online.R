@@ -34,7 +34,7 @@ online.univar = function(y_vec, b_vec = NULL, train_vec = NULL, alpha = NULL, ga
       stop("Given b_vec is missing, train_vec should be provided to calibrate b_vec.")
     }
     if(is.null(alpha)+is.null(gamma)!=1){
-      stop("Given b_vec is missing, one and only one of the parameters alpha and gamma should be provided.")
+      stop("Given b_vec is missing, either alpha or gamma should be provided.")
     }
     if(!is.null(alpha)){
       obs_train = length(train_vec)

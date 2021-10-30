@@ -310,17 +310,27 @@ USVT.norm = function(cusum_vec1, cusum_vec2, self = FALSE, tau2, tau3 = Inf){
 #' @param C          A \code{numeric} scalar of tuning constant corresponding to the threshold for the frobenius norm of the USVT estimator.
 #' @param rho        A \code{numeric} scalar of sparsity parameter of the network data.
 #' @param alpha      A \code{numeric} scalar in (0,1) representing the level.
+#' @param gamma     An \code{integer} scalar of desired average run length.
 #' @return  A \code{numeric} scalar of value of CUSUM statistic.
 #' @noRd
-data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, C, rho, alpha){
+data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, C, rho, alpha = NULL, gamma = NULL){
   if(self == TRUE){
     p = sqrt(2*nrow(data_mat1) + 1/4) - 1/2
   }else{
     p = 1/2 + sqrt(2*nrow(data_mat1) + 1/4) #obtain p
   }
-  tau1 = 0.2*sqrt(p*rho) + sqrt(2*log(2*(t-s)*(t-s+1)/alpha))/15
-  tau2 = rho*sqrt((t-s)*s/t)
-  tau3 = C*sqrt(log(t/alpha))
+  if(is.null(alpha)+is.null(gamma)!=1){
+    stop("Either alpha or gamma should be provided.")
+  }
+  if(!is.null(alpha)){
+    tau1 = 0.2*sqrt(p*rho) + sqrt(2*log(2*(t-s)*(t-s+1)/alpha))/15
+    tau2 = rho*sqrt((t-s)*s/t)
+    tau3 = C*sqrt(log(t/alpha))
+  }else{
+    tau1 = 0.2*sqrt(p*rho) + sqrt(2*log(2*gamma+2))/15
+    tau2 = rho*sqrt((t-s)*s/t)
+    tau3 = C*sqrt(log(gamma))
+  }
 
   vec1 = CUSUM.vec(data_mat1, 1, t, s)
   vec2 = CUSUM.vec(data_mat2, 1, t, s)  
@@ -345,6 +355,7 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, C, rho
 #' @param C          A \code{numeric} scalar of tuning constant corresponding to the threshold for the frobenius norm of the USVT estimator.
 #' @param rho        A \code{numeric} scalar of sparsity parameter of the network data.
 #' @param alpha      A \code{numeric} scalar in (0,1) representing the level.
+#' @param gamma     An \code{integer} scalar of desired average run length.
 #' @param ...        Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
@@ -353,15 +364,18 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, C, rho
 #'  \item b_vec        A \code{numeric} vector of thresholds b_t with t >= 2.
 #' } 
 #' @export
-online.network = function(data_mat1, data_mat2, b_vec, C = 32.1*(2^.25)*exp(2), rho, alpha, ...){
+online.network = function(data_mat1, data_mat2, b_vec, C = 32.1*(2^.25)*exp(2), rho, alpha = NULL, gamma = NULL, ...){
   n = ncol(data_mat1)
   p = sqrt(nrow(data_mat1))
+  if(is.null(alpha)+is.null(gamma)!=1){
+    stop("Either alpha or gamma should be provided.")
+  }
   score = rep(0, n)
   for(t in 2:n){
     if(t > 3){
       m = floor(log(t)/log(2))-1
       N_grid = as.matrix(2^{1:m})
-      aux = apply(N_grid, 1, function(par){data.split.statistic(data_mat1, data_mat2, self = FALSE, t, par, C, rho, alpha)})
+      aux = apply(N_grid, 1, function(par){data.split.statistic(data_mat1, data_mat2, self = FALSE, t, par, C, rho, alpha, gamma)})
       score[t] = max(aux)
     }
     if(score[t] > b_vec[t]){
@@ -374,26 +388,3 @@ online.network = function(data_mat1, data_mat2, b_vec, C = 32.1*(2^.25)*exp(2), 
   }
   return(list(t = Inf, score = score, b = b_vec))
 }
-
-
-online.network.variant = function(data_mat1, data_mat2, b_vec, tau1_mat, tau2_mat, c, gamma){
-  p = sqrt(nrow(data_mat2))
-  t = 1
-  FLAG = 0
-  while(FLAG == 0){
-    t = t + 1
-    J = floor(log2(t))
-    j = 0
-    while(j < J & FLAG == 0){
-      s_j = t - 2^j
-      B_tilde_vec = as.vector(USVT(matrix(CUSUM.vec(data_mat2, 0, s_j, t), p, p), tau1_mat[s_j, t], tau2_mat[s_j, t]))
-      B_tilde_norm = sqrt(sum(B_tilde_vec^2))
-      FLAG = (sum(CUSUM.vec(data_mat1, 0, s_j, t) * B_tilde_vec)/B_tilde_norm > b_vec[t-1]) * (B_tilde_norm > c*sqrt(log(gamma))) 
-      j = j + 1
-    }
-  }
-  return(t)
-}
-
-
-

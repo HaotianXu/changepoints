@@ -10,7 +10,8 @@ online.network(
   b_vec,
   C = 32.1 * (2^0.25) * exp(2),
   rho,
-  alpha,
+  alpha = NULL,
+  gamma = NULL,
   ...
 )
 }
@@ -26,6 +27,8 @@ online.network(
 \item{rho}{A \code{numeric} scalar of sparsity parameter of the network data.}
 
 \item{alpha}{A \code{numeric} scalar in (0,1) representing the level.}
+
+\item{gamma}{An \code{integer} scalar of desired average run length.}
 
 \item{...}{Additional arguments.}
 }
