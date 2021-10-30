@@ -2,7 +2,7 @@
 #' @description Perform online change point detection with controlled false alarm rate or average run length.
 #' @param y_vec       A \code{numeric} vector of observations.
 #' @param b_vec       A \code{numeric} vector of thresholds b_t with t >= 2.
-#' @param train_vec   A \code{numeric} vector of training data from a pre-change distribution, which is only needed to when b_t is NULL in order to calibrate b_t.
+#' @param train_vec   A \code{numeric} vector of training data from a pre-change distribution (no changepoint), which is only needed to when b_vec is NULL in order to calibrate b_t.
 #' @param alpha       A \code{numeric} scalar of desired false alarm rate.
 #' @param gamma       An \code{integer} scalar of desired average run length.
 #' @param permu_num   An \code{integer} scalar of number of random permutation for calibration.

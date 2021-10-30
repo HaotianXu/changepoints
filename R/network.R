@@ -299,21 +299,19 @@ USVT.norm = function(cusum_vec1, cusum_vec2, self = FALSE, tau2, tau3 = Inf){
 
 
 
-
-
-#' @title Internal Function: Compute value of CUSUM statistic (multivariate) at the current time t and s being the splitting time point.
+#' @title Internal Function: Compute value of CUSUM statistic (multivariate) at the current time t and s being the splitting time point. The default choice of the tuning parameters tau1, tau2 and tau3 are used (see Section 4.1 of the reference).
 #' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.
 #' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).
 #' @param self       A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.
 #' @param t          A \code{integer} scalar of current time index.
 #' @param s          A \code{integer} scalar of splitting index.
-#' @param C          A \code{numeric} scalar of tuning constant corresponding to the threshold for the frobenius norm of the USVT estimator.
 #' @param rho        A \code{numeric} scalar of sparsity parameter of the network data.
 #' @param alpha      A \code{numeric} scalar in (0,1) representing the level.
 #' @param gamma     An \code{integer} scalar of desired average run length.
 #' @return  A \code{numeric} scalar of value of CUSUM statistic.
 #' @noRd
-data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, C, rho, alpha = NULL, gamma = NULL){
+data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, rho, alpha = NULL, gamma = NULL){
+  C = 32.1*(2^.25)*exp(2)
   if(self == TRUE){
     p = sqrt(2*nrow(data_mat1) + 1/4) - 1/2
   }else{
@@ -348,14 +346,14 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, C, rho
 
 
 #' @title Online changepoint detection for network data by controlling the false alarm rate at level alpha.
-#' @description  Perform online changepoint detection for network data by controlling the false alarm rate at level alpha.
+#' @description  Perform online changepoint detection for network data by controlling the false alarm rate at level alpha or controlling the average run length gamma. The default choice of the tuning parameters tau1, tau2 and tau3 are used (see Section 4.1 of the reference). 
 #' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.
 #' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).
 #' @param b_vec      A \code{numeric} vector of thresholds b_t with t >= 2.
-#' @param C          A \code{numeric} scalar of tuning constant corresponding to the threshold for the frobenius norm of the USVT estimator.
-#' @param rho        A \code{numeric} scalar of sparsity parameter of the network data.
+#' @param train_mat  A \code{numeric} matrix of training data from a pre-change distribution(no changepoint), which is only needed to when b_vec is NULL in order to calibrate b_t.
 #' @param alpha      A \code{numeric} scalar in (0,1) representing the level.
-#' @param gamma     An \code{integer} scalar of desired average run length.
+#' @param gamma      An \code{integer} scalar of desired average run length.
+#' @param permu_num  An \code{integer} scalar of number of random permutation for calibration.
 #' @param ...        Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
@@ -364,18 +362,90 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, C, rho
 #'  \item b_vec        A \code{numeric} vector of thresholds b_t with t >= 2.
 #' } 
 #' @export
-online.network = function(data_mat1, data_mat2, b_vec, C = 32.1*(2^.25)*exp(2), rho, alpha = NULL, gamma = NULL, ...){
+#' @author  Oscar Hernan Madrid Padilla & Haotian Xu
+#' @references Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
+#' @examples
+online.network = function(data_mat1, data_mat2, b_vec, train_mat = NULL, alpha = NULL, gamma = NULL, permu_num = NULL, ...){
   n = ncol(data_mat1)
   p = sqrt(nrow(data_mat1))
   if(is.null(alpha)+is.null(gamma)!=1){
     stop("Either alpha or gamma should be provided.")
+  }
+  if(!is.null(b_vec)){
+    rho_hat = quantile(rowMeans(cbind(data_mat1, data_mat2)), 0.95)
+    if(n - length(b_vec) != 1){
+      stop("b_vec should be the vector of thresholds b_t with t >= 2.")
+    }
+  }else{
+    if(is.null(train_mat)){
+      stop("Given b_vec is missing, train_mat should be provided to calibrate b_vec.")
+    }
+    rho_hat = quantile(rowMeans(cbind(data_mat1, data_mat2, train_mat)), 0.95)
+    train_mat1 = train_mat[,seq(1,ncol(train_mat),2)]
+    train_mat2 = train_mat[,seq(2,ncol(train_mat),2)]
+    obs_train = min(ncol(train_mat1), ncol(train_mat2))
+    if(obs_train > n){
+      # only use part of train_mat1 if it's sample size is bigger than that of data_mat1
+      train_mat1 = train_mat1[,(obs_train-n+1):obs_train]
+      train_mat2 = train_mat2[,(obs_train-n+1):obs_train]
+      obs_train = n
+    }
+    scores = matrix(0, permu_num, obs_train-1)
+    if(!is.null(alpha)){
+      C_vec = rep(NA, permu_num)
+      trend = sapply(2:obs_train, function(t) sqrt(rho_hat*log(t/alpha)))
+      for(sim in 1:permu_num){
+        idx_permu_odd = sample(1:obs_train)
+        idx_permu_even = sample(1:obs_train)
+        train_permu_odd = train_mat1[,idx_permu_odd]
+        train_permu_even = train_mat2[,idx_permu_even]
+        
+        for(t in 2:obs_train){
+          if(t>10){
+            m = floor(log(t)/log(2))-1
+            N_grid = as.matrix(2^{1:m})
+            aux = apply(N_grid, 1, function(par){data.split.statistic(train_permu_odd, train_permu_even, self = FALSE, t, par, rho = rho_hat, alpha = alpha)})
+            scores[sim, t-1] = max(aux)
+          }
+        }
+        C_vec[sim] = max(scores[sim,]/trend)
+      }
+      b_vec = quantile(C_vec, 1-alpha) * trend
+    }else if(!is.null(gamma)){
+      C_mat = matrix(NA, permu_num, obs_train-1)
+      trend = sqrt(rho_hat*log(gamma))
+      for(sim in 1:permu_num){
+        idx_permu_odd = sample(1:obs_train)
+        idx_permu_even = sample(1:obs_train)
+        train_permu_odd = train_mat1[,idx_permu_odd]
+        train_permu_even = train_mat2[,idx_permu_even]
+        
+        for(t in 2:obs_train){
+          if(t>10){
+            m = floor(log(t)/log(2))-1
+            N_grid = as.matrix(2^{1:m})
+            aux = apply(N_grid, 1, function(par){data.split.statistic(train_permu_odd, train_permu_even, self = FALSE, t, par, rho = rho_hat, gamma = gamma)})
+            scores[sim, t-1] = max(aux)
+          }
+        }
+        C_mat[sim,] = scores[sim,]/trend
+      }
+      C_grid = seq(min(C_mat), max(C_mat), length = 300)
+      alarm = rep(0, length(C_grid))
+      for(j in 1:length(alarm)){
+        aux = apply(C_mat, 1,function(x){min(c(which(x > C_grid[j]), obs_train))})
+        alarm[j] = mean(aux)
+      }
+      ind = which.min(abs(alarm-gamma))
+      b_vec = rep(C_grid[ind] * trend, obs_data-1)
+    }
   }
   score = rep(0, n)
   for(t in 2:n){
     if(t > 3){
       m = floor(log(t)/log(2))-1
       N_grid = as.matrix(2^{1:m})
-      aux = apply(N_grid, 1, function(par){data.split.statistic(data_mat1, data_mat2, self = FALSE, t, par, C, rho, alpha, gamma)})
+      aux = apply(N_grid, 1, function(par){data.split.statistic(data_mat1, data_mat2, self = FALSE, t, par, rho, alpha, gamma)})
       score[t] = max(aux)
     }
     if(score[t] > b_vec[t]){
