@@ -7,11 +7,12 @@
 online.network(
   data_mat1,
   data_mat2,
-  b_vec,
-  C = 32.1 * (2^0.25) * exp(2),
-  rho,
+  self = TRUE,
+  b_vec = NULL,
+  train_mat = NULL,
   alpha = NULL,
   gamma = NULL,
+  permu_num = NULL,
   ...
 )
 }
@@ -22,13 +23,13 @@ online.network(
 
 \item{b_vec}{A \code{numeric} vector of thresholds b_t with t >= 2.}
 
-\item{C}{A \code{numeric} scalar of tuning constant corresponding to the threshold for the frobenius norm of the USVT estimator.}
-
-\item{rho}{A \code{numeric} scalar of sparsity parameter of the network data.}
+\item{train_mat}{A \code{numeric} matrix of training data from a pre-change distribution(no changepoint), which is only needed to when b_vec is NULL in order to calibrate b_t.}
 
 \item{alpha}{A \code{numeric} scalar in (0,1) representing the level.}
 
 \item{gamma}{An \code{integer} scalar of desired average run length.}
+
+\item{permu_num}{An \code{integer} scalar of number of random permutation for calibration.}
 
 \item{...}{Additional arguments.}
 }
@@ -41,5 +42,31 @@ A \code{list} with the structure:
 }
 }
 \description{
-Perform online changepoint detection for network data by controlling the false alarm rate at level alpha.
+Perform online changepoint detection for network data by controlling the false alarm rate at level alpha or controlling the average run length gamma. The default choice of the tuning parameters tau1, tau2 and tau3 are used (see Section 4.1 of the reference).
+}
+\examples{
+p = 100 # number of nodes
+rho = 0.5 # sparsity parameter
+block_num = 3 # number of groups for SBM
+n = 150 # sample size for each segment
+conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) # connectivity matrix for the first and the third segments
+conn2_mat = rho * matrix(c(0.6,0.5,0.6,0.5,0.6,1,0.6,1,0.6), nrow = 3) # connectivity matrix for the second segment
+set.seed(1)
+can_vec = sample(1:p, replace = F) # randomly assign nodes into groups
+sbm1 = simu.SBM(conn1_mat, can_vec, n, symm = TRUE, self = TRUE)
+sbm2 = simu.SBM(conn2_mat, can_vec, n, symm = TRUE, self = TRUE)
+data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
+data_mat1 = data_mat[,seq(1,ncol(data_mat),2)]
+data_mat2 = data_mat[,seq(2,ncol(data_mat),2)]
+train_mat = simu.SBM(conn1_mat, can_vec, n = 200, symm = TRUE, self = TRUE)$obs_mat
+temp = online.network(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat, alpha = 0.05, gamma = NULL, permu_num = 100)
+cpt_hat = 2 * temp$t
+temp2 = online.network(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat, alpha = NULL, gamma = 200, permu_num = 100)
+cpt_hat2 = 2 * temp2$t
+}
+\references{
+Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
+}
+\author{
+Oscar Hernan Madrid Padilla & Haotian Xu
 }

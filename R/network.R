@@ -131,7 +131,7 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 #' rho_hat = quantile(rowMeans(data_mat), 0.95)
 #' tau = p*rho_hat*(log(n))^2/20 # default threshold given in the paper
 #' cpt_init = unlist(threshold.BS(temp, tau)$change_points[1])
-#' cpt_refined = local.refine.network(cpt_init, data_mat1, data_mat2, self = FALSE, tau2 = p*rho_hat/3, tau3 = Inf)
+#' cpt_refined = local.refine.network(cpt_init, data_mat1, data_mat2, self = TRUE, tau2 = p*rho_hat/3, tau3 = Inf)
 #' cpt_WBS = 2*cpt_init
 #' cpt_refin = 2*cpt_refined
 WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0, ...){
@@ -215,7 +215,7 @@ WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0
 #' rho_hat = quantile(rowMeans(data_mat), 0.95)
 #' tau = p*rho_hat*(log(n))^2/20 # default threshold given in the paper
 #' cpt_init = unlist(threshold.BS(temp, tau)$change_points[1])
-#' cpt_refined = local.refine.network(cpt_init, data_mat1, data_mat2, self = FALSE, tau2 = p*rho_hat/3, tau3 = Inf)
+#' cpt_refined = local.refine.network(cpt_init, data_mat1, data_mat2, self = TRUE, tau2 = p*rho_hat/3, tau3 = Inf)
 #' cpt_WBS = 2*cpt_init
 #' cpt_refin = 2*cpt_refined
 local.refine.network = function(cpt_init, data_mat1, data_mat2, self = FALSE, tau2, tau3 = Inf, ...){
@@ -321,13 +321,13 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, rho, a
     stop("Either alpha or gamma should be provided.")
   }
   if(!is.null(alpha)){
-    tau1 = 0.2*sqrt(p*rho) + sqrt(2*log(2*(t-s)*(t-s+1)/alpha))/15
-    tau2 = rho*sqrt((t-s)*s/t)
-    tau3 = C*sqrt(log(t/alpha))
+    tau1 = ((C/100)*sqrt(p*rho) + sqrt(2*log(  t*(t+1)*log(t)/(alpha*log(2))   )    )      )/5
+    tau2 =  rho*sqrt(  (t-s)*s/t)/10
+    tau3 = (C/100)*sqrt( log(t/alpha)   )/50
   }else{
-    tau1 = 0.2*sqrt(p*rho) + sqrt(2*log(2*gamma+2))/15
-    tau2 = rho*sqrt((t-s)*s/t)
-    tau3 = C*sqrt(log(gamma))
+    tau1 =((C/100)*sqrt(p*rho)  + sqrt(  2*log((2*(gamma+1)*(gamma+1)*log(gamma+1) )/log(2))  ))/5
+    tau2 =  rho*sqrt(  (t-s)*s/t)/10
+    tau3 = (C/100)*sqrt( log(gamma)   )/50
   }
 
   vec1 = CUSUM.vec(data_mat1, 1, t, s)
@@ -335,7 +335,7 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, rho, a
   
   mat1 = lowertri2mat(vec1, p, diag = self)
   mat3 = USVT(vec2, self = FALSE, tau1, tau2)
-  frob_norm = sqrt(sum(as.vector(mat3)^2))
+  frob_norm = sum(as.vector(mat3)^2)
   if(frob_norm < tau3){
     return(0)
   }
@@ -365,9 +365,31 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, rho, a
 #' @author  Oscar Hernan Madrid Padilla & Haotian Xu
 #' @references Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
 #' @examples
-online.network = function(data_mat1, data_mat2, b_vec, train_mat = NULL, alpha = NULL, gamma = NULL, permu_num = NULL, ...){
+#' p = 100 # number of nodes
+#' rho = 0.5 # sparsity parameter
+#' block_num = 3 # number of groups for SBM
+#' n = 150 # sample size for each segment
+#' conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) # connectivity matrix for the first and the third segments
+#' conn2_mat = rho * matrix(c(0.6,0.5,0.6,0.5,0.6,1,0.6,1,0.6), nrow = 3) # connectivity matrix for the second segment
+#' set.seed(1)
+#' can_vec = sample(1:p, replace = F) # randomly assign nodes into groups
+#' sbm1 = simu.SBM(conn1_mat, can_vec, n, symm = TRUE, self = TRUE)
+#' sbm2 = simu.SBM(conn2_mat, can_vec, n, symm = TRUE, self = TRUE)
+#' data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
+#' data_mat1 = data_mat[,seq(1,ncol(data_mat),2)]
+#' data_mat2 = data_mat[,seq(2,ncol(data_mat),2)]
+#' train_mat = simu.SBM(conn1_mat, can_vec, n = 200, symm = TRUE, self = TRUE)$obs_mat
+#' temp = online.network(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat, alpha = 0.05, gamma = NULL, permu_num = 100)
+#' cpt_hat = 2 * temp$t
+#' temp2 = online.network(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat, alpha = NULL, gamma = 200, permu_num = 100)
+#' cpt_hat2 = 2 * temp2$t
+online.network = function(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat = NULL, alpha = NULL, gamma = NULL, permu_num = NULL, ...){
   n = ncol(data_mat1)
-  p = sqrt(nrow(data_mat1))
+  if(self == TRUE){
+    p = sqrt(2*nrow(data_mat1) + 1/4) - 1/2
+  }else{
+    p = 1/2 + sqrt(2*nrow(data_mat1) + 1/4) #obtain p
+  }
   if(is.null(alpha)+is.null(gamma)!=1){
     stop("Either alpha or gamma should be provided.")
   }
@@ -394,6 +416,9 @@ online.network = function(data_mat1, data_mat2, b_vec, train_mat = NULL, alpha =
     if(!is.null(alpha)){
       C_vec = rep(NA, permu_num)
       trend = sapply(2:obs_train, function(t) sqrt(rho_hat*log(t/alpha)))
+      print("Start calibrating the thresholds b_t:")
+      pb = txtProgressBar(min = 0, max = permu_num, style = 3)
+      counter = 0
       for(sim in 1:permu_num){
         idx_permu_odd = sample(1:obs_train)
         idx_permu_even = sample(1:obs_train)
@@ -409,11 +434,20 @@ online.network = function(data_mat1, data_mat2, b_vec, train_mat = NULL, alpha =
           }
         }
         C_vec[sim] = max(scores[sim,]/trend)
+        counter = counter + 1
+        setTxtProgressBar(pb, counter)
       }
-      b_vec = quantile(C_vec, 1-alpha) * trend
+      b_vec = quantile(C_vec, 1-alpha) * sapply(2:n, function(t) sqrt(rho_hat*log(t/alpha)))
     }else if(!is.null(gamma)){
+      if(gamma > obs_train){
+        gamma = obs_train
+        warning(paste0("gamma is set to be ", obs_train, ". To allow larger value of gamma, please increase the sample size of train_mat."))
+      }
       C_mat = matrix(NA, permu_num, obs_train-1)
       trend = sqrt(rho_hat*log(gamma))
+      print("Start calibrating the thresholds b_t:")
+      pb = txtProgressBar(min = 0, max = permu_num, style = 3)
+      counter = 0
       for(sim in 1:permu_num){
         idx_permu_odd = sample(1:obs_train)
         idx_permu_even = sample(1:obs_train)
@@ -429,6 +463,8 @@ online.network = function(data_mat1, data_mat2, b_vec, train_mat = NULL, alpha =
           }
         }
         C_mat[sim,] = scores[sim,]/trend
+        counter = counter + 1
+        setTxtProgressBar(pb, counter)
       }
       C_grid = seq(min(C_mat), max(C_mat), length = 300)
       alarm = rep(0, length(C_grid))
@@ -437,8 +473,9 @@ online.network = function(data_mat1, data_mat2, b_vec, train_mat = NULL, alpha =
         alarm[j] = mean(aux)
       }
       ind = which.min(abs(alarm-gamma))
-      b_vec = rep(C_grid[ind] * trend, obs_data-1)
+      b_vec = rep(C_grid[ind] * trend, n-1)
     }
+    print("Finish calibration.")
   }
   score = rep(0, n)
   for(t in 2:n){
@@ -454,7 +491,7 @@ online.network = function(data_mat1, data_mat2, b_vec, train_mat = NULL, alpha =
   }
   #ind =  which(score/b >1)
   if(score[t] > b_vec[t]){
-    return(list(t = t, score = score, b = b_vec))
+    return(list(t = t, score = score, b_vec = b_vec))
   }
-  return(list(t = Inf, score = score, b = b_vec))
+  return(list(t = Inf, score = score, b_vec = b_vec))
 }

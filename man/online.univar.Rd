@@ -19,7 +19,7 @@ online.univar(
 
 \item{b_vec}{A \code{numeric} vector of thresholds b_t with t >= 2.}
 
-\item{train_vec}{A \code{numeric} vector of training data from a pre-change distribution, which is only needed to when b_t is NULL in order to calibrate b_t.}
+\item{train_vec}{A \code{numeric} vector of training data from a pre-change distribution (no changepoint), which is only needed to when b_vec is NULL in order to calibrate b_t.}
 
 \item{alpha}{A \code{numeric} scalar of desired false alarm rate.}
 
