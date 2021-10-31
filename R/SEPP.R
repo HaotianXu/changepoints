@@ -9,7 +9,8 @@
 #' @param ...        Additional arguments.
 #' @return  A p-by-n matrix.
 #' @export
-#' @author 
+#' @author  Daren Wang & Haotian Xu
+#' @references Wang, D., Yu, Y., & Willett, R. (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. arXiv preprint arXiv:2006.03572.
 #' @examples
 #' M = 30
 #' n = 300
@@ -48,13 +49,15 @@ simu.SEPP = function(intercept, M, A, threshold, n, vzero = NULL, ...){
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param lambda    A \code{numeric} scalar of tuning parameter for lasso penalty.
+#' @param threshold A \code{numeric} scalar representing the upper bound for each coordinate of X_t (for stability).
 #' @param ...      Additional arguments.
-#' @return TO DO.
+#' @return A vector of the best partition.
 #' @export
-#' @author Haotian Xu
+#' @author Daren Wang & Haotian Xu
+#' @references Wang, D., Yu, Y., & Willett, R. (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. arXiv preprint arXiv:2006.03572.
 #' @examples
 #' parti = DP.SEPP(gamma = 1, delta = 5, delta2 = 600, DATA, intercept = 1/2, lambda = 100, threshold = 6)$partition
-#' localization = part2local(parti)
+#' cpt_hat = part2local(parti)
 DP.SEPP = function(gamma, delta, delta2, DATA, intercept, lambda, threshold, ...){
   M = nrow(DATA)
   N = ncol(DATA)

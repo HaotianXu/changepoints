@@ -41,6 +41,9 @@ DATA1 = simu.SEPP(intercept, M, A, threshold, n, vzero = NULL)
 DATA2 = simu.SEPP(intercept, M, A2, threshold, n, vzero = DATA1[,n])
 DATA = cbind(DATA1, DATA2)
 }
+\references{
+Wang, D., Yu, Y., & Willett, R. (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. arXiv preprint arXiv:2006.03572.
+}
 \author{
-
+Daren Wang & Haotian Xu
 }

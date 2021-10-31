@@ -15,18 +15,23 @@ DP.SEPP(gamma, delta, delta2, DATA, intercept, lambda, threshold, ...)
 
 \item{lambda}{A \code{numeric} scalar of tuning parameter for lasso penalty.}
 
+\item{threshold}{A \code{numeric} scalar representing the upper bound for each coordinate of X_t (for stability).}
+
 \item{...}{Additional arguments.}
 }
 \value{
-TO DO.
+A vector of the best partition.
 }
 \description{
 Perform dynamic programming for SEPP change points detection through l0 penalty.
 }
 \examples{
 parti = DP.SEPP(gamma = 1, delta = 5, delta2 = 600, DATA, intercept = 1/2, lambda = 100, threshold = 6)$partition
-localization = part2local(parti)
+cpt_hat = part2local(parti)
+}
+\references{
+Wang, D., Yu, Y., & Willett, R. (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. arXiv preprint arXiv:2006.03572.
 }
 \author{
-Haotian Xu
+Daren Wang & Haotian Xu
 }
