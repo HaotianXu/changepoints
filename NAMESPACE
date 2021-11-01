@@ -3,6 +3,7 @@
 export(BS.cov)
 export(BS.univar)
 export(BS.univar.CPD)
+export(CV.search.DP.LR)
 export(CV.search.DP.VAR1)
 export(CV.search.DP.poly)
 export(CV.search.DP.regression)

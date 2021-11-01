@@ -28,8 +28,11 @@ Perform dynamic programming algorithm for regression change points detection thr
 \examples{
 data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 temp = DP.regression(data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
-part2local(temp$partition)
+cpt_hat = part2local(temp$partition)
+}
+\references{
+Rinaldo, A., Wang, D., Wen, Q., Willett, R., & Yu, Y. (2021, March). Localizing changes in high-dimensional regression models. In International Conference on Artificial Intelligence and Statistics (pp. 2089-2097). PMLR.
 }
 \author{
-
+Daren Wang & Haotian Xu
 }

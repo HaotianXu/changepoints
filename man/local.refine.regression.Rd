@@ -13,14 +13,14 @@ local.refine.regression(cpt.init, y, X, zeta, w = 1/3)
 
 \item{X}{A \code{numeric} matrix of covariates.}
 
-\item{zeta}{A \code{numeric} scalar of lasso penalty.}
+\item{zeta}{A \code{numeric} scalar of tuning parameter for the group lasso.}
 
-\item{w}{A \code{numeric} scalar of weight for interpolation.}
+\item{w}{A \code{numeric} scalar of weight for extrapolating the initial changepoints estimation.}
 
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{numeric} scalar of prediction error in l2 norm.
+A vector of locally refined changepoints estimation.
 }
 \description{
 Perform local refinement for regression change points detection.
@@ -28,8 +28,11 @@ Perform local refinement for regression change points detection.
 \examples{
 data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 cpt.init = part2local(DP.regression(data$y, X = data$X, gamma = 2, lambda = 2, delta = 5)$partition)
-local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
+local.refine.regression(cpt.init, data$y, X = data$X, zeta = 1, w = 1/3)
+}
+\references{
+Rinaldo, A., Wang, D., Wen, Q., Willett, R., & Yu, Y. (2021, March). Localizing changes in high-dimensional regression models. In International Conference on Artificial Intelligence and Statistics (pp. 2089-2097). PMLR.
 }
 \author{
-
+Daren Wang & Haotian Xu
 }

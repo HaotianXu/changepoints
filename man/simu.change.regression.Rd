@@ -4,7 +4,7 @@
 \alias{simu.change.regression}
 \title{Simulate sparse regression model with changepoints in coefficients.}
 \usage{
-simu.change.regression(d0, cpt.true, p, n, sigma, kappa)
+simu.change.regression(d0, cpt.true, p, n, sigma, kappa, ...)
 }
 \arguments{
 \item{d0}{A \code{numeric} scalar of number of nonzero coefficients.}
@@ -17,9 +17,9 @@ simu.change.regression(d0, cpt.true, p, n, sigma, kappa)
 
 \item{kappa}{A \code{numeric} scalar of minimum jump size in terms of the l2 norm.}
 
-\item{cpt.ture}{An \code{integer} vector of true changepoints (sorted in strictly increasing order).}
-
 \item{...}{Additional arguments.}
+
+\item{cpt.ture}{An \code{integer} vector of true changepoints (sorted in strictly increasing order).}
 }
 \value{
 A \code{list} with the structure:
