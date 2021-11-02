@@ -234,7 +234,7 @@ X.glasso.converter.VAR1 = function(X, eta, s_ceil){
 #' @noRd
 CV.DP.VAR1 = function(DATA, gamma, lambda, delta, ...){
   DATA.temp = DATA
-  if (ncol(DATA)%%2 == 0){
+  if (ncol(DATA)%%2 != 0){
     DATA.temp = DATA[,2:ncol(DATA)]
   }
   N = ncol(DATA.temp)
