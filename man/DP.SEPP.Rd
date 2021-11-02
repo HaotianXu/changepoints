@@ -4,16 +4,20 @@
 \alias{DP.SEPP}
 \title{Dynamic programming for SEPP change points detection through l0 penalty.}
 \usage{
-DP.SEPP(gamma, delta, delta2, DATA, intercept, lambda, threshold, ...)
+DP.SEPP(DATA, gamma, lambda, delta, delta2, intercept, threshold, ...)
 }
 \arguments{
+\item{DATA}{A \code{numeric} matrix of observations with horizontal axis being time.}
+
 \item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
 
-\item{delta}{A positive \code{integer} scalar of minimum spacing.}
-
-\item{DATA}{A \code{numeric} matrix of observations.}
-
 \item{lambda}{A \code{numeric} scalar of tuning parameter for lasso penalty.}
+
+\item{delta}{An \code{integer} scalar of minimum spacing.}
+
+\item{delta2}{An \code{integer} scalar representing the maximal of the change point spacing (for reducing computation cost).}
+
+\item{intercept}{A \code{numeric} scalar representing the intercept of the model, which is assumed to be known.}
 
 \item{threshold}{A \code{numeric} scalar representing the upper bound for each coordinate of X_t (for stability).}
 
@@ -26,7 +30,12 @@ A vector of the best partition.
 Perform dynamic programming for SEPP change points detection through l0 penalty.
 }
 \examples{
-parti = DP.SEPP(gamma = 1, delta = 5, delta2 = 600, DATA, intercept = 1/2, lambda = 100, threshold = 6)$partition
+gamma = n/50
+delta = n/2-1
+delta2 = 1.5*n
+intercept = 1/2
+threshold = 4
+parti = DP.SEPP(DATA, gamma = gamma, lambda = 500, delta, delta2, intercept, threshold)$partition
 cpt_hat = part2local(parti)
 }
 \references{

@@ -28,18 +28,35 @@ A p-by-n matrix.
 Simulate a (stable) SEPP model (without change point).
 }
 \examples{
-M = 30
-n = 300
-threshold = 6 #thresholding makes the process stable
+M = 50 #M is dimension
+n = 100
+s = 30 # s is sparsity
+factor = 0.12 #large factor gives exact recovery
+threshold = 4 #thresholding makes the process stable
 intercept = 1/2 #intercept of the model. Assume to be known as in the existing literature
-v1 = (2*(seq(1,30,1)\%\%2)-1)*(0.05+0.05*6)
-v2 = -v1
-AA=matrix(0,nrow = 30,ncol=28)
-A=cbind(v1,v2,AA)
-A2=cbind(v2,v1,AA)
-DATA1 = simu.SEPP(intercept, M, A, threshold, n, vzero = NULL)
-DATA2 = simu.SEPP(intercept, M, A2, threshold, n, vzero = DATA1[,n])
-DATA = cbind(DATA1, DATA2)
+A1 = matrix(0,M,M)
+diag(A1[,-1]) = 1
+diag(A1) = 1
+diag(A1[-1,]) = -1
+A1 = A1*factor
+A1[(s+1):M,(s+1):M] = 0
+A2 = matrix(0,M,M)
+diag(A2[,-1]) = 1
+diag(A2) = -1
+diag(A2[-1,]) = 1
+A2 = A2*factor
+A2[(s+1):M,(s+1):M] = 0
+A3 = matrix(0,M,M)
+diag(A3[,-1]) = 1
+diag(A3) = 1
+diag(A3[-1,]) = -1
+A3 = A3*factor
+A3[(s+1):M,(s+1):M] = 0
+data1 = simu.SEPP(intercept, M, A1, threshold, n, vzero = NULL)
+data2 = simu.SEPP(intercept, M, A2, threshold, n, vzero = data1[,n])
+data3 = simu.SEPP(intercept, M, A3, threshold, n, vzero = data2[,n])
+data = cbind(data1, data2, data3)
+dim(data)
 }
 \references{
 Wang, D., Yu, Y., & Willett, R. (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. arXiv preprint arXiv:2006.03572.
