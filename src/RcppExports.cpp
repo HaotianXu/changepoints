@@ -85,6 +85,87 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_soft_threshold_scalar
+double rcpp_soft_threshold_scalar(double x, double lambda);
+RcppExport SEXP _changepoints_rcpp_soft_threshold_scalar(SEXP xSEXP, SEXP lambdaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_soft_threshold_scalar(x, lambda));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_lasso_standardized_obj
+double rcpp_lasso_standardized_obj(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::colvec& beta, double lambda);
+RcppExport SEXP _changepoints_rcpp_lasso_standardized_obj(SEXP XtildeSEXP, SEXP YtildeSEXP, SEXP betaSEXP, SEXP lambdaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type Xtilde(XtildeSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type Ytilde(YtildeSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_lasso_standardized_obj(Xtilde, Ytilde, beta, lambda));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_lasso_standardized
+arma::colvec rcpp_lasso_standardized(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::colvec& beta_start, double lambda, double eps);
+RcppExport SEXP _changepoints_rcpp_lasso_standardized(SEXP XtildeSEXP, SEXP YtildeSEXP, SEXP beta_startSEXP, SEXP lambdaSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type Xtilde(XtildeSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type Ytilde(YtildeSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type beta_start(beta_startSEXP);
+    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_lasso_standardized(Xtilde, Ytilde, beta_start, lambda, eps));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_lasso_standardized_seq
+arma::mat rcpp_lasso_standardized_seq(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::colvec& lambda_seq, double eps);
+RcppExport SEXP _changepoints_rcpp_lasso_standardized_seq(SEXP XtildeSEXP, SEXP YtildeSEXP, SEXP lambda_seqSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type Xtilde(XtildeSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type Ytilde(YtildeSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type lambda_seq(lambda_seqSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_lasso_standardized_seq(Xtilde, Ytilde, lambda_seq, eps));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_standardizeXY
+Rcpp::List rcpp_standardizeXY(const arma::mat& X, const arma::colvec& Y);
+RcppExport SEXP _changepoints_rcpp_standardizeXY(SEXP XSEXP, SEXP YSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type Y(YSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_standardizeXY(X, Y));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_lasso_seq
+Rcpp::List rcpp_lasso_seq(const arma::mat& X, const arma::colvec& Y, const arma::colvec& lambda_seq, double eps);
+RcppExport SEXP _changepoints_rcpp_lasso_seq(SEXP XSEXP, SEXP YSEXP, SEXP lambda_seqSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type lambda_seq(lambda_seqSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_lasso_seq(X, Y, lambda_seq, eps));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_hello_world
 List rcpp_hello_world();
 RcppExport SEXP _changepoints_rcpp_hello_world() {
@@ -102,6 +183,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_changepoints_rcpp_DP_univar", (DL_FUNC) &_changepoints_rcpp_DP_univar, 3},
     {"_changepoints_rcpp_basis_poly", (DL_FUNC) &_changepoints_rcpp_basis_poly, 4},
     {"_changepoints_rcpp_error_pred_seg_VAR1", (DL_FUNC) &_changepoints_rcpp_error_pred_seg_VAR1, 7},
+    {"_changepoints_rcpp_soft_threshold_scalar", (DL_FUNC) &_changepoints_rcpp_soft_threshold_scalar, 2},
+    {"_changepoints_rcpp_lasso_standardized_obj", (DL_FUNC) &_changepoints_rcpp_lasso_standardized_obj, 4},
+    {"_changepoints_rcpp_lasso_standardized", (DL_FUNC) &_changepoints_rcpp_lasso_standardized, 5},
+    {"_changepoints_rcpp_lasso_standardized_seq", (DL_FUNC) &_changepoints_rcpp_lasso_standardized_seq, 4},
+    {"_changepoints_rcpp_standardizeXY", (DL_FUNC) &_changepoints_rcpp_standardizeXY, 2},
+    {"_changepoints_rcpp_lasso_seq", (DL_FUNC) &_changepoints_rcpp_lasso_seq, 4},
     {"_changepoints_rcpp_hello_world", (DL_FUNC) &_changepoints_rcpp_hello_world, 0},
     {NULL, NULL, 0}
 };

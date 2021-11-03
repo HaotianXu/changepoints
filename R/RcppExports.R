@@ -21,6 +21,30 @@ rcpp_error_pred_seg_VAR1 <- function(X_futu, X_curr, s, e, alpha, lambda, delta)
     .Call('_changepoints_rcpp_error_pred_seg_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, s, e, alpha, lambda, delta)
 }
 
+rcpp_soft_threshold_scalar <- function(x, lambda) {
+    .Call('_changepoints_rcpp_soft_threshold_scalar', PACKAGE = 'changepoints', x, lambda)
+}
+
+rcpp_lasso_standardized_obj <- function(Xtilde, Ytilde, beta, lambda) {
+    .Call('_changepoints_rcpp_lasso_standardized_obj', PACKAGE = 'changepoints', Xtilde, Ytilde, beta, lambda)
+}
+
+rcpp_lasso_standardized <- function(Xtilde, Ytilde, beta_start, lambda, eps) {
+    .Call('_changepoints_rcpp_lasso_standardized', PACKAGE = 'changepoints', Xtilde, Ytilde, beta_start, lambda, eps)
+}
+
+rcpp_lasso_standardized_seq <- function(Xtilde, Ytilde, lambda_seq, eps) {
+    .Call('_changepoints_rcpp_lasso_standardized_seq', PACKAGE = 'changepoints', Xtilde, Ytilde, lambda_seq, eps)
+}
+
+rcpp_standardizeXY <- function(X, Y) {
+    .Call('_changepoints_rcpp_standardizeXY', PACKAGE = 'changepoints', X, Y)
+}
+
+rcpp_lasso_seq <- function(X, Y, lambda_seq, eps) {
+    .Call('_changepoints_rcpp_lasso_seq', PACKAGE = 'changepoints', X, Y, lambda_seq, eps)
+}
+
 rcpp_hello_world <- function() {
     .Call('_changepoints_rcpp_hello_world', PACKAGE = 'changepoints')
 }

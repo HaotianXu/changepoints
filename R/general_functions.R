@@ -229,3 +229,34 @@ gen.cov.mat = function(p, sigma2, type){
   }
   return(Sigma)
 }
+
+
+
+#' @export
+lasso_standardized_seq <- function(Xtilde, Ytilde, lambda_seq, eps = 0.0001, ...){
+  .Call('_changepoints_rcpp_lasso_standardized_seq', PACKAGE = 'changepoints', Xtilde, Ytilde, lambda_seq, eps)
+}
+
+
+#' @export
+soft_threshold_scalar <- function(x, lambda){
+  .Call('_changepoints_rcpp_soft_threshold_scalar', PACKAGE = 'changepoints', x, lambda)
+}
+
+
+#' @export
+lasso_seq <- function(X, Y, lambda_seq, eps = 0.0001, ...){
+  .Call('_changepoints_rcpp_lasso_seq', PACKAGE = 'changepoints', X, Y, lambda_seq, eps)
+}
+
+
+#' @export
+lasso_standardized <- function(Xtilde, Ytilde, beta_start, lambda, eps = 0.0001){
+  .Call('_changepoints_rcpp_lasso_standardized', PACKAGE = 'changepoints', Xtilde, Ytilde, beta_start, lambda, eps)
+}
+
+#' @export
+standardizeXY <- function(X, Y){
+  .Call('_changepoints_rcpp_standardizeXY', PACKAGE = 'changepoints', X, Y)
+}
+
