@@ -1,6 +1,5 @@
 //DP_univar.cpp
 #include <RcppArmadillo.h>
-#include <limits>
 #include "DP_univar.h"
 
 // [[Rcpp::export]]
@@ -13,13 +12,13 @@ Rcpp::List rcpp_DP_univar(const arma::vec& y, double gamma, int delta) {
   arma::vec yhat = arma::zeros<arma::vec>(N+1);
   bestvalue(0) = -gamma;
   for(int r = 1; r < N+1; ++r){
-    bestvalue(r) = std::numeric_limits<int>::max();
+    bestvalue(r) = R_PosInf;
     for(int l = 1; l < r+1; ++l){
       if(r - l > 2*delta){
         dist = arma::norm(y.subvec(l-1,r-1) - mean(y.subvec(l-1,r-1)), 2);
         b = bestvalue(l-1) + gamma + dist*dist;
       }else{
-        b = std::numeric_limits<int>::max();
+        b = R_PosInf;
       }
       if (b < bestvalue(r)){
         bestvalue(r) = b;

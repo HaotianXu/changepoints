@@ -1,6 +1,5 @@
 //DP_poly.cpp
 #include <RcppArmadillo.h>
-#include <limits>
 #include "basis_poly.h"
 #include "DP_poly.h"
 
@@ -16,7 +15,7 @@ Rcpp::List rcpp_DP_poly(const arma::vec& y, int r, double gamma, int delta){
   arma::mat proj_mat;
   bestvalue(0) = -gamma;
   for(int i = 1; i < n+1; ++i){
-    bestvalue(i) = std::numeric_limits<int>::max();
+    bestvalue(i) = R_PosInf;
     for(int l = 1; l < i+1; ++l){
       if(i - l > 2*delta){
         u_mat = rcpp_basis_poly(n, l, i, r);
@@ -24,7 +23,7 @@ Rcpp::List rcpp_DP_poly(const arma::vec& y, int r, double gamma, int delta){
         dist = arma::norm(y.subvec(l-1,i-1) - proj_mat * y.subvec(l-1,i-1), 2);
         b = bestvalue(l-1) + gamma + dist*dist;
       }else{
-        b = std::numeric_limits<int>::max();
+        b = R_PosInf;
       }
       if (b < bestvalue(i)){
         bestvalue(i) = b;

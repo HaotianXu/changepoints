@@ -239,6 +239,12 @@ lasso_standardized_seq <- function(Xtilde, Ytilde, lambda_seq, eps = 0.0001, ...
 
 
 #' @export
+lasso_standardized_obj <- function(Xtilde, Ytilde, beta, lambda){
+  .Call('_changepoints_rcpp_lasso_standardized_obj', PACKAGE = 'changepoints', Xtilde, Ytilde, beta, lambda)
+}
+  
+
+#' @export
 soft_threshold_scalar <- function(x, lambda){
   .Call('_changepoints_rcpp_soft_threshold_scalar', PACKAGE = 'changepoints', x, lambda)
 }
@@ -258,5 +264,10 @@ lasso_standardized <- function(Xtilde, Ytilde, beta_start, lambda, eps = 0.0001)
 #' @export
 standardizeXY <- function(X, Y){
   .Call('_changepoints_rcpp_standardizeXY', PACKAGE = 'changepoints', X, Y)
+}
+
+#' @export
+rcpp_error_pred_seg_VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps = 0.0001){
+  .Call('_changepoints_rcpp_error_pred_seg_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, s, e, lambda, delta, eps)
 }
 

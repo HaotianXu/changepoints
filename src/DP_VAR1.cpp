@@ -1,29 +1,52 @@
 //DP_VAR1.cpp
 #include <RcppArmadillo.h>
-#include <limits>
-#include "error_pred_seg_VAR1.h"
 #include "DP_VAR1.h"
+#include "lasso.h"
 
 // [[Rcpp::export]]
-Rcpp::List rcpp_DP_VAR1(const arma::mat& X_futu, const arma::mat& X_curr, double alpha, double gamma, double lambda, int delta){
-  int n = X_curr.n_cols;
+double rcpp_error_pred_seg_VAR1(const arma::mat& X_futu, const arma::mat& X_curr, int s, int e, const arma::vec& lambda, int delta, double eps){
+  int p = X_curr.n_rows;
+  arma::mat tran_hat;
+  Rcpp::List lassofit;
+  arma::mat X;
+  arma::vec y;
+  double error = 0;
+  if(e - s > 2*delta){
+    X = X_curr.cols(s-1, e-1).t();
+    y = X.col(0);
+    lassofit = rcpp_lasso_seq(X, y, lambda/sqrt(e-s), eps);
+    tran_hat = Rcpp::as<arma::mat>(lassofit["beta_mat"]);
+    for(int m = 1; m < p; ++m){
+      y = X.col(m);
+      lassofit = rcpp_lasso_seq(X, y, lambda/sqrt(e-s), eps);
+      tran_hat = arma::join_rows(tran_hat, Rcpp::as<arma::mat>(lassofit["beta_mat"]));
+    }
+    error = norm(tran_hat.t() * X_curr.cols(s-1, e-1) - X_futu.cols(s-1, e-1), "fro");
+  }else{
+    error = R_PosInf;
+  }
+  return error * error;
+}
+
+
+
+// [[Rcpp::export]]
+Rcpp::List rcpp_DP_VAR1(const arma::mat& X_futu, const arma::mat& X_curr, double gamma, const arma::vec& lambda, int delta, double eps){
+  int n = X_futu.n_cols;
   double b = 0;
-  double dist = 0;
   arma::vec bestvalue = arma::zeros<arma::vec>(n+1);
   arma::vec partition = arma::zeros<arma::vec>(n+1);
   bestvalue(0) = -gamma;
   for(int i = 1; i < n+1; ++i){
-    bestvalue(i) = std::numeric_limits<int>::max();
+    //Rcpp::Rcout << "r is" << std::endl << i << std::endl;
+    bestvalue(i) = R_PosInf;
     for(int l = 1; l < i+1; ++l){
-      if(i - l > 2*delta){
-        dist = rcpp_error_pred_seg_VAR1(X_futu, X_curr, l, i, alpha, lambda, delta);
-        b = bestvalue(l-1) + gamma + dist;
-      }else{
-        b = std::numeric_limits<int>::max();
-      }
+      //Rcpp::Rcout << "l is" << std::endl << l << std::endl;
+      b = bestvalue(l-1) + gamma + rcpp_error_pred_seg_VAR1(X_futu, X_curr, l, i, lambda, delta, eps);
       if (b < bestvalue(i)){
         bestvalue(i) = b;
         partition(i) = l-1;
+        //Rcpp::Rcout << partition(i) << std::endl;
       }
     }
   }

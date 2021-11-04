@@ -52,7 +52,7 @@ error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
   if(e > n | s > e | s < 1){
     stop("s and e are not correctly specified.")
   }
-  if(e-s > delta){
+  if(e-s > 2*delta){
     estimate = as.matrix(do.call(cbind, sapply(1:p, function(m) glmnet(x = t(X_curr[,s:e]), y = X_curr[m,s:e], family=c("gaussian"), alpha = 1, lambda = lambda/sqrt(e-s))$beta)))
     X_futu_hat = t(estimate) %*% X_curr[,s:e]
     d = norm(X_futu_hat - X_futu[,s:e], type = "F")
@@ -65,10 +65,10 @@ error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
 }
 
 
-# # in cpp
-# DP_VAR1 <- function(X_futu, X_curr, alpha, gamma, lambda, delta) {
-#   .Call('_changepoints_rcpp_DP_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, alpha, gamma, lambda, delta)
-# }
+#' @export
+DP_VAR1 <- function(X_futu, X_curr, gamma, lambda, delta, eps = 0.0001) {
+  .Call('_changepoints_rcpp_DP_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, gamma, lambda, delta, eps)
+}
 
 #' @title Dynamic programming for VAR1 change points detection through l0 penalty.
 #' @description Perform dynamic programming for VAR1 change points detection through l0 penalty.
@@ -82,7 +82,7 @@ error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
 #' @export
 #' @author Daren Wang, Haotian Xu
 #' @examples
-#' p = 10
+#' p = 20
 #' sigma = 1
 #' n = 5
 #' v1 = 2*(seq(1,p,1)%%2) - 1
@@ -97,7 +97,7 @@ error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
 #' N = ncol(data)
 #' X_curr = data[,1:(N-1)]
 #' X_futu = data[,2:N]
-#' parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
+#' parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 1)$partition
 #' part2local(parti)
 DP.VAR1 = function(X_futu, X_curr, gamma, lambda, delta, ...){
   p = nrow(X_futu)

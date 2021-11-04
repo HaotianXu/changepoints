@@ -1,6 +1,5 @@
 //D_P.cpp
 #include <RcppArmadillo.h>
-#include <limits>
 #include "basis_poly.h"
 
 // [[Rcpp::export]]

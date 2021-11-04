@@ -11,19 +11,36 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// rcpp_DP_VAR1
-Rcpp::List rcpp_DP_VAR1(const arma::mat& X_futu, const arma::mat& X_curr, double alpha, double gamma, double lambda, int delta);
-RcppExport SEXP _changepoints_rcpp_DP_VAR1(SEXP X_futuSEXP, SEXP X_currSEXP, SEXP alphaSEXP, SEXP gammaSEXP, SEXP lambdaSEXP, SEXP deltaSEXP) {
+// rcpp_error_pred_seg_VAR1
+double rcpp_error_pred_seg_VAR1(const arma::mat& X_futu, const arma::mat& X_curr, int s, int e, const arma::vec& lambda, int delta, double eps);
+RcppExport SEXP _changepoints_rcpp_error_pred_seg_VAR1(SEXP X_futuSEXP, SEXP X_currSEXP, SEXP sSEXP, SEXP eSEXP, SEXP lambdaSEXP, SEXP deltaSEXP, SEXP epsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type X_futu(X_futuSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type X_curr(X_currSEXP);
-    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< double >::type gamma(gammaSEXP);
-    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< int >::type s(sSEXP);
+    Rcpp::traits::input_parameter< int >::type e(eSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< int >::type delta(deltaSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_DP_VAR1(X_futu, X_curr, alpha, gamma, lambda, delta));
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_error_pred_seg_VAR1(X_futu, X_curr, s, e, lambda, delta, eps));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_DP_VAR1
+Rcpp::List rcpp_DP_VAR1(const arma::mat& X_futu, const arma::mat& X_curr, double gamma, const arma::vec& lambda, int delta, double eps);
+RcppExport SEXP _changepoints_rcpp_DP_VAR1(SEXP X_futuSEXP, SEXP X_currSEXP, SEXP gammaSEXP, SEXP lambdaSEXP, SEXP deltaSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type X_futu(X_futuSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X_curr(X_currSEXP);
+    Rcpp::traits::input_parameter< double >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< int >::type delta(deltaSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_DP_VAR1(X_futu, X_curr, gamma, lambda, delta, eps));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -65,23 +82,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type e(eSEXP);
     Rcpp::traits::input_parameter< int >::type r(rSEXP);
     rcpp_result_gen = Rcpp::wrap(rcpp_basis_poly(n, s, e, r));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcpp_error_pred_seg_VAR1
-double rcpp_error_pred_seg_VAR1(const arma::mat& X_futu, const arma::mat& X_curr, int s, int e, double alpha, double lambda, int delta);
-RcppExport SEXP _changepoints_rcpp_error_pred_seg_VAR1(SEXP X_futuSEXP, SEXP X_currSEXP, SEXP sSEXP, SEXP eSEXP, SEXP alphaSEXP, SEXP lambdaSEXP, SEXP deltaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::mat& >::type X_futu(X_futuSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type X_curr(X_currSEXP);
-    Rcpp::traits::input_parameter< int >::type s(sSEXP);
-    Rcpp::traits::input_parameter< int >::type e(eSEXP);
-    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< int >::type delta(deltaSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_error_pred_seg_VAR1(X_futu, X_curr, s, e, alpha, lambda, delta));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -178,11 +178,11 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_changepoints_rcpp_error_pred_seg_VAR1", (DL_FUNC) &_changepoints_rcpp_error_pred_seg_VAR1, 7},
     {"_changepoints_rcpp_DP_VAR1", (DL_FUNC) &_changepoints_rcpp_DP_VAR1, 6},
     {"_changepoints_rcpp_DP_poly", (DL_FUNC) &_changepoints_rcpp_DP_poly, 4},
     {"_changepoints_rcpp_DP_univar", (DL_FUNC) &_changepoints_rcpp_DP_univar, 3},
     {"_changepoints_rcpp_basis_poly", (DL_FUNC) &_changepoints_rcpp_basis_poly, 4},
-    {"_changepoints_rcpp_error_pred_seg_VAR1", (DL_FUNC) &_changepoints_rcpp_error_pred_seg_VAR1, 7},
     {"_changepoints_rcpp_soft_threshold_scalar", (DL_FUNC) &_changepoints_rcpp_soft_threshold_scalar, 2},
     {"_changepoints_rcpp_lasso_standardized_obj", (DL_FUNC) &_changepoints_rcpp_lasso_standardized_obj, 4},
     {"_changepoints_rcpp_lasso_standardized", (DL_FUNC) &_changepoints_rcpp_lasso_standardized, 5},

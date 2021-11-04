@@ -26,7 +26,7 @@ partition: A vector of the best partition.
 Perform dynamic programming for VAR1 change points detection through l0 penalty.
 }
 \examples{
-p = 10
+p = 20
 sigma = 1
 n = 5
 v1 = 2*(seq(1,p,1)\%\%2) - 1
@@ -41,7 +41,7 @@ data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
 N = ncol(data)
 X_curr = data[,1:(N-1)]
 X_futu = data[,2:N]
-parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
+parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 1)$partition
 part2local(parti)
 }
 \author{
