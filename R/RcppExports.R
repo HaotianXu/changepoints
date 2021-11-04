@@ -13,6 +13,14 @@ rcpp_DP_poly <- function(y, r, gamma, delta) {
     .Call('_changepoints_rcpp_DP_poly', PACKAGE = 'changepoints', y, r, gamma, delta)
 }
 
+rcpp_error_pred_seg_regression <- function(y, X, s, e, lambda, delta, eps) {
+    .Call('_changepoints_rcpp_error_pred_seg_regression', PACKAGE = 'changepoints', y, X, s, e, lambda, delta, eps)
+}
+
+rcpp_DP_regression <- function(y, X, gamma, lambda, delta, eps) {
+    .Call('_changepoints_rcpp_DP_regression', PACKAGE = 'changepoints', y, X, gamma, lambda, delta, eps)
+}
+
 rcpp_DP_univar <- function(y, gamma, delta) {
     .Call('_changepoints_rcpp_DP_univar', PACKAGE = 'changepoints', y, gamma, delta)
 }

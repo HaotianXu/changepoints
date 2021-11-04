@@ -1,3 +1,13 @@
+#' @export
+DP_regression <- function(y, X, gamma, lambda, delta, eps = 0.001) {
+  .Call('_changepoints_rcpp_DP_regression', PACKAGE = 'changepoints', y, X, gamma, lambda, delta, eps)
+}
+
+#' @export
+error_pred_seg_regression <- function(y, X, s, e, lambda, delta, eps = 0.001) {
+  .Call('_changepoints_rcpp_error_pred_seg_regression', PACKAGE = 'changepoints', y, X, s, e, lambda, delta, eps)
+}
+
 #' @title Dynamic programming algorithm for regression change points detection through l0 penalty.
 #' @description     Perform dynamic programming algorithm for regression change points detection through l0 penalty.
 #' @param y         A \code{numeric} vector of observations.
@@ -5,7 +15,6 @@
 #' @param gamma     A positive \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param lambda    A positive \code{numeric} scalar of tuning parameter for the lasso penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @param eps       A \code{numeric} scalar of precision level for convergence.
 #' @param ...       Additional arguments.
 #' @return          A vector of the best partition.
 #' @export
@@ -15,9 +24,37 @@
 #' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 #' temp = DP.regression(data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
 #' cpt_hat = part2local(temp$partition)
-#' @export
-DP.regression <- function(y, X, gamma, lambda, delta, eps = 0.001, ...) {
-  .Call('_changepoints_rcpp_DP_regression', PACKAGE = 'changepoints', y, X, gamma, lambda, delta, eps)
+DP.regression = function(y, X, gamma, lambda, delta, ...){
+  N = length(y)
+  bestvalue = rep(0,N+1)
+  partition = rep(0,N)
+  #yhat = rep(NA, N)
+  if(length(dim(X)) != 2 | dim(X)[2] != N){
+    stop("X should be a p-by-n design matrix")
+  }
+  p = dim(X)[1]
+  bestvalue[1] = -gamma*log(max(N,p))
+  for(r in 1:N){
+    bestvalue[r+1] = Inf
+    for(l in 1:r){
+      if(r - l > 2*delta){
+        b = bestvalue[l] + gamma*log(max(N,p)) + error.pred.seg.regression(l, r, y, X, lambda, delta)$MSE
+      }else{
+        b = Inf
+      }
+      if(b < bestvalue[r+1]){
+        bestvalue[r+1] = b
+        partition[r] = l-1
+      }
+    }
+  }
+  r = N
+  l = partition[r]
+  while(r > 0){
+    r = l
+    l = partition[r]
+  }
+  return(list(partition = partition))
 }
 
 
@@ -93,9 +130,25 @@ simu.change.regression = function(d0, cpt.true, p, n, sigma, kappa, ...){
 #'  \item ...         Additional parameters.
 #' }
 #' @noRd
-#' @export
-error.pred.seg.regression <- function(y, X, s, e, lambda, delta, eps = 0.001) {
-  .Call('_changepoints_rcpp_error_pred_seg_regression', PACKAGE = 'changepoints', y, X, s, e, lambda, delta, eps)
+error.pred.seg.regression = function(s, e, y, X, lambda, delta){
+  n = ncol(X)
+  p = nrow(X)
+  if(e > n | s > e | s < 1){
+    stop("s and e are not correctly specified.")
+  }
+  if (e-s > 2*delta){
+    fit = glmnet(x = t(X[,s:e]), y = y[s:e], family = c("gaussian"),
+                 alpha = 1, lambda = lambda*sqrt(max(log(max(n,p)), e-s))*sqrt(log(max(n,p)))/(e-s),intercept=F)
+    coef_est = as.vector(fit$beta)
+    yhat = t(X[,s:e])%*%coef_est
+    d = sum((y[s:e] - yhat)^2)
+  }
+  else{
+    coef_est = NA
+    d = Inf
+  }
+  result = list(MSE = d, beta.hat = coef_est)
+  return(result)
 }
 
 

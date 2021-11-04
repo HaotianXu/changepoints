@@ -4,7 +4,7 @@
 \alias{CV.search.DP.VAR1}
 \title{Grid search based on Cross-Validation of Dynamic Programming for regression change points detection via l0 penalty}
 \usage{
-CV.search.DP.VAR1(DATA, gamma.set, lambda.set, delta, ...)
+CV.search.DP.VAR1(DATA, gamma.set, lambda.set, delta, eps = 0.001, ...)
 }
 \arguments{
 \item{DATA}{A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.}

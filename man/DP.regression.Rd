@@ -4,7 +4,7 @@
 \alias{DP.regression}
 \title{Dynamic programming algorithm for regression change points detection through l0 penalty.}
 \usage{
-DP.regression(y, X, gamma, lambda, delta, ...)
+DP.regression(y, X, gamma, lambda, delta, eps = 0.001, ...)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of observations.}
@@ -16,6 +16,8 @@ DP.regression(y, X, gamma, lambda, delta, ...)
 \item{lambda}{A positive \code{numeric} scalar of tuning parameter for the lasso penalty.}
 
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
+
+\item{eps}{A \code{numeric} scalar of precision level for convergence.}
 
 \item{...}{Additional arguments.}
 }

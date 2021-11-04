@@ -12,7 +12,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // rcpp_error_pred_seg_VAR1
-double rcpp_error_pred_seg_VAR1(const arma::mat& X_futu, const arma::mat& X_curr, int s, int e, const arma::vec& lambda, int delta, double eps);
+Rcpp::List rcpp_error_pred_seg_VAR1(const arma::mat& X_futu, const arma::mat& X_curr, int s, int e, const arma::vec& lambda, int delta, double eps);
 RcppExport SEXP _changepoints_rcpp_error_pred_seg_VAR1(SEXP X_futuSEXP, SEXP X_currSEXP, SEXP sSEXP, SEXP eSEXP, SEXP lambdaSEXP, SEXP deltaSEXP, SEXP epsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -55,6 +55,39 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type gamma(gammaSEXP);
     Rcpp::traits::input_parameter< int >::type delta(deltaSEXP);
     rcpp_result_gen = Rcpp::wrap(rcpp_DP_poly(y, r, gamma, delta));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_error_pred_seg_regression
+Rcpp::List rcpp_error_pred_seg_regression(const arma::vec& y, const arma::mat& X, int s, int e, const arma::vec& lambda, int delta, double eps);
+RcppExport SEXP _changepoints_rcpp_error_pred_seg_regression(SEXP ySEXP, SEXP XSEXP, SEXP sSEXP, SEXP eSEXP, SEXP lambdaSEXP, SEXP deltaSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type s(sSEXP);
+    Rcpp::traits::input_parameter< int >::type e(eSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< int >::type delta(deltaSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_error_pred_seg_regression(y, X, s, e, lambda, delta, eps));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_DP_regression
+Rcpp::List rcpp_DP_regression(const arma::vec& y, const arma::mat& X, double gamma, const arma::vec& lambda, int delta, double eps);
+RcppExport SEXP _changepoints_rcpp_DP_regression(SEXP ySEXP, SEXP XSEXP, SEXP gammaSEXP, SEXP lambdaSEXP, SEXP deltaSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< int >::type delta(deltaSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_DP_regression(y, X, gamma, lambda, delta, eps));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -181,6 +214,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_changepoints_rcpp_error_pred_seg_VAR1", (DL_FUNC) &_changepoints_rcpp_error_pred_seg_VAR1, 7},
     {"_changepoints_rcpp_DP_VAR1", (DL_FUNC) &_changepoints_rcpp_DP_VAR1, 6},
     {"_changepoints_rcpp_DP_poly", (DL_FUNC) &_changepoints_rcpp_DP_poly, 4},
+    {"_changepoints_rcpp_error_pred_seg_regression", (DL_FUNC) &_changepoints_rcpp_error_pred_seg_regression, 7},
+    {"_changepoints_rcpp_DP_regression", (DL_FUNC) &_changepoints_rcpp_DP_regression, 6},
     {"_changepoints_rcpp_DP_univar", (DL_FUNC) &_changepoints_rcpp_DP_univar, 3},
     {"_changepoints_rcpp_basis_poly", (DL_FUNC) &_changepoints_rcpp_basis_poly, 4},
     {"_changepoints_rcpp_soft_threshold_scalar", (DL_FUNC) &_changepoints_rcpp_soft_threshold_scalar, 2},

@@ -31,22 +31,44 @@ simu.VAR1= function(sigma, p, n, A, vzero = NULL, ...){
 }
 
 
+# # in cpp
+# error_pred_seg_VAR1 <- function(X_futu, X_curr, s, e, alpha, lambda, delta) {
+#   .Call('_changepoints_rcpp_error_pred_seg_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, s, e, alpha, lambda, delta)
+# }
+
+
 #' @title Internal Function: Prediction error in squared Frobenius norm for the lasso estimator of transition matrix[11] 
-#' @param X_futu    A \code{numeric} matrix of time series at one step ahead.
-#' @param X_curr    A \code{numeric} matrix of time series at current step.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
+#' @param X_futu    A \code{numeric} matrix of time series at one step ahead.
+#' @param X_curr    A \code{numeric} matrix of time series at current step.
 #' @param lambda    A \code{numeric} scalar of lasso penalty.
 #' @param delta     A \code{integer} scalar of minimum spacing.
-#' @param eps       A \code{numeric} scalar of precision level for convergence.
 #' @return  A \code{numeric} scalar of prediction error in Frobenius norm.
 #' @noRd
-error.pred.seg.VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps) {
-  .Call('_changepoints_rcpp_error_pred_seg_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, s, e, lambda, delta, eps)
+error.pred.seg.VAR1 = function(s, e, X_futu, X_curr, lambda, delta){
+  n = ncol(X_curr)
+  p = nrow(X_curr)
+  if(e > n | s > e | s < 1){
+    stop("s and e are not correctly specified.")
+  }
+  if(e-s > 2*delta){
+    estimate = as.matrix(do.call(cbind, sapply(1:p, function(m) glmnet(x = t(X_curr[,s:e]), y = X_curr[m,s:e], family=c("gaussian"), alpha = 1, lambda = lambda/sqrt(e-s))$beta)))
+    X_futu_hat = t(estimate) %*% X_curr[,s:e]
+    d = norm(X_futu_hat - X_futu[,s:e], type = "F")
+  }else{
+    estimate = NA
+    d = Inf
+  }
+  result = list(MSE = d^2, transition.hat = estimate)
+  return(result)
 }
 
 
-
+#' @export
+DP_VAR1 <- function(X_futu, X_curr, gamma, lambda, delta, eps = 0.0001) {
+  .Call('_changepoints_rcpp_DP_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, gamma, lambda, delta, eps)
+}
 
 #' @title Dynamic programming for VAR1 change points detection through l0 penalty.
 #' @description Perform dynamic programming for VAR1 change points detection through l0 penalty.
@@ -55,116 +77,52 @@ error.pred.seg.VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps) {
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param lambda    A \code{numeric} scalar of tuning parameter for lasso penalty.
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
-#' @param eps       A \code{numeric} scalar of precision level for convergence.
 #' @param ...      Additional arguments.
 #' @return partition: A vector of the best partition.
 #' @export
 #' @author Daren Wang, Haotian Xu
 #' @examples
-#' p = 10
+#' p = 20
 #' sigma = 1
-#' n = 50
+#' n = 5
 #' v1 = 2*(seq(1,p,1)%%2) - 1
 #' v2 = -v1
 #' AA = matrix(0, nrow = p, ncol = p-2)
-#' A1 = cbind(v1,v2,AA)
-#' A2 = cbind(v2,v1,AA)
-#' A3 = A1
+#' A1=cbind(v1,v2,AA)
+#' A2=cbind(v2,v1,AA)
+#' A3=A1
 #' data = simu.VAR1(sigma, p, 2*n+1, A1)
 #' data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
 #' data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
 #' N = ncol(data)
 #' X_curr = data[,1:(N-1)]
 #' X_futu = data[,2:N]
-#' parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
+#' parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 1)$partition
 #' part2local(parti)
-DP.VAR1 <- function(X_futu, X_curr, gamma, lambda, delta, eps = 0.001) {
-  .Call('_changepoints_rcpp_DP_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, gamma, lambda, delta, eps)
-}
-
-
-#' @title Internal function: Cross-Validation of Dynamic Programming algorithm for VAR1 change points detection via l0 penalty
-#' @param DATA      A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.
-#' @param gamma     A positive \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
-#' @param lambda    A positive \code{numeric} scalar of tuning parameter for the lasso penalty.
-#' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @param eps       A \code{numeric} scalar of precision level for convergence.
-#' @param ...      Additional arguments.
-#' @noRd
-CV.DP.VAR1 = function(DATA, gamma, lambda, delta, eps = 0.001, ...){
-  DATA.temp = DATA
-  if (ncol(DATA)%%2 != 0){
-    DATA.temp = DATA[,2:ncol(DATA)]
-  }
-  N = ncol(DATA.temp)
-  p = nrow(DATA.temp)
-  X_curr = DATA.temp[,1:(N-1)]
-  X_futu = DATA.temp[,2:N]
-  X_curr.train = X_curr[,seq(1,N-1,2)]
-  X_curr.test = X_curr[,seq(2,N-1,2)]
-  X_futu.train = X_futu[,seq(1,N-1,2)]
-  X_futu.test = X_futu[,seq(2,N-1,2)]
-  init_cpt_train = part2local(DP.VAR1(X_futu.train, X_curr.train, gamma, lambda, delta)$partition)
-  init_cpt = 2*init_cpt_train
-  len = length(init_cpt)
-  init_cpt_long = c(init_cpt_train, ncol(X_curr.train))
-  interval = matrix(0, nrow = len+1, ncol = 2)
-  interval[1,] = c(1, init_cpt_long[1])
-  if(len > 0){
-    for(j in 2:(1+len)){
-      interval[j,] = c(init_cpt_long[j-1]+1, init_cpt_long[j])
+DP.VAR1 = function(X_futu, X_curr, gamma, lambda, delta, ...){
+  p = nrow(X_futu)
+  N = ncol(X_futu) + 1
+  bestvalue = rep(0,N)
+  partition = rep(0,N-1)
+  bestvalue[1] = -gamma
+  for(r in 1:(N-1)){
+    bestvalue[r+1] = Inf
+    for(l in 1:r){
+      b = bestvalue[l] + gamma + error.pred.seg.VAR1(l, r, X_futu, X_curr, lambda, delta)$MSE
+      if(b < bestvalue[r+1]){
+        bestvalue[r+1] = b
+        partition[r] = l-1
+      }
     }
   }
-  trainmat = sapply(1:(len+1), function(index) error.pred.seg.VAR1(X_futu.train, X_curr.train, interval[index,1], interval[index,2], lambda, delta, eps))
-  transition.list = vector("list", len+1)
-  training_loss = matrix(0, nrow = 1, ncol = len+1)
-  for(col in 1:(len+1)){
-    transition.list[[col]] = trainmat[2,col]$tran_hat
-    training_loss[,col] = as.numeric(trainmat[1,col]$MSE)
+  r = N-1
+  l = partition[r]
+  while(r > 0){
+    r = l
+    l = partition[r]
   }
-  validationmat = sapply(1:(len+1), function(index) error.test.VAR1(interval[index,1], interval[index,2], X_futu.test, X_curr.test, transition.list[[index]]))
-  result = list(cpt_hat = init_cpt, K_hat = len, test_error = sum(validationmat), train_error = sum(training_loss))
-  return(result)
+  return(list(partition = partition))
 }
-
-
-#' @title Internal Function: compute testing error for VAR1
-#' @param  lower     A \code{integer} scalar of starting index.
-#' @param  upper     A \code{integer} scalar of ending index.
-#' @param  X_futu    A \code{numeric} matrix of observations.
-#' @param  X_curr    A \code{numeric} matrix of covariates.
-#' @param  transition.hat A \code{numeric} matrix of transition matrix estimator.
-#' @return A numeric scalar of testing error in squared Frobenius norm.
-#' @noRd
-error.test.VAR1 = function(lower, upper, X_futu, X_curr, transition.hat){
-  res = norm(X_futu[lower:upper] - transition.hat%*%X_curr[,lower:upper], type = "F")^2
-  return(res)
-}
-
-
-#' @title Grid search based on Cross-Validation of Dynamic Programming for regression change points detection via l0 penalty
-#' @description TO DO
-#' @param DATA          A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.
-#' @param gamma.set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
-#' @param lambda.set    A \code{numeric} vector of candidate tuning parameter for the lasso penalty.
-#' @param delta         A strictly \code{integer} scalar of minimum spacing.
-#' @param ...           Additional arguments.
-#' @return Row: lambda.set; column: gamma.set
-#' @export
-#' @author
-#' @examples
-#' TO DO
-CV.search.DP.VAR1 = function(DATA, gamma.set, lambda.set, delta, eps = 0.001, ...){
-  output = sapply(1:length(lambda.set), function(i) sapply(1:length(gamma.set), 
-                                                           function(j) CV.DP.VAR1(DATA, gamma.set[j], lambda.set[i], delta, eps)))
-  cpt_hat = output[seq(1,4*length(gamma.set),4),]## estimated change points
-  K_hat = output[seq(2,4*length(gamma.set),4),]## number of estimated change points
-  test_error = output[seq(3,4*length(gamma.set),4),]## validation loss
-  train_error = output[seq(4,4*length(gamma.set),4),]## training loss                                                      
-  result = list(cpt_hat = cpt_hat, K_hat = K_hat, test_error = test_error, train_error = train_error)
-  return(result)
-}
-
 
 
 
@@ -263,6 +221,89 @@ X.glasso.converter.VAR1 = function(X, eta, s_ceil){
   }
   xxx = xx[,index]
   return(xxx)
+}
+
+
+
+#' @title Internal function: Cross-Validation of Dynamic Programming algorithm for VAR1 change points detection via l0 penalty
+#' @param DATA      A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.
+#' @param gamma     A positive \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
+#' @param lambda    A positive \code{numeric} scalar of tuning parameter for the lasso penalty.
+#' @param delta     A positive \code{integer} scalar of minimum spacing.
+#' @param ...      Additional arguments.
+#' @noRd
+CV.DP.VAR1 = function(DATA, gamma, lambda, delta, ...){
+  DATA.temp = DATA
+  if (ncol(DATA)%%2 != 0){
+    DATA.temp = DATA[,2:ncol(DATA)]
+  }
+  N = ncol(DATA.temp)
+  p = nrow(DATA.temp)
+  X_curr = DATA.temp[,1:(N-1)]
+  X_futu = DATA.temp[,2:N]
+  X_curr.train = X_curr[,seq(1,N-1,2)]
+  X_curr.test = X_curr[,seq(2,N-1,2)]
+  X_futu.train = X_futu[,seq(1,N-1,2)]
+  X_futu.test = X_futu[,seq(2,N-1,2)]
+  init_cpt_train = part2local(DP.VAR1(X_futu.train, X_curr.train, gamma, lambda, delta)$partition)
+  init_cpt = 2*init_cpt_train
+  len = length(init_cpt)
+  init_cpt_long = c(init_cpt_train, ncol(X_curr.train))
+  interval = matrix(0, nrow = len+1, ncol = 2)
+  interval[1,] = c(1, init_cpt_long[1])
+  if(len > 0){
+    for(j in 2:(1+len)){
+      interval[j,] = c(init_cpt_long[j-1]+1, init_cpt_long[j])
+    }
+  }
+  trainmat = sapply(1:(len+1), function(index) error.pred.seg.VAR1(interval[index,1], interval[index,2], X_futu.train, X_curr.train, lambda, delta))
+  transition.list = vector("list", len+1)
+  training_loss = matrix(0, nrow = 1, ncol = len+1)
+  for(col in 1:(len+1)){
+    transition.list[[col]] = trainmat[2,col]$transition.hat
+    training_loss[,col] = as.numeric(trainmat[1,col]$MSE)
+  }
+  validationmat = sapply(1:(len+1), function(index) error.test.VAR1(interval[index,1], interval[index,2], X_futu.test, X_curr.test, transition.list[[index]]))
+  result = list(cpt_hat = init_cpt, K_hat = len, test_error = sum(validationmat), train_error = sum(training_loss))
+  return(result)
+}
+
+
+#' @title Internal Function: compute testing error for VAR1
+#' @param  lower     A \code{integer} scalar of starting index.
+#' @param  upper     A \code{integer} scalar of ending index.
+#' @param  X_futu    A \code{numeric} matrix of observations.
+#' @param  X_curr    A \code{numeric} matrix of covariates.
+#' @param  transition.hat A \code{numeric} matrix of transition matrix estimator.
+#' @return A numeric scalar of testing error in squared Frobenius norm.
+#' @noRd
+error.test.VAR1 = function(lower, upper, X_futu, X_curr, transition.hat){
+  res = norm(X_futu[lower:upper] - transition.hat%*%X_curr[,lower:upper], type = "F")^2
+  return(res)
+}
+
+
+#' @title Grid search based on Cross-Validation of Dynamic Programming for regression change points detection via l0 penalty
+#' @description TO DO
+#' @param DATA          A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.
+#' @param gamma.set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
+#' @param lambda.set    A \code{numeric} vector of candidate tuning parameter for the lasso penalty.
+#' @param delta         A strictly \code{integer} scalar of minimum spacing.
+#' @param ...           Additional arguments.
+#' @return Row: lambda.set; column: gamma.set
+#' @export
+#' @author
+#' @examples
+#' TO DO
+CV.search.DP.VAR1 = function(DATA, gamma.set, lambda.set, delta, ...){
+  output = sapply(1:length(lambda.set), function(i) sapply(1:length(gamma.set), 
+                                                           function(j) CV.DP.VAR1(DATA, gamma.set[j], lambda.set[i], delta)))
+  cpt_hat = output[seq(1,4*length(gamma.set),4),]## estimated change points
+  K_hat = output[seq(2,4*length(gamma.set),4),]## number of estimated change points
+  test_error = output[seq(3,4*length(gamma.set),4),]## validation loss
+  train_error = output[seq(4,4*length(gamma.set),4),]## training loss                                                      
+  result = list(cpt_hat = cpt_hat, K_hat = K_hat, test_error = test_error, train_error = train_error)
+  return(result)
 }
 
 

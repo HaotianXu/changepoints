@@ -4,7 +4,7 @@
 \alias{DP.VAR1}
 \title{Dynamic programming for VAR1 change points detection through l0 penalty.}
 \usage{
-DP.VAR1(X_futu, X_curr, gamma, lambda, delta, ...)
+DP.VAR1(X_futu, X_curr, gamma, lambda, delta, eps = 0.001)
 }
 \arguments{
 \item{X_futu}{A \code{numeric} matrix of time series at one step ahead.}
@@ -17,6 +17,8 @@ DP.VAR1(X_futu, X_curr, gamma, lambda, delta, ...)
 
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
 
+\item{eps}{A \code{numeric} scalar of precision level for convergence.}
+
 \item{...}{Additional arguments.}
 }
 \value{
@@ -26,22 +28,22 @@ partition: A vector of the best partition.
 Perform dynamic programming for VAR1 change points detection through l0 penalty.
 }
 \examples{
-p = 20
+p = 10
 sigma = 1
-n = 5
+n = 50
 v1 = 2*(seq(1,p,1)\%\%2) - 1
 v2 = -v1
 AA = matrix(0, nrow = p, ncol = p-2)
-A1=cbind(v1,v2,AA)
-A2=cbind(v2,v1,AA)
-A3=A1
+A1 = cbind(v1,v2,AA)
+A2 = cbind(v2,v1,AA)
+A3 = A1
 data = simu.VAR1(sigma, p, 2*n+1, A1)
 data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
 data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
 N = ncol(data)
 X_curr = data[,1:(N-1)]
 X_futu = data[,2:N]
-parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 1)$partition
+parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
 part2local(parti)
 }
 \author{
