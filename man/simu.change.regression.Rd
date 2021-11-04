@@ -24,7 +24,7 @@ simu.change.regression(d0, cpt.true, p, n, sigma, kappa, ...)
 \value{
 A \code{list} with the structure:
 \itemize{
- \item cpt.true    A vector of true changepoints (sorted in strictly increasing order).
+ \item cpt_true    A vector of true changepoints (sorted in strictly increasing order).
  \item X           A p-by-n matrix of (random) design matrix.
  \item y           A n-dim vector of response variable.
  \item betafullmat A p-by-n matrix of coefficients.
@@ -37,6 +37,9 @@ Simulate sparse regression model with changepoints in coefficients under the set
 \examples{
 data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 }
+\references{
+Rinaldo, A., Wang, D., Wen, Q., Willett, R., & Yu, Y. (2021, March). Localizing changes in high-dimensional regression models. In International Conference on Artificial Intelligence and Statistics (pp. 2089-2097). PMLR.
+}
 \author{
-Daren Wang
+Daren Wang & Haotian Xu
 }

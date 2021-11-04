@@ -39,6 +39,12 @@ simu.VAR1= function(sigma, p, n, A, vzero = NULL, ...){
 #' @param lambda    A \code{numeric} scalar of lasso penalty.
 #' @param delta     A \code{integer} scalar of minimum spacing.
 #' @param eps       A \code{numeric} scalar of precision level for convergence.
+#' @return    A \code{list} with the structure:
+#' \itemize{
+#'  \item MSE       A \code{numeric} scalar of prediction error in Frobenius norm.
+#'  \item tran_hat  A p-by-p matrix of estimated transition matrix.
+#'  \item ...         Additional parameters.
+#' }
 #' @return  A \code{numeric} scalar of prediction error in Frobenius norm.
 #' @noRd
 error.pred.seg.VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps) {
