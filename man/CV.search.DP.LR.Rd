@@ -36,11 +36,13 @@ TO DO
 \examples{
 set.seed(123)
 data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-temp = CV.search.DP.LR(data$y, data$X, gamma.set = 1:5, lambda.set = 1:5, zeta.set = 1:2, delta = 5)
-temp[3,1]
-temp[3,2]
-cpt.init = part2local(DP.regression(data$y, X = data$X, gamma = 4, lambda = 1, delta = 5)$partition)
-local.refine.regression(cpt.init, data$y, X = data$X, zeta = 1, 1/3)
+temp = CV.search.DP.LR(data$y, data$X, gamma.set = c(1, 2, 5, 10, 20, 30), lambda.set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5), zeta.set = c(0.1, 1, 10), delta = 3)
+temp[3,]
+zeta_sel = 1
+gamma_sel = 1
+lambda_sel = 0.1
+cpt_hat_init = part2local(DP.regression(data$y, X = data$X, gamma = gamma_sel, lambda = lambda_sel, delta = 3)$partition)
+cpt_hat_LR = local.refine.regression(cpt_hat_init, data$y, X = data$X, zeta = zeta_sel, 1/3)
 }
 \author{
 Daren Wang
