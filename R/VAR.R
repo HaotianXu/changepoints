@@ -61,9 +61,9 @@ error.pred.seg.VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps) {
 #' @export
 #' @author Daren Wang, Haotian Xu
 #' @examples
-#' p = 10
+#' p = 20
 #' sigma = 1
-#' n = 50
+#' n = 20
 #' v1 = 2*(seq(1,p,1)%%2) - 1
 #' v2 = -v1
 #' AA = matrix(0, nrow = p, ncol = p-2)

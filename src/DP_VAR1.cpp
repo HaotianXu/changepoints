@@ -14,12 +14,12 @@ Rcpp::List rcpp_error_pred_seg_VAR1(const arma::mat& X_futu, const arma::mat& X_
   double error = 0;
   if(e - s > 2*delta){
     X = X_curr.cols(s-1, e-1).t();
-    X_futu_temp = X_futu.cols(s-1, e-1);
-    y = X_futu_temp.row(0);
+    X_futu_temp = X_futu.cols(s-1, e-1).t();
+    y = X_futu_temp.col(0);
     lassofit = rcpp_lasso_seq(X, y, lambda/sqrt(e-s), eps);
     tran_hat = Rcpp::as<arma::mat>(lassofit["beta_mat"]);
     for(int m = 1; m < p; ++m){
-      y = X_futu_temp.row(m);
+      y = X_futu_temp.col(m);
       lassofit = rcpp_lasso_seq(X, y, lambda/sqrt(e-s), eps);
       tran_hat = arma::join_rows(tran_hat, Rcpp::as<arma::mat>(lassofit["beta_mat"]));
     }

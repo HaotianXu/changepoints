@@ -28,9 +28,9 @@ partition: A vector of the best partition.
 Perform dynamic programming for VAR1 change points detection through l0 penalty.
 }
 \examples{
-p = 10
+p = 20
 sigma = 1
-n = 50
+n = 20
 v1 = 2*(seq(1,p,1)\%\%2) - 1
 v2 = -v1
 AA = matrix(0, nrow = p, ncol = p-2)
