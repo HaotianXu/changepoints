@@ -52,8 +52,6 @@ error.pred.seg.VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps) {
 }
 
 
-
-
 #' @title Dynamic programming for VAR1 change points detection through l0 penalty.
 #' @description Perform dynamic programming for VAR1 change points detection through l0 penalty.
 #' @param X_futu    A \code{numeric} matrix of time series at one step ahead.
@@ -366,7 +364,7 @@ test.res.glasso = function(eta, y.train, X.train, y.test, X.test, zeta.group){
   group = rep(1:p, each=2)
   X.convert = X.glasso.converter.VAR1(X.train, eta, 1)
   X.test.convert = X.glasso.converter.VAR1(X.test, eta, 1)
-  res = tryCatch(sum((y.test - predicct(grplasso(x = X.convert, y = y.train, index = group, model = LinReg(),
+  res = tryCatch(sum((y.test - predict(grplasso(x = X.convert, y = y.train, index = group, model = LinReg(),
                 lambda = zeta.group/ncol(X.train), center = FALSE), X.test.convert))^2), error = function(e) return(Inf))
   return(res)
 }

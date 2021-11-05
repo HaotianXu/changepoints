@@ -409,15 +409,19 @@ CV.search.DP.LR.gl = function(y, X, gamma.set, lambda.set, zeta, delta, eps = 0.
 #' lambda_sel = 0.1
 #' cpt_hat_init = part2local(DP.regression(data$y, X = data$X, gamma = gamma_sel, lambda = lambda_sel, delta = 3)$partition)
 #' cpt_hat_LR = local.refine.regression(cpt_hat_init, data$y, X = data$X, zeta = zeta_sel, 1/3)
-CV.search.DP.LR = function(y, X, gamma.set, lambda.set, zeta.set, delta){
-  output.2 = sapply(1:length(zeta.set), function(q) CV.search.DP.LR.gl(y, X, gamma.set, lambda.set, zeta.set[q], delta))
-  print("output with zeta")
-  print(output.2) 
-  cpt_hat = output.2[1,]## estimated change points
-  K_hat = output.2[2,]## number of estimated change points
-  test_error = output.2[3,]## validation loss
-  train_error = output.2[4,]## training loss   
-  return(output.2)                  
+CV.search.DP.LR = function(y, X, gamma.set, lambda.set, zeta.set, delta, eps = 0.001){
+  cpt_hat = vector("list", length(zeta.set))
+  K_hat = vector("list", length(zeta.set))
+  test_error = vector("list", length(zeta.set))
+  train_error = vector("list", length(zeta.set))
+  for(ii in 1:length(zeta.set)){
+    temp = CV.search.DP.LR.gl(y, X, gamma.set, lambda.set, zeta.set[ii], delta, eps = 0.001)
+    cpt_hat[[ii]] = temp$cpt_hat
+    K_hat[[ii]] = temp$K_hat
+    test_error[[ii]] = temp$test_error
+    train_error[[ii]] = temp$train_error
+  }
+  return(list(cpt_hat = cpt_hat, K_hat = K_hat, test_error = test_error, train_error = train_error))                  
 }                         
 
 

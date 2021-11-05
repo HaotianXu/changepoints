@@ -4,7 +4,7 @@
 \alias{CV.search.DP.LR}
 \title{Grid search based on Cross-Validation (all tuning parameters (gamma, lambda and zeta)) of local refinement for regression.}
 \usage{
-CV.search.DP.LR(y, X, gamma.set, lambda.set, zeta.set, delta)
+CV.search.DP.LR(y, X, gamma.set, lambda.set, zeta.set, delta, eps = 0.001)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of observations.}
