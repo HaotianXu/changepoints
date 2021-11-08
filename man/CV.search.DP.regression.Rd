@@ -4,7 +4,7 @@
 \alias{CV.search.DP.regression}
 \title{Grid search based on Cross-Validation of Dynamic Programming for regression change points detection via l0 penalty}
 \usage{
-CV.search.DP.regression(y, X, gamma.set, lambda.set, delta, eps = 0.001)
+CV.search.DP.regression(y, X, gamma.set, lambda.set, delta, eps = 0.001, ...)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of observations.}
@@ -16,6 +16,8 @@ CV.search.DP.regression(y, X, gamma.set, lambda.set, delta, eps = 0.001)
 \item{lambda.set}{A \code{numeric} vector of candidate tuning parameter for the lasso penalty.}
 
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
+
+\item{eps}{A \code{numeric} scalar of precision level for convergence of lasso.}
 
 \item{...}{Additional arguments.}
 }
@@ -29,14 +31,14 @@ A \code{list} with the structure:
 }
 }
 \description{
-TO DO
+Perform grid search to select tuning parameters gamma and lambda based on Cross-Validation.
 }
 \examples{
 set.seed(123)
 data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 temp = CV.search.DP.regression(data$y, data$X, gamma.set = c(1, 2, 5, 10, 20, 30), lambda.set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5), delta = 2)
 temp$test_error # test error result
-min_idx = as.vector(arrayInd(which.min(result$test_error), dim(result$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
+min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
 cpt.init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
 }

@@ -32,7 +32,7 @@ A \code{list} with the structure:
 }
 }
 \description{
-Simulate sparse regression model with changepoints in coefficients under the setting of Simulations 4.2 [10].
+Simulate sparse regression model with changepoints in coefficients under the setting of Simulations 4.2 in Rinaldo et al. (2021).
 }
 \examples{
 data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)

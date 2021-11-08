@@ -4,7 +4,7 @@
 \alias{local.refine.regression}
 \title{Local refinement for regression change points detection.}
 \usage{
-local.refine.regression(cpt.init, y, X, zeta, w = 1/3)
+local.refine.regression(cpt.init, y, X, zeta)
 }
 \arguments{
 \item{cpt.init}{An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
@@ -28,7 +28,7 @@ Perform local refinement for regression change points detection.
 \examples{
 data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 cpt.init = part2local(DP.regression(data$y, X = data$X, gamma = 2, lambda = 2, delta = 5)$partition)
-local.refine.regression(cpt.init, data$y, X = data$X, zeta = 1, w = 1/3)
+local.refine.regression(cpt.init, data$y, X = data$X, zeta = 1)
 }
 \references{
 Rinaldo, A., Wang, D., Wen, Q., Willett, R., & Yu, Y. (2021, March). Localizing changes in high-dimensional regression models. In International Conference on Artificial Intelligence and Statistics (pp. 2089-2097). PMLR.

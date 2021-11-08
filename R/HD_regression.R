@@ -1,5 +1,5 @@
 #' @title Simulate sparse regression model with changepoints in coefficients.
-#' @description      Simulate sparse regression model with changepoints in coefficients under the setting of Simulations 4.2 [10].
+#' @description      Simulate sparse regression model with changepoints in coefficients under the setting of Simulations 4.2 in Rinaldo et al. (2021).
 #' @param d0         A \code{numeric} scalar of number of nonzero coefficients.
 #' @param cpt.ture   An \code{integer} vector of true changepoints (sorted in strictly increasing order).
 #' @param p          An \code{integer} scalar of dimensionality.
@@ -64,7 +64,7 @@ simu.change.regression = function(d0, cpt.true, p, n, sigma, kappa, ...){
 #' @param gamma     A positive \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param lambda    A positive \code{numeric} scalar of tuning parameter for the lasso penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @param eps       A \code{numeric} scalar of precision level for convergence.
+#' @param eps       A \code{numeric} scalar of precision level for convergence of lasso.
 #' @param ...       Additional arguments.
 #' @return          A vector of the best partition.
 #' @export
@@ -90,6 +90,7 @@ DP.regression <- function(y, X, gamma, lambda, delta, eps = 0.001, ...) {
 #' @param X         A \code{numeric} matrix of covariates.
 #' @param lambda    A \code{numeric} scalar of tuning parameter for lasso penalty.
 #' @param delta     A \code{integer} scalar of minimum spacing.
+#' @param eps       A \code{numeric} scalar of precision level for convergence of lasso.
 #' @return    A \code{list} with the structure:
 #' \itemize{
 #'  \item MSE       A \code{numeric} scalar of prediction error in l2 norm.
@@ -111,6 +112,7 @@ error.pred.seg.regression <- function(y, X, s, e, lambda, delta, eps = 0.001) {
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param lambda    A \code{numeric} scalar of tuning parameter for the lasso penalty.
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
+#' @param eps       A \code{numeric} scalar of precision level for convergence of lasso.
 #' @param ...      Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
@@ -177,12 +179,13 @@ error.test.regression = function(y, X, lower, upper, beta.hat){
 
 
 #' @title Grid search based on Cross-Validation of Dynamic Programming for regression change points detection via l0 penalty
-#' @description TO DO
+#' @description Perform grid search to select tuning parameters gamma and lambda based on Cross-Validation.
 #' @param y             A \code{numeric} vector of observations.
 #' @param X             A \code{numeric} matrix of covariates.
 #' @param gamma.set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
 #' @param lambda.set    A \code{numeric} vector of candidate tuning parameter for the lasso penalty.
 #' @param delta         A strictly \code{integer} scalar of minimum spacing.
+#' @param eps           A \code{numeric} scalar of precision level for convergence of lasso.
 #' @param ...           Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
@@ -198,10 +201,10 @@ error.test.regression = function(y, X, lower, upper, beta.hat){
 #' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 #' temp = CV.search.DP.regression(data$y, data$X, gamma.set = c(1, 2, 5, 10, 20, 30), lambda.set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5), delta = 2)
 #' temp$test_error # test error result
-#' min_idx = as.vector(arrayInd(which.min(result$test_error), dim(result$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
+#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
 #' cpt.init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 #' local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
-CV.search.DP.regression = function(y, X, gamma.set, lambda.set, delta, eps = 0.001){
+CV.search.DP.regression = function(y, X, gamma.set, lambda.set, delta, eps = 0.001, ...){
   output = sapply(1:length(lambda.set), function(i) sapply(1:length(gamma.set), 
                                                            function(j) CV.DP.regression(y, X, gamma.set[j], lambda.set[i], delta)))
   cpt_hat = output[seq(1,4*length(gamma.set),4),]## estimated change points
@@ -231,8 +234,9 @@ CV.search.DP.regression = function(y, X, gamma.set, lambda.set, delta, eps = 0.0
 #' @examples
 #' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
 #' cpt.init = part2local(DP.regression(data$y, X = data$X, gamma = 2, lambda = 2, delta = 5)$partition)
-#' local.refine.regression(cpt.init, data$y, X = data$X, zeta = 1, w = 1/3)
-local.refine.regression = function(cpt.init, y, X, zeta, w = 1/3){
+#' local.refine.regression(cpt.init, data$y, X = data$X, zeta = 1)
+local.refine.regression = function(cpt.init, y, X, zeta){
+  w = 0.9
   n = ncol(X)
   cpt.init.ext = c(0, cpt.init, n)
   cpt.init.numb = length(cpt.init)
@@ -242,7 +246,7 @@ local.refine.regression = function(cpt.init, y, X, zeta, w = 1/3){
     e = (1-w)*cpt.init.ext[k+1] + w*cpt.init.ext[k+2]
     lower = ceiling(s) + 1
     upper = floor(e) - 1
-    b = sapply(lower:upper, function(eta)obj.func.lr.regression(ceiling(s), floor(e), eta, y, X, zeta))
+    b = sapply(lower:upper, function(eta)obj.LR.regression(ceiling(s), floor(e), eta, y, X, zeta))
     cpt.refined[k+1] = ceiling(s) + which.min(b)
   }
   return(cpt.refined[-1])
@@ -257,7 +261,7 @@ local.refine.regression = function(cpt.init, y, X, zeta, w = 1/3){
 #' @param X         A \code{numeric} matrix of covariates.
 #' @param zeta      A \code{numeric} scalar of tuning parameter for the group lasso.
 #' @noRd
-obj.func.lr.regression = function(s_extra, e_extra, eta, y, X, zeta){
+obj.LR.regression = function(s_extra, e_extra, eta, y, X, zeta){
   n = ncol(X)
   p = nrow(X)
   group = rep(1:p, 2)
@@ -265,11 +269,11 @@ obj.func.lr.regression = function(s_extra, e_extra, eta, y, X, zeta){
   y.convert = y[s_extra:e_extra]
   lambda.LR = zeta*sqrt(log(max(n, p)))
   auxfit = gglasso(x = X.convert, y = y.convert, group = group, loss="ls",
-                   lambda = lambda.LR/(e_extra-s_extra+1), intercept = FALSE, eps = 0.001)
+                   lambda = lambda.LR/(e_extra-s_extra+1), intercept = FALSE)
   coef = as.vector(auxfit$beta)
   coef1 = coef[1:p]
   coef2 = coef[(p+1):(2*p)]
-  btemp = norm(y.convert - X.convert %*% coef, type = "2")^2
+  btemp = norm(y.convert - X.convert %*% coef, type = "2")^2 + lambda.LR*sum(sqrt(coef1^2 + coef2^2))
   return(btemp)
 }
 
@@ -281,16 +285,14 @@ obj.func.lr.regression = function(s_extra, e_extra, eta, y, X, zeta){
 #' @param upper   An \code{integer} scalar of ending index.
 #' @param zeta    A \code{numeric} scalar of tuning parameter for the group lasso.
 #' @noRd
-distance.cv.lr = function(y, X, lower, upper, zeta){
+distance.CV.LR = function(y, X, lower, upper, zeta){
   n = ncol(X)
   p = nrow(X)
   lambda.LR = zeta*sqrt(log(max(n,p)))
-  fit = glmnet(x = t(X[,lower:upper]), y = y[lower:upper], family=c("gaussian"),
-               alpha = 1, lambda = lambda.LR, intercept = F)
-  coef_est = t(t(as.vector(fit$beta)))
-  yhat = t(X[,lower:upper]) %*% coef_est
+  fit = glmnet(x = t(X[,lower:upper]), y = y[lower:upper], lambda = lambda.LR)
+  yhat = t(X[,lower:upper]) %*% as.vector(fit$beta)
   d = norm(y[lower:upper] - yhat, type = "2")
-  result = list("mse" = d^2, "beta" = coef_est)
+  result = list("MSE" = d^2, "beta" = as.vector(fit$beta))
   return(result)
 }                                   
 
@@ -303,6 +305,7 @@ distance.cv.lr = function(y, X, lower, upper, zeta){
 #' @param lambda    A \code{numeric} scalar of tuning parameter for the lasso penalty.
 #' @param zeta      A \code{numeric} scalar of tuning parameter for the group lasso.
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
+#' @param eps           A \code{numeric} scalar of precision level for convergence of lasso.
 #' @return  A \code{list} with the structure:
 #' \itemize{
 #'  \item{cpt_hat}: A list of vector of estimated change points locations (sorted in strictly increasing order).
@@ -322,14 +325,14 @@ CV.DP.LR.regression = function(y, X, gamma, lambda, zeta, delta, eps = 0.001){
   init_cpt_train = part2local(DP.regression(train.y, train.X, gamma, lambda, delta, eps)$partition)
   if(length(init_cpt_train) != 0){
     init_cp_dp = odd_indexes[init_cpt_train]
-    init_cp = local.refine.regression(init_cp_dp, y, X, zeta, w = 1/3)
+    init_cp = local.refine.regression(init_cp_dp, y, X, zeta)
   }
   else{
     init_cp_dp = c()
     init_cp = c()
   }
   len = length(init_cp)
-  init_cp_train = (1+init_cp)/2
+  init_cp_train = (1+init_cp_dp)/2
   init_cp_long = c(init_cp_train, n/2)
   interval = matrix(0, nrow = len + 1, ncol = 2)
   interval[1,] = c(1, init_cp_long[1])
@@ -339,12 +342,12 @@ CV.DP.LR.regression = function(y, X, gamma, lambda, zeta, delta, eps = 0.001){
     }
   }
   p = nrow(train.X)
-  trainmat = sapply(1:(len+1), function(index) distance.cv.lr(train.y, train.X, interval[index,1], interval[index,2], zeta))
+  trainmat = sapply(1:(len+1), function(index) distance.CV.LR(train.y, train.X, interval[index,1], interval[index,2], zeta))
   betamat = matrix(0, nrow = p, ncol = len+1)
   training_loss = matrix(0, nrow = 1, ncol = len+1)                
   for(col in 1:(len+1)){
     betamat[,col] = as.numeric(trainmat[2,col]$beta)
-    training_loss[,col] = as.numeric(trainmat[1,col]$mse)
+    training_loss[,col] = as.numeric(trainmat[1,col]$MSE)
   }      
   validationmat = sapply(1:(len+1),function(index) error.test.regression(validation.y, validation.X, interval[index,1], interval[index,2], betamat[,index]))                       
   result = list(cpt_hat = init_cp, K_hat = len, test_error = sum(validationmat), train_error = sum(training_loss))                       
@@ -360,6 +363,7 @@ CV.DP.LR.regression = function(y, X, gamma, lambda, zeta, delta, eps = 0.001){
 #' @param lambda.set    A \code{numeric} vector of candidate tuning parameter for the lasso penalty.
 #' @param zeta          A \code{numeric} scalar of tuning parameter for the group lasso.
 #' @param delta         A strictly \code{integer} scalar of minimum spacing.
+#' @param eps           A \code{numeric} scalar of precision level for convergence of lasso.
 #' @return  A \code{list} with the structure:
 #' \itemize{
 #'  \item{cpt_hat}: A list of vector of estimated changepoints (sorted in strictly increasing order).
@@ -389,6 +393,7 @@ CV.search.DP.LR.gl = function(y, X, gamma.set, lambda.set, zeta, delta, eps = 0.
 #' @param lambda.set    A \code{numeric} vector of candidate tuning parameter for the lasso penalty.
 #' @param zeta.set      A \code{numeric} vector of candidate tuning parameter for the group lasso.
 #' @param delta         A strictly \code{integer} scalar of minimum spacing.
+#' @param eps           A \code{numeric} scalar of precision level for convergence of lasso.
 #' @param ...           Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
@@ -402,20 +407,20 @@ CV.search.DP.LR.gl = function(y, X, gamma.set, lambda.set, zeta, delta, eps = 0.
 #' @examples
 #' set.seed(123)
 #' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-#' temp = CV.search.DP.LR(data$y, data$X, gamma.set = c(1, 2, 5, 10, 20, 30), lambda.set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5), zeta.set = c(0.1, 1, 10), delta = 3)
-#' temp[3,]
-#' zeta_sel = 1
-#' gamma_sel = 1
-#' lambda_sel = 0.1
-#' cpt_hat_init = part2local(DP.regression(data$y, X = data$X, gamma = gamma_sel, lambda = lambda_sel, delta = 3)$partition)
-#' cpt_hat_LR = local.refine.regression(cpt_hat_init, data$y, X = data$X, zeta = zeta_sel, 1/3)
-CV.search.DP.LR = function(y, X, gamma.set, lambda.set, zeta.set, delta, eps = 0.001){
+#' temp = CV.search.DP.LR.regression(data$y, data$X, gamma.set = c(1, 2, 5, 10, 20, 30), lambda.set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5), zeta.set = c(0.1, 1, 10), delta = 3, eps = 0.001)
+#' temp$test_error
+#' zeta_set = 1
+#' gamma_set = 1
+#' lambda_set = 0.1
+#' cpt_hat_init = part2local(DP.regression(data$y, X = data$X, gamma = gamma_set, lambda = lambda_set, delta = 3)$partition)
+#' cpt_hat_LR = local.refine.regression(cpt_hat_init, data$y, X = data$X, zeta = zeta_set)
+CV.search.DP.LR.regression = function(y, X, gamma.set, lambda.set, zeta.set, delta, eps = 0.001, ...){
   cpt_hat = vector("list", length(zeta.set))
   K_hat = vector("list", length(zeta.set))
   test_error = vector("list", length(zeta.set))
   train_error = vector("list", length(zeta.set))
   for(ii in 1:length(zeta.set)){
-    temp = CV.search.DP.LR.gl(y, X, gamma.set, lambda.set, zeta.set[ii], delta, eps = 0.001)
+    temp = CV.search.DP.LR.gl(y, X, gamma.set, lambda.set, zeta.set[ii], delta, eps = eps)
     cpt_hat[[ii]] = temp$cpt_hat
     K_hat[[ii]] = temp$K_hat
     test_error[[ii]] = temp$test_error

@@ -160,7 +160,7 @@ WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0
     for(m in 1:M){
       temp = rep(0, Beta_new[m] - Alpha_new[m] - 2*delta + 1)
       for(t in (Alpha_new[m]+delta):(Beta_new[m]-delta)){
-        temp[t-(Alpha_new[m]+delta)+1] = changepoints:::CUSUM.innerprod(data_mat1,data_mat2, Alpha_new[m], Beta_new[m], t)
+        temp[t-(Alpha_new[m]+delta)+1] = CUSUM.innerprod(data_mat1,data_mat2, Alpha_new[m], Beta_new[m], t)
       }
       best_value = max(temp)
       best_t = which.max(temp) + Alpha_new[m] + delta - 1

@@ -4,7 +4,7 @@
 \alias{local.refine.VAR1}
 \title{Local refinement for VAR1 change points detection.}
 \usage{
-local.refine.VAR1(cpt.init, DATA, zeta.group, w = 1/3, ...)
+local.refine.VAR1(cpt.init, DATA, zeta.group, ...)
 }
 \arguments{
 \item{cpt.init}{A \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
@@ -13,9 +13,9 @@ local.refine.VAR1(cpt.init, DATA, zeta.group, w = 1/3, ...)
 
 \item{zeta.group}{A \code{numeric} scalar of lasso penalty.}
 
-\item{w}{A \code{numeric} scalar of weight for interpolation.}
-
 \item{...}{Additional arguments.}
+
+\item{w}{A \code{numeric} scalar of weight for interpolation.}
 }
 \value{
 An \code{integer} vector of locally refined change points estimation.
@@ -24,24 +24,25 @@ An \code{integer} vector of locally refined change points estimation.
 Perform local refinement for VAR1 change points detection.
 }
 \examples{
-p = 2
+p = 20
 sigma = 1
-n = 5
+n = 20
 v1 = 2*(seq(1,p,1)\%\%2) - 1
 v2 = -v1
 AA = matrix(0, nrow = p, ncol = p-2)
-A1=cbind(v1,v2,AA)
-A2=cbind(v2,v1,AA)
-A3=A1
+A1 = cbind(v1,v2,AA)*0.1
+A2 = cbind(v2,v1,AA)*0.1
+A3 = A1
 data = simu.VAR1(sigma, p, 2*n+1, A1)
 data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
 data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
-N = ncol(data)
-X_curr = data[,1:(N-1)]
-X_futu = data[,2:N]
-parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
-cpt.init = part2local(parti)
-local.refine.VAR1(cpt.init, data, 1, 1/3)
+gamma.set = c(0.1, 1)
+lambda.set = c(0.1, 1, 2, 3)
+temp = CV.search.DP.VAR1(data, gamma.set, lambda.set, delta = 10)
+temp$test_error # test error result
+min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
+cpt.init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
+local.refine.VAR1(cpt.init, data, 1)
 }
 \author{
 

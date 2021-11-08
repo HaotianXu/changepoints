@@ -46,7 +46,7 @@ for (time in 1:RR){
   X = data$X
   y = data$y
   cpt_true = data$cpt_true
-  result = CV.search.DP.LR(y, X, gamma_dp_set, lambda_dp_set, zeta_set, delta, eps = 0.001)
+  result = CV.search.DP.LR.regression(y, X, gamma_dp_set, lambda_dp_set, zeta_set, delta, eps = 0.001)
   min_zeta_idx = 1 + which.min(unlist(result$test_error)) %/% (length(gamma_dp_set) * length(lambda_dp_set))
   min_idx = as.vector(arrayInd(which.min(result$test_error[[min_zeta_idx]]), dim(result$test_error[[min_zeta_idx]])))
   cpt_est_lr[[time]] = unlist(result$cpt_hat[[min_zeta_idx]][min_idx[1], min_idx[2]])

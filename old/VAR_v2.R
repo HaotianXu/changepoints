@@ -71,8 +71,8 @@ error.pred.seg.VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps) {
 #' v1 = 2*(seq(1,p,1)%%2) - 1
 #' v2 = -v1
 #' AA = matrix(0, nrow = p, ncol = p-2)
-#' A1 = cbind(v1,v2,AA)*0.1
-#' A2 = cbind(v2,v1,AA)*0.1
+#' A1 = cbind(v1,v2,AA)
+#' A2 = cbind(v2,v1,AA)
 #' A3 = A1
 #' data = simu.VAR1(sigma, p, 2*n+1, A1)
 #' data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
@@ -102,12 +102,12 @@ CV.DP.VAR1 = function(DATA, gamma, lambda, delta, eps = 0.001, ...){
   }
   N = ncol(DATA.temp)
   p = nrow(DATA.temp)
-  X_train = DATA.temp[,seq(1,N,2)]
-  X_test = DATA.temp[,seq(2,N,2)]
-  X_curr.train = X_train[,1:(N/2-1)]
-  X_futu.train = X_train[,2:(N/2)]
-  X_curr.test = X_test[,1:(N/2-1)]
-  X_futu.test = X_test[,2:(N/2)]
+  X_curr = DATA.temp[,1:(N-1)]
+  X_futu = DATA.temp[,2:N]
+  X_curr.train = X_curr[,seq(1,N-1,2)]
+  X_curr.test = X_curr[,seq(2,N-1,2)]
+  X_futu.train = X_futu[,seq(1,N-1,2)]
+  X_futu.test = X_futu[,seq(2,N-1,2)]
   init_cpt_train = part2local(DP.VAR1(X_futu.train, X_curr.train, gamma, lambda, delta)$partition)
   init_cpt = 2*init_cpt_train
   len = length(init_cpt)
@@ -126,7 +126,7 @@ CV.DP.VAR1 = function(DATA, gamma, lambda, delta, eps = 0.001, ...){
     transition.list[[col]] = trainmat[2,col]$tran_hat
     training_loss[,col] = as.numeric(trainmat[1,col]$MSE)
   }
-  validationmat = sapply(1:(len+1), function(index) error.test.VAR1(X_futu.test, X_curr.test, interval[index,1], interval[index,2], transition.list[[index]]))
+  validationmat = sapply(1:(len+1), function(index) error.test.VAR1(interval[index,1], interval[index,2], X_futu.test, X_curr.test, transition.list[[index]]))
   result = list(cpt_hat = init_cpt, K_hat = len, test_error = sum(validationmat), train_error = sum(training_loss))
   return(result)
 }
@@ -140,12 +140,8 @@ CV.DP.VAR1 = function(DATA, gamma, lambda, delta, eps = 0.001, ...){
 #' @param  transition.hat A \code{numeric} matrix of transition matrix estimator.
 #' @return A numeric scalar of testing error in squared Frobenius norm.
 #' @noRd
-error.test.VAR1 = function(X_futu, X_curr, lower, upper, transition.hat){
-  if(sum(dim(transition.hat) == c(0,0))){
-    res = Inf
-  }else{
-    res = norm(X_futu[,lower:upper] - transition.hat%*%X_curr[,lower:upper], type = "F")^2
-  }
+error.test.VAR1 = function(lower, upper, X_futu, X_curr, transition.hat){
+  res = norm(X_futu[lower:upper] - transition.hat%*%X_curr[,lower:upper], type = "F")^2
   return(res)
 }
 
@@ -161,24 +157,7 @@ error.test.VAR1 = function(X_futu, X_curr, lower, upper, transition.hat){
 #' @export
 #' @author
 #' @examples
-#' p = 20
-#' sigma = 1
-#' n = 20
-#' v1 = 2*(seq(1,p,1)%%2) - 1
-#' v2 = -v1
-#' AA = matrix(0, nrow = p, ncol = p-2)
-#' A1 = cbind(v1,v2,AA)*0.1
-#' A2 = cbind(v2,v1,AA)*0.1
-#' A3 = A1
-#' data = simu.VAR1(sigma, p, 2*n+1, A1)
-#' data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
-#' data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
-#' gamma.set = c(0.1, 1)
-#' lambda.set = c(0.1, 1, 2, 3)
-#' temp = CV.search.DP.VAR1(data, gamma.set, lambda.set, delta = 10)
-#' temp$test_error # test error result
-#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
-#' cpt.init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
+#' TO DO
 CV.search.DP.VAR1 = function(DATA, gamma.set, lambda.set, delta, eps = 0.001, ...){
   output = sapply(1:length(lambda.set), function(i) sapply(1:length(gamma.set), 
                                                            function(j) CV.DP.VAR1(DATA, gamma.set[j], lambda.set[i], delta, eps)))
@@ -204,27 +183,25 @@ CV.search.DP.VAR1 = function(DATA, gamma.set, lambda.set, delta, eps = 0.001, ..
 #' @export
 #' @author 
 #' @examples
-#' p = 20
+#' p = 2
 #' sigma = 1
-#' n = 20
+#' n = 5
 #' v1 = 2*(seq(1,p,1)%%2) - 1
 #' v2 = -v1
 #' AA = matrix(0, nrow = p, ncol = p-2)
-#' A1 = cbind(v1,v2,AA)*0.1
-#' A2 = cbind(v2,v1,AA)*0.1
-#' A3 = A1
+#' A1=cbind(v1,v2,AA)
+#' A2=cbind(v2,v1,AA)
+#' A3=A1
 #' data = simu.VAR1(sigma, p, 2*n+1, A1)
 #' data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
 #' data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
-#' gamma.set = c(0.1, 1)
-#' lambda.set = c(0.1, 1, 2, 3)
-#' temp = CV.search.DP.VAR1(data, gamma.set, lambda.set, delta = 10)
-#' temp$test_error # test error result
-#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
-#' cpt.init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
-#' local.refine.VAR1(cpt.init, data, 1)
-local.refine.VAR1 = function(cpt.init, DATA, zeta.group, ...){
-  w = 0.9
+#' N = ncol(data)
+#' X_curr = data[,1:(N-1)]
+#' X_futu = data[,2:N]
+#' parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
+#' cpt.init = part2local(parti)
+#' local.refine.VAR1(cpt.init, data, 1, 1/3)
+local.refine.VAR1 = function(cpt.init, DATA, zeta.group, w = 1/3, ...){
   N = ncol(DATA)
   p = nrow(DATA)
   X_curr = DATA[,1:(N-1)]
@@ -237,7 +214,7 @@ local.refine.VAR1 = function(cpt.init, DATA, zeta.group, ...){
     e.inter = (1-w)*cpt.init.ext[k+1] + w*cpt.init.ext[k+2]
     lower = ceiling(s.inter) + 1
     upper = floor(e.inter) - 1
-    b = sapply(lower:upper, function(eta)obj.LR.VAR1(ceiling(s.inter), floor(e.inter), eta, X_futu, X_curr, zeta.group))
+    b = sapply(lower:upper, function(eta)obj.func.lr.VAR1(ceiling(s.inter), floor(e.inter), eta, X_futu, X_curr, zeta.group))
     cpt.refined[k+1] = which.min(b) + lower - 1
   }
   return(cpt.refined[-1])
@@ -252,7 +229,7 @@ local.refine.VAR1 = function(cpt.init, DATA, zeta.group, ...){
 #' @param X_curr     A \code{numeric} matrix of time series at current step.
 #' @param zeta.group A \code{numeric} scalar of tuning parameter for the group lasso.
 #' @noRd
-obj.LR.VAR1 = function(s.inter.ceil, e.inter.floor, eta, X_futu, X_curr, zeta.group){
+obj.func.lr.VAR1 = function(s.inter.ceil, e.inter.floor, eta, X_futu, X_curr, zeta.group){
   n = ncol(X_futu)
   p = nrow(X_futu)
   len.inter = e.inter.floor-s.inter.ceil+1
@@ -262,10 +239,9 @@ obj.LR.VAR1 = function(s.inter.ceil, e.inter.floor, eta, X_futu, X_curr, zeta.gr
   Y.convert = X_futu[, s.inter.ceil:e.inter.floor]
   for(m in 1:p){
     y.convert = Y.convert[m,]
-    auxfit = gglasso(x = X.convert, y = y.convert, group = group, intercept = FALSE, loss="ls",
-             lambda = zeta.group/len.inter)
-    coef = as.vector(auxfit$beta)
-    btemp[m] = sum((y.convert - X.convert %*% coef)^2) + zeta.group*sqrt(sum(coef^2))
+    btemp[m] = tryCatch(sum((y.convert - predict(grplasso(x = X.convert, y = y.convert, index = group, model = LinReg(),
+                             lambda = zeta.group/len.inter, center = FALSE), X.convert))^2), error = function(e) return(Inf))
+    
   }
   return(sum(btemp))
 }
@@ -305,28 +281,26 @@ X.glasso.converter.VAR1 = function(X, eta, s_ceil){
 #' @export
 #' @author 
 #' @examples
-#' p = 20
+#' p = 2
 #' sigma = 1
-#' n = 20
+#' n = 5
 #' v1 = 2*(seq(1,p,1)%%2) - 1
 #' v2 = -v1
 #' AA = matrix(0, nrow = p, ncol = p-2)
-#' A1 = cbind(v1,v2,AA)*0.1
-#' A2 = cbind(v2,v1,AA)*0.1
-#' A3 = A1
+#' A1=cbind(v1,v2,AA)
+#' A2=cbind(v2,v1,AA)
+#' A3=A1
 #' data = simu.VAR1(sigma, p, 2*n+1, A1)
 #' data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
 #' data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
-#' gamma.set = c(0.1, 1)
-#' lambda.set = c(0.1, 1, 2, 3)
-#' temp = CV.search.DP.VAR1(data, gamma.set, lambda.set, delta = 10)
-#' temp$test_error # test error result
-#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
-#' cpt.init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
-#' local.refine.VAR1(cpt.init, data, 1)
-#' local.refine.CV.VAR1(cpt.init, data, c(0.5, 1, 1.5), delta.local = 10)
-local.refine.CV.VAR1 = function(cpt.init, DATA, zeta_group_set, delta.local, ...){
-  w = 0.9
+#' N = ncol(data)
+#' X_curr = data[,1:(N-1)]
+#' X_futu = data[,2:N]
+#' parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
+#' cpt.init = part2local(parti)
+#' local.refine.VAR1(cpt.init, data, 1, 1/3)
+#' local.refine.CV.VAR1(cpt.init, data, c(0.5, 1, 1.5), delta.local = 5, 1/3)
+local.refine.CV.VAR1 = function(cpt.init, DATA, zeta_group_set, delta.local, w = 1/3, ...){
   DATA.temp = DATA
   if (ncol(DATA)%%2 == 0){
     DATA.temp = DATA[,2:ncol(DATA)]
@@ -379,7 +353,7 @@ find.one.change.grouplasso.VAR1 = function(s, e, Y.train, X.train, delta.local, 
     can.vec = c((s+delta.local):(e-delta.local))
     #can.vec = can.vec[which(can.vec%%2==0)]
     res.seq = sapply(can.vec, function(t) 
-                     obj.LR.VAR1(s, e, t, Y.train, X.train, zeta.group)) 
+                     obj.func.lr.VAR1(s, e, t, Y.train, X.train, zeta.group)) 
     estimate = can.vec[which.min(res.seq)]
   }
   return(estimate)
@@ -390,9 +364,7 @@ test.res.glasso = function(eta, y.train, X.train, y.test, X.test, zeta.group){
   group = rep(1:p, each=2)
   X.convert = X.glasso.converter.VAR1(X.train, eta, 1)
   X.test.convert = X.glasso.converter.VAR1(X.test, eta, 1)
-  auxfit = gglasso(x = X.convert, y = y.train, group = group, intercept = FALSE, loss="ls",
-                   lambda = zeta.group/ncol(X.train))
-  coef = as.vector(auxfit$beta)
-  res = sum((y.test - X.test.convert %*% coef)^2) + zeta.group*sqrt(sum(coef^2))
+  res = tryCatch(sum((y.test - predict(grplasso(x = X.convert, y = y.train, index = group, model = LinReg(),
+                lambda = zeta.group/ncol(X.train), center = FALSE), X.test.convert))^2), error = function(e) return(Inf))
   return(res)
 }

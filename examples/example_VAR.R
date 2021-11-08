@@ -13,8 +13,8 @@ n = 30
 v1 = 2*(seq(1,p,1)%%2) - 1
 v2 = -v1 
 AA = matrix(0, nrow = p, ncol = p-2)
-A1=cbind(v1,v2,AA) # transition matrix for the first segment
-A2=cbind(v2,v1,AA) # transition matrix for the second segment
+A1=cbind(v1,v2,AA)*0.1 # transition matrix for the first segment
+A2=cbind(v2,v1,AA)*0.1 # transition matrix for the second segment
 A3=A1 # transition matrix for the third segment
 # generate data
 data = simu.VAR1(sigma, p, 2*n+1, A1)

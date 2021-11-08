@@ -17,7 +17,7 @@ DP.regression(y, X, gamma, lambda, delta, eps = 0.001, ...)
 
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
 
-\item{eps}{A \code{numeric} scalar of precision level for convergence.}
+\item{eps}{A \code{numeric} scalar of precision level for convergence of lasso.}
 
 \item{...}{Additional arguments.}
 }
