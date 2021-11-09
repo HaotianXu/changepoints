@@ -152,7 +152,7 @@ error.test.VAR1 = function(X_futu, X_curr, lower, upper, transition.hat){
 
 #' @title Grid search based on Cross-Validation of Dynamic Programming for regression change points detection via l0 penalty
 #' @description TO DO
-#' @param DATA          A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.
+#' @param DATA          A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being dimensions.
 #' @param gamma.set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
 #' @param lambda.set    A \code{numeric} vector of candidate tuning parameter for the lasso penalty.
 #' @param delta         A strictly \code{integer} scalar of minimum spacing.

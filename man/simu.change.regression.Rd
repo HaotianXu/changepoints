@@ -2,9 +2,9 @@
 % Please edit documentation in R/HD_regression.R
 \name{simu.change.regression}
 \alias{simu.change.regression}
-\title{Simulate sparse regression model with changepoints in coefficients.}
+\title{Simulate a sparse regression model with change points in coefficients.}
 \usage{
-simu.change.regression(d0, cpt.true, p, n, sigma, kappa, ...)
+simu.change.regression(d0, cpt_true, p, n, sigma, kappa, ...)
 }
 \arguments{
 \item{d0}{A \code{numeric} scalar of number of nonzero coefficients.}
@@ -15,27 +15,28 @@ simu.change.regression(d0, cpt.true, p, n, sigma, kappa, ...)
 
 \item{sigma}{A \code{numeric} scalar of error standard deviation.}
 
-\item{kappa}{A \code{numeric} scalar of minimum jump size in terms of the l2 norm.}
+\item{kappa}{A \code{numeric} scalar of minimum jump size of coefficient vector in terms of \eqn{l_2} norm.}
 
 \item{...}{Additional arguments.}
 
-\item{cpt.ture}{An \code{integer} vector of true changepoints (sorted in strictly increasing order).}
+\item{cpt_ture}{An \code{integer} vector of true change points (sorted in strictly increasing order).}
 }
 \value{
-A \code{list} with the structure:
-\itemize{
- \item cpt_true    A vector of true changepoints (sorted in strictly increasing order).
- \item X           A p-by-n matrix of (random) design matrix.
- \item y           A n-dim vector of response variable.
- \item betafullmat A p-by-n matrix of coefficients.
- \item ...         Additional parameters.
-}
+A \code{list} with the following structure:
+ \item{cpt_true}{A vector of true changepoints (sorted in strictly increasing order)}
+ \item{X}{A p-by-n design matrix}
+ \item{y}{A n-dim vector of response variable}
+ \item{betafullmat}{A p-by-n matrix of coefficients}
 }
 \description{
-Simulate sparse regression model with changepoints in coefficients under the setting of Simulations 4.2 in Rinaldo et al. (2021).
+Simulate a sparse regression model with change points in coefficients under the setting of Simulations 4.2 in Rinaldo et al. (2021).
 }
 \examples{
-data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
+d0 = 10
+p = 30
+n = 100
+cpt_true = c(10, 30, 40, 70, 90)
+data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 }
 \references{
 Rinaldo, A., Wang, D., Wen, Q., Willett, R., & Yu, Y. (2021, March). Localizing changes in high-dimensional regression models. In International Conference on Artificial Intelligence and Statistics (pp. 2089-2097). PMLR.

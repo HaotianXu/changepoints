@@ -2,12 +2,12 @@
 % Please edit documentation in R/general_functions.R
 \name{part2local}
 \alias{part2local}
-\title{Partition to localization.}
+\title{Partition to localization for dynamic programming.}
 \usage{
 part2local(parti_vec)
 }
 \arguments{
-\item{parti_vec}{A \code{numeric} vector of observations.}
+\item{parti_vec}{A \code{integer} vector of best partition produced by dynamic programming algorithm.}
 
 \item{...}{Additional arguments.}
 }
@@ -15,11 +15,14 @@ part2local(parti_vec)
 A vector of change point locations.
 }
 \description{
-Find change point locations from the best partition produced by dynamic programming.
+Find change point locations from the best partition produced by dynamic programming altorithm.
 }
 \examples{
 y = c(rep(0, 100), rep(1, 100))
 part2local(DP.univar(y, 1, 4)$partition)
+}
+\seealso{
+\code{DP.univar()}, \code{DP.poly()}, \code{DP.regression()}, \code{DP.SEPP()}, \code{DP.VAR1()}
 }
 \author{
 Haotian Xu

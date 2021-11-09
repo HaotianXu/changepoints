@@ -7,7 +7,7 @@
 CV.search.DP.VAR1(DATA, gamma.set, lambda.set, delta, eps = 0.001, ...)
 }
 \arguments{
-\item{DATA}{A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.}
+\item{DATA}{A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being dimensions.}
 
 \item{gamma.set}{A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.}
 

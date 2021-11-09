@@ -14,7 +14,7 @@ Hausdorff.dist(vec1, vec2, ...)
 \item{...}{Additional arguments.}
 }
 \value{
-An integer scalar.
+An integer scalar of bidirectional Hausdorff distance.
 }
 \description{
 Compute the bidirectional Hausdorff distance between two sets.

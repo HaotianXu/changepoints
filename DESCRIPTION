@@ -21,8 +21,11 @@ Imports:
     Rcpp, 
     RcppArmadillo
 Suggests:
-    abind
+    knitr,
+    abind,
+    rmarkdown
 LinkingTo: Rcpp, RcppArmadillo
 License: MIT | LICENSE
 RoxygenNote: 7.1.2
 Encoding: UTF-8
+VignetteBuilder: knitr

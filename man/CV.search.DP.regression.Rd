@@ -2,18 +2,18 @@
 % Please edit documentation in R/HD_regression.R
 \name{CV.search.DP.regression}
 \alias{CV.search.DP.regression}
-\title{Grid search based on Cross-Validation of Dynamic Programming for regression change points detection via l0 penalty}
+\title{Grid search based on cross-validation of dynamic programming for regression change points detection via \eqn{l_0} penalty}
 \usage{
-CV.search.DP.regression(y, X, gamma.set, lambda.set, delta, eps = 0.001, ...)
+CV.search.DP.regression(y, X, gamma_set, lambda_set, delta, eps = 0.001, ...)
 }
 \arguments{
-\item{y}{A \code{numeric} vector of observations.}
+\item{y}{A \code{numeric} vector of response variable.}
 
-\item{X}{A \code{numeric} matrix of covariates.}
+\item{X}{A \code{numeric} matrix of covariates with horizontal axis being time.}
 
-\item{gamma.set}{A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.}
+\item{gamma_set}{A \code{numeric} vector of candidate tuning parameters associated with \eqn{l_0} penalty of DP.}
 
-\item{lambda.set}{A \code{numeric} vector of candidate tuning parameter for the lasso penalty.}
+\item{lambda_set}{A \code{numeric} vector of candidate tuning parameters for lasso penalty.}
 
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
 
@@ -22,25 +22,29 @@ CV.search.DP.regression(y, X, gamma.set, lambda.set, delta, eps = 0.001, ...)
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{list} with the structure:
-\itemize{
- \item{cpt_hat}: A list of vector of estimated changepoints (sorted in strictly increasing order).
- \item{K_hat}: A list of scalar of number of estimated changepoints.
- \item{test_error}: A list of vector of testing errors (each column corresponding to each lambda, and each column corresponding to each gamma).
- \item{train_error}: A list of vector of training errors.
-}
+A \code{list} with the following structure:
+ \item{cpt_hat}{A list of vector of estimated change points}
+ \item{K_hat}{A list of scalar of number of estimated change points}
+ \item{test_error}{A list of vector of testing errors (each row corresponding to each gamma, and each column corresponding to each lambda)}
+ \item{train_error}{A list of vector of training errors}
 }
 \description{
-Perform grid search to select tuning parameters gamma and lambda based on Cross-Validation.
+Perform grid search to select tuning parameters gamma (for \eqn{l_0} penalty of DP) and lambda (for lasso penalty) based on cross-validation.
 }
 \examples{
-set.seed(123)
-data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-temp = CV.search.DP.regression(data$y, data$X, gamma.set = c(1, 2, 5, 10, 20, 30), lambda.set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5), delta = 2)
+d0 = 10
+p = 30
+n = 100
+cpt_true = c(10, 30, 40, 70, 90)
+data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
+gamma_set = c(0.01, 0.05, 0.1, 0.5, 1)
+lambda_set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5)
+temp = CV.search.DP.regression(y = data$y, X = data$X, gamma_set, lambda_set, delta = 2)
 temp$test_error # test error result
-min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
-cpt.init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
-local.refine.regression(cpt.init, data$y, X = data$X, 1, 1/3)
+min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma_set and lambda_set which minimizes the test error
+gamma_set[min_idx[1]]
+lambda_set[min_idx[2]]
+cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 }
 \author{
 Daren Wang

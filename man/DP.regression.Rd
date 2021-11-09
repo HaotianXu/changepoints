@@ -2,18 +2,18 @@
 % Please edit documentation in R/HD_regression.R
 \name{DP.regression}
 \alias{DP.regression}
-\title{Dynamic programming algorithm for regression change points detection through l0 penalty.}
+\title{Dynamic programming algorithm for regression change points detection through \eqn{l_0} penalty.}
 \usage{
 DP.regression(y, X, gamma, lambda, delta, eps = 0.001, ...)
 }
 \arguments{
-\item{y}{A \code{numeric} vector of observations.}
+\item{y}{A \code{numeric} vector of response variable.}
 
-\item{X}{A \code{numeric} matrix of covariates.}
+\item{X}{A \code{numeric} matrix of covariates with horizontal axis being time.}
 
-\item{gamma}{A positive \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
+\item{gamma}{A positive \code{numeric} scalar of tuning parameter associated with \eqn{l_0} penalty.}
 
-\item{lambda}{A positive \code{numeric} scalar of tuning parameter for the lasso penalty.}
+\item{lambda}{A positive \code{numeric} scalar of tuning parameter for lasso penalty.}
 
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
 
@@ -22,18 +22,25 @@ DP.regression(y, X, gamma, lambda, delta, eps = 0.001, ...)
 \item{...}{Additional arguments.}
 }
 \value{
-A vector of the best partition.
+A vector of the best partition of the dynamic programming algorithm.
 }
 \description{
-Perform dynamic programming algorithm for regression change points detection through l0 penalty.
+Perform dynamic programming algorithm for regression change points detection.
 }
 \examples{
-data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-temp = DP.regression(data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
+d0 = 10
+p = 30
+n = 100
+cpt_true = c(10, 30, 40, 70, 90)
+data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
+temp = DP.regression(y = data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
 cpt_hat = part2local(temp$partition)
 }
 \references{
 Rinaldo, A., Wang, D., Wen, Q., Willett, R., & Yu, Y. (2021, March). Localizing changes in high-dimensional regression models. In International Conference on Artificial Intelligence and Statistics (pp. 2089-2097). PMLR.
+}
+\seealso{
+\code{part2local()} for estimated change points.
 }
 \author{
 Daren Wang & Haotian Xu

@@ -4,31 +4,40 @@
 \alias{local.refine.regression}
 \title{Local refinement for regression change points detection.}
 \usage{
-local.refine.regression(cpt.init, y, X, zeta)
+local.refine.regression(cpt_init, y, X, zeta, ...)
 }
 \arguments{
-\item{cpt.init}{An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
+\item{cpt_init}{An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
 
 \item{y}{A \code{numeric} vector of response variable.}
 
-\item{X}{A \code{numeric} matrix of covariates.}
+\item{X}{A \code{numeric} matrix of covariates with horizontal axis being time..}
 
 \item{zeta}{A \code{numeric} scalar of tuning parameter for the group lasso.}
-
-\item{w}{A \code{numeric} scalar of weight for extrapolating the initial changepoints estimation.}
 
 \item{...}{Additional arguments.}
 }
 \value{
-A vector of locally refined changepoints estimation.
+A vector of locally refined change points estimation.
 }
 \description{
 Perform local refinement for regression change points detection.
 }
 \examples{
-data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-cpt.init = part2local(DP.regression(data$y, X = data$X, gamma = 2, lambda = 2, delta = 5)$partition)
-local.refine.regression(cpt.init, data$y, X = data$X, zeta = 1)
+d0 = 10
+p = 30
+n = 100
+cpt_true = c(10, 30, 40, 70, 90)
+data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
+gamma_set = c(0.01, 0.05, 0.1, 0.5, 1)
+lambda_set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5)
+temp = CV.search.DP.regression(y = data$y, X = data$X, gamma_set, lambda_set, delta = 2)
+temp$test_error # test error result
+min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma_set and lambda_set which minimizes the test error
+gamma_set[min_idx[1]]
+lambda_set[min_idx[2]]
+cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
+local.refine.regression(cpt_init, data$y, X = data$X, zeta = 0.5)
 }
 \references{
 Rinaldo, A., Wang, D., Wen, Q., Willett, R., & Yu, Y. (2021, March). Localizing changes in high-dimensional regression models. In International Conference on Artificial Intelligence and Statistics (pp. 2089-2097). PMLR.

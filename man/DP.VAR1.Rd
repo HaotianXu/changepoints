@@ -2,7 +2,7 @@
 % Please edit documentation in R/VAR.R
 \name{DP.VAR1}
 \alias{DP.VAR1}
-\title{Dynamic programming for VAR1 change points detection through l0 penalty.}
+\title{Dynamic programming for VAR1 change points detection through l_0 penalty.}
 \usage{
 DP.VAR1(X_futu, X_curr, gamma, lambda, delta, eps = 0.001)
 }
@@ -11,13 +11,13 @@ DP.VAR1(X_futu, X_curr, gamma, lambda, delta, eps = 0.001)
 
 \item{X_curr}{A \code{numeric} matrix of time series at current step.}
 
-\item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
+\item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l_0 penalty.}
 
 \item{lambda}{A \code{numeric} scalar of tuning parameter for lasso penalty.}
 
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
 
-\item{eps}{A \code{numeric} scalar of precision level for convergence.}
+\item{eps}{A \code{numeric} scalar of precision level for convergence of lasso.}
 
 \item{...}{Additional arguments.}
 }
@@ -25,7 +25,7 @@ DP.VAR1(X_futu, X_curr, gamma, lambda, delta, eps = 0.001)
 partition: A vector of the best partition.
 }
 \description{
-Perform dynamic programming for VAR1 change points detection through l0 penalty.
+Perform dynamic programming for VAR1 change points detection through l_0 penalty.
 }
 \examples{
 p = 20

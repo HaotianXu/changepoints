@@ -1,6 +1,6 @@
-#' @title Partition to localization.
-#' @description     Find change point locations from the best partition produced by dynamic programming.
-#' @param parti_vec    A \code{numeric} vector of observations.
+#' @title Partition to localization for dynamic programming.
+#' @description     Find change point locations from the best partition produced by dynamic programming altorithm.
+#' @param parti_vec    A \code{integer} vector of best partition produced by dynamic programming algorithm.
 #' @param ...          Additional arguments.
 #' @return  A vector of change point locations.
 #' @export
@@ -8,6 +8,7 @@
 #' @examples
 #' y = c(rep(0, 100), rep(1, 100))
 #' part2local(DP.univar(y, 1, 4)$partition)
+#' @seealso \code{DP.univar()}, \code{DP.poly()}, \code{DP.regression()}, \code{DP.SEPP()}, \code{DP.VAR1()}
 part2local = function(parti_vec){
   N = length(parti_vec)
   localization = c()
@@ -28,7 +29,7 @@ part2local = function(parti_vec){
 #' @param vec1      A \code{integer} vector forms a subset of {1, 2, ..., n}.
 #' @param vec2      A \code{integer} vector forms a subset of {1, 2, ..., n}.
 #' @param ...       Additional arguments.
-#' @return  An integer scalar.
+#' @return  An integer scalar of bidirectional Hausdorff distance.
 #' @export
 #' @author
 #' @examples
@@ -140,11 +141,9 @@ one.step.trim = function(idx_remove_parent, data_children){
 #' @param lower    A positive \code{integer} scalar of lower bound of random intervals.
 #' @param upper    A positive \code{integer} scalar of upper bound of random intervals.
 #' @param ...      Additional arguments.
-#' @return         A \code{list} with the structure:
-#' \itemize{
-#'  \item{Alpha}: {A M-dim vector representing the starting indices of random intervals.}
-#'  \item{Beta}: {A M-dim vector representing the ending indices of random intervals.}
-#' } 
+#' @return         A \code{list} with the following structure:
+#'  \item{Alpha}{A M-dim vector representing the starting indices of random intervals}
+#'  \item{Beta}{A M-dim vector representing the ending indices of random intervals}
 #' @export
 #' @author    Oscar Hernan Madrid Padilla
 #' @examples
@@ -198,6 +197,7 @@ lowertri2mat = function(lowertri_vec, p, diag = FALSE){
 #' @author    Oscar Hernan Madrid Padilla
 #' @examples
 #' gen.lower.coordinate(5)
+#' @noRd
 gen.lower.coordinate=function(p){
   mat=matrix(1:p^2, nrow = p)
   return(mat[lower.tri(mat, diag = F)])  
