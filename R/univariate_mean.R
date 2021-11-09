@@ -67,40 +67,31 @@ CV.DP.univar = function(y, gamma, delta, ...){
   N = length(y)
   even_indexes = seq(2, N, 2)
   odd_indexes = seq(1, N, 2)
-  train.y = y[odd_indexes]
-  validation.y = y[even_indexes]
-  init_cpt_train = part2local(DP.univar(train.y, gamma, delta)$partition)
-  init_cpt_train.long = c(0, init_cpt_train, length(train.y))
-  diff.point = diff(init_cpt_train.long)
-  if (length(which(diff.point == 1)) > 0){
-    print(paste("gamma =", gamma, ".", "Warning: Consecutive points detected. Try a larger gamma."))
-    init_cpt = odd_indexes[init_cpt_train]
-    len = length(init_cpt)
-    result = list(cpt_hat = init_cpt, K_hat = len, test_error = Inf, train_error = Inf)
-  }
-  else{
-    init_cpt = odd_indexes[init_cpt_train]
-    len = length(init_cpt)
-    init_cpt_long = c(init_cpt_train, N/2)
-    interval = matrix(0, nrow = len+1, ncol = 2)
-    interval[1,] = c(1, init_cpt_long[1])
-    if(len > 0){
-      for(j in 2:(1+len)){
-        interval[j,] = c(init_cpt_long[j-1]+1, init_cpt_long[j])
-      }
+  train_y = y[odd_indexes]
+  validation_y = y[even_indexes]
+  init_cpt_train = part2local(DP.univar(train_y, gamma, delta)$partition)
+  init_cpt_train_ext = c(0, init_cpt_train, length(train_y))
+  init_cpt = odd_indexes[init_cpt_train]
+  len = length(init_cpt)
+  init_cpt_ext = c(init_cpt_train, N/2)
+  interval = matrix(0, nrow = len+1, ncol = 2)
+  interval[1,] = c(1, init_cpt_ext[1])
+  if(len > 0){
+    for(j in 2:(1+len)){
+      interval[j,] = c(init_cpt_ext[j-1]+1, init_cpt_ext[j])
     }
-    y_hat_train = sapply(1:(len+1), function(index) mean(train.y[(interval[index,1]):(interval[index,2])]))
-    training_loss = sapply(1:(len+1), function(index) norm(train.y[(interval[index,1]):(interval[index,2])] - y_hat_train[index], type = "2")^2)
-    validationmat = sapply(1:(len+1), function(index) norm(validation.y[(interval[index,1]):(interval[index,2])] - y_hat_train[index], type = "2")^2)
-    result = list(cpt_hat = init_cpt, K_hat = len, test_error = sum(validationmat), train_error = sum(training_loss))
   }
+  y_hat_train = sapply(1:(len+1), function(index) mean(train_y[(interval[index,1]):(interval[index,2])]))
+  training_loss = sapply(1:(len+1), function(index) norm(train_y[(interval[index,1]):(interval[index,2])] - y_hat_train[index], type = "2")^2)
+  validationmat = sapply(1:(len+1), function(index) norm(validation_y[(interval[index,1]):(interval[index,2])] - y_hat_train[index], type = "2")^2)
+  result = list(cpt_hat = init_cpt, K_hat = len, test_error = sum(validationmat), train_error = sum(training_loss))
   return(result)
 }
 
 
 #' @title Grid search for dynamic programming to select the tuning parameter through Cross-Validation.
 #' @description Perform grid search for dynamic programming to select the tuning parameter through Cross-Validation.
-#' @param gamma.set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
+#' @param gamma_set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
 #' @param y             A \code{numeric} vector of observations.
 #' @param delta         A positive \code{integer} scalar of minimum spacing.
 #' @param ...           Additional arguments.
@@ -115,12 +106,12 @@ CV.DP.univar = function(y, gamma, delta, ...){
 #' @author  Daren Wang and Haotian Xu
 #' @examples
 #' y = rnorm(300) + c(rep(0,130),rep(1,20),rep(0,20),rep(1,130))
-#' gamma.set = 3:9
-#' DP_result = CV.search.DP.univar(y, gamma.set, delta = 5)
+#' gamma_set = 3:9
+#' DP_result = CV.search.DP.univar(y, gamma_set, delta = 5)
 #' min_idx = which.min(DP_result$test_error)
-#' part2local(DP.univar(y, gamma.set[min_idx], delta = 5)$partition)
-CV.search.DP.univar = function(y, gamma.set, delta, ...){
-  output = sapply(1:length(gamma.set), function(j) CV.DP.univar(y, gamma.set[j], delta))
+#' part2local(DP.univar(y, gamma_set[min_idx], delta = 5)$partition)
+CV.search.DP.univar = function(y, gamma_set, delta, ...){
+  output = sapply(1:length(gamma_set), function(j) CV.DP.univar(y, gamma_set[j], delta))
   print(output)
   cpt_hat = output[1,]## estimated change points
   K_hat = output[2,]## number of estimated change points
@@ -133,30 +124,30 @@ CV.search.DP.univar = function(y, gamma.set, delta, ...){
 
 #' @title Local refinement for univariate mean changepoint detection.
 #' @description     Perform local refinement for univariate mean changepoint detection.
-#' @param cpt.init  An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
+#' @param cpt_init  An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
 #' @param y         A \code{numeric} vector of univariate time series.
 #' @param zeta      A \code{numeric} scalar of lasso penalty.
-#' @param w         A \code{numeric} scalar of weight for interpolation.
 #' @param ...       Additional arguments.
 #' @return  An \code{integer} vector of locally refined changepoint estimation.
 #' @export
 #' @author 
 #' @examples
 #' TO DO
-local.refine.univar = function(cpt.init, y, w = 1/3){
+local.refine.univar = function(cpt_init, y, ...){
+  w = 0.9
   n = length(y)
-  cpt.init.ext = c(0, cpt.init, n)
-  cpt.init.numb = length(cpt.init)
-  cpt.refined = rep(0, cpt.init.numb+1)
-  for (k in 1:cpt.init.numb){
-    s = w*cpt.init.ext[k] + (1-w)*cpt.init.ext[k+1]
-    e = (1-w)*cpt.init.ext[k+1] + w*cpt.init.ext[k+2]
+  cpt_init_ext = c(0, cpt_init, n)
+  cpt_init_numb = length(cpt_init)
+  cpt_refined = rep(0, cpt_init_numb+1)
+  for (k in 1:cpt_init_numb){
+    s = w*cpt_init_ext[k] + (1-w)*cpt_init_ext[k+1]
+    e = (1-w)*cpt_init_ext[k+1] + w*cpt_init_ext[k+2]
     lower = ceiling(s) + 1
     upper = floor(e) - 1
     b = sapply(lower:upper, function(eta) sum((y[ceiling(s):eta] - mean(y[ceiling(s):eta]))^2) + sum((y[(eta+1):floor(e)] - mean(y[(eta+1):floor(e)]))^2))
-    cpt.refined[k+1] = ceiling(s) + which.min(b)
+    cpt_refined[k+1] = ceiling(s) + which.min(b)
   }
-  return(cpt.refined[-1])
+  return(cpt_refined[-1])
 }
 
 
@@ -330,7 +321,7 @@ WBS.univar.CPD = function(y, Alpha, Beta, delta){
     score[j] = sSIC.obj(y, S[[j]])
   }
   best_ind = which.min(score)
-  return(S[[best_ind]])
+  return(list(cpt = S[[best_ind]], tau = tau_grid[best_ind]))
 }
 
 
@@ -372,7 +363,7 @@ BS.univar.CPD = function(y, delta){
     score[j] = sSIC.obj(y, S[[j]])
   }
   best_ind = which.min(score)
-  return(S[[best_ind]])
+  return(list(cpt = S[[best_ind]], tau = tau_grid[best_ind]))
 }
 
 

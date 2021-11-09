@@ -1,7 +1,6 @@
 set.seed(123)
-
 #START define parameters
-rho_can = c(0.1, 0.4)#candidate of rho (rho can not be too large so that the time series is stable)
+rho_can = 0.4#candidate of rho (rho can not be too large so that the time series is stable)
 ll = length(rho_can)
 RR = 3# 100 # number of repetition
 p = 20 # dimension
@@ -13,19 +12,6 @@ n = 30
 v1 = 2*(seq(1,p,1)%%2) - 1
 v2 = -v1 
 AA = matrix(0, nrow = p, ncol = p-2)
-A1=cbind(v1,v2,AA)*0.1 # transition matrix for the first segment
-A2=cbind(v2,v1,AA)*0.1 # transition matrix for the second segment
-A3=A1 # transition matrix for the third segment
-# generate data
-data = simu.VAR1(sigma, p, 2*n+1, A1)
-data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
-data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
-#FINISH generate data
-N = ncol(data) # sample size
-X_curr = data[,1:(N-1)]
-X_futu = data[,2:N]
-parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = delta1)$partition
-localization = part2local(parti)
 
 #records of change point estimation
 dp_rec = vector("list", length = ll)
@@ -36,6 +22,11 @@ haus_lr = rep(0,ll)
 
 
 for(candidate in 1:ll){
+  #generate transition matrices
+  A1=cbind(v1,v2,AA)
+  A2=cbind(v2,v1,AA)
+  A3=A1
+  
   print(paste("candidate=" ,candidate))
   rho = rho_can[candidate]
   A1 = A1*rho
@@ -56,6 +47,7 @@ for(candidate in 1:ll){
     dp_result = CV.search.DP.VAR1(data, gamma_set, lambda_lasso_set, delta1)
     end.time <- Sys.time(); time.taken <- end.time - start.time; print(time.taken)
     min_idx = as.vector(arrayInd(which.min(dp_result$test_error), dim(dp_result$test_error)))
+    N = ncol(data)
     X_curr = data[,1:(N-1)]
     X_futu = data[,2:N]
     dp_estimate = part2local(DP.VAR1(X_futu, X_curr, gamma = gamma_set[min_idx[2]], lambda = lambda_lasso_set[min_idx[1]], delta = delta1)$partition)
@@ -69,7 +61,7 @@ for(candidate in 1:ll){
     
     zeta_group_set = c(0.5, 1, 1.5)
     #START  local refinement#include X and Y
-    lr_estimate = local.refine.CV.VAR1(dp_estimate, data, zeta_group_set, delta.local, w = 1/3)
+    lr_estimate = local.refine.CV.VAR1(dp_estimate, data, zeta_group_set, delta.local)
     lr_estimate_ext = c(0, lr_estimate, 6*n)
     print( "lr=")
     print(lr_estimate_ext)

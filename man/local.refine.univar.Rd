@@ -4,18 +4,16 @@
 \alias{local.refine.univar}
 \title{Local refinement for univariate mean changepoint detection.}
 \usage{
-local.refine.univar(cpt.init, y, w = 1/3)
+local.refine.univar(cpt_init, y, ...)
 }
 \arguments{
-\item{cpt.init}{An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
+\item{cpt_init}{An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
 
 \item{y}{A \code{numeric} vector of univariate time series.}
 
-\item{w}{A \code{numeric} scalar of weight for interpolation.}
+\item{...}{Additional arguments.}
 
 \item{zeta}{A \code{numeric} scalar of lasso penalty.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 An \code{integer} vector of locally refined changepoint estimation.

@@ -52,14 +52,14 @@ error.pred.seg.VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps) {
 }
 
 
-#' @title Dynamic programming for VAR1 change points detection through l0 penalty.
-#' @description Perform dynamic programming for VAR1 change points detection through l0 penalty.
+#' @title Dynamic programming for VAR1 change points detection through l_0 penalty.
+#' @description Perform dynamic programming for VAR1 change points detection through l_0 penalty.
 #' @param X_futu    A \code{numeric} matrix of time series at one step ahead.
 #' @param X_curr    A \code{numeric} matrix of time series at current step.
-#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
+#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l_0 penalty.
 #' @param lambda    A \code{numeric} scalar of tuning parameter for lasso penalty.
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
-#' @param eps       A \code{numeric} scalar of precision level for convergence.
+#' @param eps       A \code{numeric} scalar of precision level for convergence of lasso.
 #' @param ...      Additional arguments.
 #' @return partition: A vector of the best partition.
 #' @export

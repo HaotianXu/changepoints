@@ -3,27 +3,26 @@ Type: Package
 Title: A collections of change-point detection methods
 Version: 1.0
 Date: 2021-07-27
-Author:
-    Oscar Hernan Madrid Padilla,
-    Daren Wang,
-    Qin Wen,
-    Haotian Xu
-Maintainer: Your Name <your@email.com>
-Description: TO COMPLETE
-Depends:
-    R (>= 3.5.0),
+Authors@R: c(
+    person("Haotian", "Xu", email="haotian.xu@warwick.ac.uk", role=c("aut","cre")),
+    person("Oscar", "Madrid Padilla", "Hernan", email="oscar.madrid@stat.ucla.edu", role="aut"),
+    person("Daren", "Wang", email="dwang24@nd.edu", role="aut"),
+    person("Qin", "Wen", role="ctb")
+    )
+Maintainer: Haotian Xu <haotian.xu@warwick.ac.uk>
+Description: A collections of change-point detection methods.
+Depends: R (>= 3.5.0)
+Imports:
     gglasso,
-    grplasso,
     glmnet,
     penalized,
     ks,
-    MASS
-Imports:
+    MASS,
     Rcpp, 
     RcppArmadillo
 Suggests:
     abind
 LinkingTo: Rcpp, RcppArmadillo
-License: AGPL-3
+License: MIT | LICENSE
 RoxygenNote: 7.1.2
 Encoding: UTF-8
