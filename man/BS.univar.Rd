@@ -20,24 +20,30 @@ BS.univar(y, s, e, delta = 2, level = 0, ...)
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{list} with the structure:
-\itemize{
- \item{S}: A vector of estimated change point locations (sorted in strictly increasing order).
- \item{Dval}: A vector of values of CUSUM statistic based on KS distance.
- \item{Level}: A vector representing the levels at which each change point is detected.
- \item{Parent}: A matrix with the starting indices on the first row and the ending indices on the second row.
-}
+A \code{list} with the following structure:
+ \item{S}{A vector of estimated change point locations (sorted in strictly increasing order)}
+ \item{Dval}{A vector of values of CUSUM statistic}
+ \item{Level}{A vector representing the levels at which each change point is detected}
+ \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row}
 }
 \description{
 Perform standard binary segmentation for univariate mean change points detection.
 }
 \examples{
-y = c(rnorm(100, 0, 1), rnorm(100, 1, 1), rnorm(100, 0, 1))
-temp = BS.univar(y, 1, length(y), delta = 10)
+set.seed(0)
+cpt_true = c(20, 50, 170)
+y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
+temp = BS.univar(y, 1, length(y), delta = 5)
 plot.ts(y)
 points(x = tail(temp$S[order(temp$Dval)],4),
        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-threshold.BS(temp, 2)
+cpt_hat = sort(threshold.BS(temp, tau = 4)$cpt_hat[,1]) # the threshold tau is specified to be 4
+Hausdorff.dist(cpt_hat, cpt_true)
+cpt_LR = local.refine.univar(cpt_hat, y)
+Hausdorff.dist(cpt_LR, cpt_true)
+}
+\seealso{
+\code{threshold.BS()} for obtain change points estimation.
 }
 \author{
 Haotian Xu

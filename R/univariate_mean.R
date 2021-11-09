@@ -1,52 +1,23 @@
-#' @title Dynamic programming for univariate mean changepoints detection.
-#' @description     Perform dynamic programming for univariate mean changepoints detection through l0 penalty
+#' @title Dynamic programming for univariate mean change points detection through \eqn{l_0} penalty.
+#' @description     Perform dynamic programming for univariate mean change points detection.
 #' @param y         A \code{numeric} vector of observations.
-#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
+#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with \eqn{l_0} penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param ...       Additional arguments.
-#' @return A \code{list} with the structure:
-#' \itemize{
-#'  \item{partition}: {A vector of the best partition.}
-#'  \item{yhat}: {A vector of mean estimation for corresponding to the best partition.}
-#' }
+#' @return A \code{list} with the following structure:
+#'  \item{partition}{A vector of the best partition}
+#'  \item{yhat}{A vector of mean estimation for corresponding to the best partition}
 #' @export
 #' @author Haotian Xu
 #' @examples
-#' y = rnorm(300) + c(rep(0,130),rep(1,20),rep(0,20),rep(1,130))
-#' part2local(DP.univar(y, 3, 5)$partition)
+#' set.seed(123)
+#' cpt_true = c(20, 50, 170)
+#' y = rnorm(300) + c(rep(0,20),rep(1,30),rep(0,120),rep(1,130))
+#' cpt_hat = part2local(DP.univar(y, gamma = 5, delta = 5)$partition)
+#' Hausdorff.dist(cpt_hat, cpt_true)
 DP.univar <- function(y, gamma, delta, ...) {
   .Call('_changepoints_rcpp_DP_univar', PACKAGE = 'changepoints', y, gamma, delta)
 }
-
-# DP.univar = function(y, gamma, delta, ...){
-#   N = length(y)
-#   bestvalue = rep(0,N+1)
-#   partition = rep(0,N)
-#   yhat = rep(NA, N)
-#   bestvalue[1] = -gamma
-#   for(r in 1:N){
-#     bestvalue[r+1] = Inf
-#     for(l in 1:r){
-#       if(r - l > 2*delta){
-#         b = bestvalue[l] + gamma + (norm(y[l:r] - mean(y[l:r]), type = "2"))^2 
-#       }else{
-#         b = Inf
-#       }
-#       if(b < bestvalue[r+1]){
-#         bestvalue[r+1] = b
-#         partition[r] = l-1
-#       }
-#     }
-#   }
-#   r = N
-#   l = partition[r]
-#   while(r > 0){
-#     yhat[(l+1):r] = rep(mean(y[(l+1):r]), r-l)
-#     r = l
-#     l = partition[r]
-#   }
-#   return(list(partition = partition, yhat = yhat))
-# }
 
 
 #' @title Internal function: Cross-Validation of Dynamic Programming algorithm for univariate mean change points detection.
@@ -55,13 +26,11 @@ DP.univar <- function(y, gamma, delta, ...) {
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param ...       Additional arguments.
-#' @return  A \code{list} with the structure:
-#' \itemize{
-#'  \item{cpt_hat}: A vector of estimated change points locations (sorted in strictly increasing order).
-#'  \item{K_hat}: A scalar of number of estimated change points.
-#'  \item{test_error}: A vector of testing errors.
-#'  \item{train_error}: A vector of training errors.
-#' } 
+#' @return  A \code{list} with the following structure:
+#'  \item{cpt_hat}{A vector of estimated change points locations (sorted in strictly increasing order)}
+#'  \item{K_hat}{A scalar of number of estimated change points}
+#'  \item{test_error}{A vector of testing errors}
+#'  \item{train_error}{A vector of training errors}
 #' @noRd
 CV.DP.univar = function(y, gamma, delta, ...){
   N = length(y)
@@ -95,21 +64,22 @@ CV.DP.univar = function(y, gamma, delta, ...){
 #' @param y             A \code{numeric} vector of observations.
 #' @param delta         A positive \code{integer} scalar of minimum spacing.
 #' @param ...           Additional arguments.
-#' @return  A \code{list} with the structure:
-#' \itemize{
-#'  \item{cpt_hat}: A list of vector of estimated change points locations (sorted in strictly increasing order).
-#'  \item{K_hat}: A list of scalar of number of estimated change points.
-#'  \item{test_error}: A list of vector of testing errors.
-#'  \item{train_error}: A list of vector of training errors.
-#' } 
+#' @return  A \code{list} with the following structure:
+#'  \item{cpt_hat}{A list of vector of estimated change points (sorted in strictly increasing order)}
+#'  \item{K_hat}{A list of scalar of number of estimated change points}
+#'  \item{test_error}{A list of vector of testing errors}
+#'  \item{train_error}{A list of vector of training errors}
 #' @export
 #' @author  Daren Wang and Haotian Xu
 #' @examples
-#' y = rnorm(300) + c(rep(0,130),rep(1,20),rep(0,20),rep(1,130))
-#' gamma_set = 3:9
+#' set.seed(0)
+#' cpt_true = c(20, 50, 170)
+#' y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
+#' gamma_set = 1:5
 #' DP_result = CV.search.DP.univar(y, gamma_set, delta = 5)
 #' min_idx = which.min(DP_result$test_error)
-#' part2local(DP.univar(y, gamma_set[min_idx], delta = 5)$partition)
+#' cpt_hat = unlist(DP_result$cpt_hat[min_idx])
+#' Hausdorff.dist(cpt_hat, cpt_true)
 CV.search.DP.univar = function(y, gamma_set, delta, ...){
   output = sapply(1:length(gamma_set), function(j) CV.DP.univar(y, gamma_set[j], delta))
   print(output)
@@ -132,7 +102,16 @@ CV.search.DP.univar = function(y, gamma_set, delta, ...){
 #' @export
 #' @author 
 #' @examples
-#' TO DO
+#' set.seed(0)
+#' cpt_true = c(20, 50, 170)
+#' y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
+#' gamma_set = 1:5
+#' DP_result = CV.search.DP.univar(y, gamma_set, delta = 5)
+#' min_idx = which.min(DP_result$test_error)
+#' cpt_hat = unlist(DP_result$cpt_hat[min_idx])
+#' Hausdorff.dist(cpt_hat, cpt_true)
+#' cpt_LR = local.refine.univar(cpt_hat, y)
+#' Hausdorff.dist(cpt_LR, cpt_true)
 local.refine.univar = function(cpt_init, y, ...){
   w = 0.9
   n = length(y)
@@ -158,23 +137,27 @@ local.refine.univar = function(cpt_init, y, ...){
 #' @param e         A \code{integer} scalar of ending index.
 #' @param delta     A positive \code{numeric} scalar of minimum spacing.
 #' @param level     Should be fixed as 0.
-#' @param ...      Additional arguments.
-#' @return  A \code{list} with the structure:
-#' \itemize{
-#'  \item{S}: A vector of estimated change point locations (sorted in strictly increasing order).
-#'  \item{Dval}: A vector of values of CUSUM statistic based on KS distance.
-#'  \item{Level}: A vector representing the levels at which each change point is detected.
-#'  \item{Parent}: A matrix with the starting indices on the first row and the ending indices on the second row.
-#' } 
+#' @param ...       Additional arguments.
+#' @return  A \code{list} with the following structure:
+#'  \item{S}{A vector of estimated change point locations (sorted in strictly increasing order)}
+#'  \item{Dval}{A vector of values of CUSUM statistic}
+#'  \item{Level}{A vector representing the levels at which each change point is detected}
+#'  \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row}
 #' @export
-#' @author Haotian Xu
+#' @author  Haotian Xu
 #' @examples
-#' y = c(rnorm(100, 0, 1), rnorm(100, 1, 1), rnorm(100, 0, 1))
-#' temp = BS.univar(y, 1, length(y), delta = 10)
+#' set.seed(0)
+#' cpt_true = c(20, 50, 170)
+#' y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
+#' temp = BS.univar(y, 1, length(y), delta = 5)
 #' plot.ts(y)
 #' points(x = tail(temp$S[order(temp$Dval)],4),
 #'        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-#' threshold.BS(temp, 2)
+#' cpt_hat = sort(threshold.BS(temp, tau = 4)$cpt_hat[,1]) # the threshold tau is specified to be 4
+#' Hausdorff.dist(cpt_hat, cpt_true)
+#' cpt_LR = local.refine.univar(cpt_hat, y)
+#' Hausdorff.dist(cpt_LR, cpt_true)
+#' @seealso \code{threshold.BS()} for obtain change points estimation.
 BS.univar = function(y, s, e, delta = 2, level = 0, ...){
   S = NULL
   Dval = NULL
@@ -214,23 +197,27 @@ BS.univar = function(y, s, e, delta = 2, level = 0, ...){
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param level     Should be fixed as 0.
 #' @param ...      Additional arguments.
-#' @return  A \code{list} with the structure:
-#' \itemize{
-#'  \item{S}: A vector of estimated change point locations (sorted in strictly increasing order).
-#'  \item{Dval}: A vector of values of CUSUM statistic based on KS distance.
-#'  \item{Level}: A vector representing the levels at which each change point is detected.
-#'  \item{Parent}: A matrix with the starting indices on the first row and the ending indices on the second row.
-#' }
+#' @return  A \code{list} with the following structure:
+#'  \item{S}{A vector of estimated change point locations (sorted in strictly increasing order)}
+#'  \item{Dval}{A vector of values of CUSUM statistic}
+#'  \item{Level}{A vector representing the levels at which each change point is detected}
+#'  \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row}
 #' @export
 #' @author Haotian Xu
 #' @examples
-#' y = c(rnorm(100, 0, 1), rnorm(100, 1, 1), rnorm(100, 0, 1))
+#' set.seed(0)
+#' cpt_true = c(20, 50, 170)
+#' y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
 #' intervals = WBS.intervals(M = 300, lower = 1, upper = length(y))
-#' temp = WBS.univar(y, 1, length(y), intervals$Alpha, intervals$Beta, delta = 10)
+#' temp = WBS.univar(y, 1, length(y), intervals$Alpha, intervals$Beta, delta = 5)
 #' plot.ts(y)
-#' points(x = tail(temp$S[order(temp$Dval)], 4),
+#' points(x = tail(temp$S[order(temp$Dval)],4),
 #'        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-#' threshold.BS(temp, 3)
+#' cpt_hat = sort(threshold.BS(temp, tau = 4)$cpt_hat[,1]) # the threshold tau is specified to be 4
+#' Hausdorff.dist(cpt_hat, cpt_true)
+#' cpt_LR = local.refine.univar(cpt_hat, y)
+#' Hausdorff.dist(cpt_LR, cpt_true)
+#' @seealso \code{threshold.BS()} for obtain change points estimation, \code{WBS.univar.CPD()} for tuning free change point detection based on WBS.
 WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){ 
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
@@ -289,17 +276,24 @@ WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){
 #' @param Beta      A \code{integer} vector of ending indices of random intervals.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param ...      Additional arguments.
-#' @return  A \code{numeric} vector of estimated changepoint locations.
+#' @return  A \code{list} with the following structure:
+#'  \item{cpt}{A vector of estimated change point locations (sorted in strictly increasing order)}
+#'  \item{tau}{A scalar of selected threshold tau based on sSIC}
 #' @export
 #' @author Haotian Xu
 #' @references Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection,  Ann. Statist. 42(6): 2243-2281 (December 2014). DOI: 10.1214/14-AOS1245
 #' @examples
-#' y = c(rnorm(100, 0, 1), rnorm(100, 1, 1), rnorm(100, 0, 1))
-#' intervals = WBS.intervals(M = 500, lower = 1, upper = length(y))
+#' set.seed(0)
+#' cpt_true = c(20, 50, 170)
+#' y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
+#' intervals = WBS.intervals(M = 300, lower = 1, upper = length(y))
 #' temp = WBS.univar.CPD(y, intervals$Alpha, intervals$Beta, delta = 5)
+#' cpt_hat = temp$cpt
 #' plot.ts(y)
-#' points(x = temp, y = y[temp], col = "red")
-#' 
+#' points(x = cpt_hat, y = y[cpt_hat], col = "red")
+#' Hausdorff.dist(cpt_hat, cpt_true)
+#' cpt_LR = local.refine.univar(cpt_hat, y)
+#' Hausdorff.dist(cpt_LR, cpt_true)
 WBS.univar.CPD = function(y, Alpha, Beta, delta){
   obs_num = length(y)
   temp1 = WBS.univar(y, s = 1, e = obs_num, Alpha, Beta, delta)
@@ -310,7 +304,7 @@ WBS.univar.CPD = function(y, Alpha, Beta, delta){
   tau_grid = c(tau_grid,10)
   S = c()
   for(j in 1:length(tau_grid)){
-    aux = threshold.BS(temp1, tau_grid[j])$change_points[,1]
+    aux = threshold.BS(temp1, tau_grid[j])$cpt_hat[,1]
     if(length(aux) == 0)
       break;
     S[[j]] = sort(aux)
@@ -332,16 +326,24 @@ WBS.univar.CPD = function(y, Alpha, Beta, delta){
 #' @param Beta      A \code{integer} vector of ending indices of random intervals.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param ...      Additional arguments.
-#' @return  A \code{numeric} vector of estimated changepoint locations.
+#' @return  A \code{list} with the following structure:
+#'  \item{cpt}{A vector of estimated change point locations (sorted in strictly increasing order)}
+#'  \item{tau}{A scalar of selected threshold tau based on sSIC}
 #' @export
 #' @author Haotian Xu
 #' @references Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection,  Ann. Statist. 42(6): 2243-2281 (December 2014). DOI: 10.1214/14-AOS1245
 #' @examples
-#' y = c(rnorm(100, 0, 1), rnorm(100, 2, 1), rnorm(100, 0, 1))
+#' set.seed(0)
+#' cpt_true = c(20, 50, 170)
+#' y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
+#' intervals = WBS.intervals(M = 300, lower = 1, upper = length(y))
 #' temp = BS.univar.CPD(y, delta = 5)
+#' cpt_hat = temp$cpt
 #' plot.ts(y)
-#' points(x = temp, y = y[temp], col = "red")
-#' 
+#' points(x = cpt_hat, y = y[cpt_hat], col = "red")
+#' Hausdorff.dist(cpt_hat, cpt_true)
+#' cpt_LR = local.refine.univar(cpt_hat, y)
+#' Hausdorff.dist(cpt_LR, cpt_true)
 BS.univar.CPD = function(y, delta){
   obs_num = length(y)
   temp1 = BS.univar(y, s = 1, e = obs_num, delta)
@@ -352,7 +354,7 @@ BS.univar.CPD = function(y, delta){
   tau_grid = c(tau_grid,10)
   S = c()
   for(j in 1:length(tau_grid)){
-    aux = threshold.BS(temp1, tau_grid[j])$change_points[,1]
+    aux = threshold.BS(temp1, tau_grid[j])$cpt_hat[,1]
     if(length(aux) == 0)
       break;
     S[[j]] = sort(aux)

@@ -18,18 +18,25 @@ WBS.univar.CPD(y, Alpha, Beta, delta)
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{numeric} vector of estimated changepoint locations.
+A \code{list} with the following structure:
+ \item{cpt}{A vector of estimated change point locations (sorted in strictly increasing order)}
+ \item{tau}{A scalar of selected threshold tau based on sSIC}
 }
 \description{
 Perform Univariate mean change point detection based on wild binary segmentation. The threshold parameter tau for WBS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
 }
 \examples{
-y = c(rnorm(100, 0, 1), rnorm(100, 1, 1), rnorm(100, 0, 1))
-intervals = WBS.intervals(M = 500, lower = 1, upper = length(y))
+set.seed(0)
+cpt_true = c(20, 50, 170)
+y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
+intervals = WBS.intervals(M = 300, lower = 1, upper = length(y))
 temp = WBS.univar.CPD(y, intervals$Alpha, intervals$Beta, delta = 5)
+cpt_hat = temp$cpt
 plot.ts(y)
-points(x = temp, y = y[temp], col = "red")
-
+points(x = cpt_hat, y = y[cpt_hat], col = "red")
+Hausdorff.dist(cpt_hat, cpt_true)
+cpt_LR = local.refine.univar(cpt_hat, y)
+Hausdorff.dist(cpt_LR, cpt_true)
 }
 \references{
 Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection,  Ann. Statist. 42(6): 2243-2281 (December 2014). DOI: 10.1214/14-AOS1245

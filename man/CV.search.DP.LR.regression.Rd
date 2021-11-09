@@ -2,7 +2,7 @@
 % Please edit documentation in R/HD_regression.R
 \name{CV.search.DP.LR.regression}
 \alias{CV.search.DP.LR.regression}
-\title{Grid search based on Cross-Validation (all tuning parameters (gamma, lambda and zeta)) of local refinement for regression.}
+\title{Grid search based on Cross-Validation of all tuning parameters (gamma, lambda and zeta) for regression.}
 \usage{
 CV.search.DP.LR.regression(
   y,
@@ -40,7 +40,7 @@ A \code{list} with the following structure:
  \item{train_error}{A list of vector of training errors}
 }
 \description{
-TO DO
+Perform grid search based on Cross-Validation of all tuning parameters (gamma, lambda and zeta)
 }
 \examples{
 set.seed(123)

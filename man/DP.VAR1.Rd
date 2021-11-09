@@ -2,18 +2,18 @@
 % Please edit documentation in R/VAR.R
 \name{DP.VAR1}
 \alias{DP.VAR1}
-\title{Dynamic programming for VAR1 change points detection through l_0 penalty.}
+\title{Dynamic programming for VAR1 change points detection through \eqn{l_0} penalty.}
 \usage{
-DP.VAR1(X_futu, X_curr, gamma, lambda, delta, eps = 0.001)
+DP.VAR1(X_futu, X_curr, gamma, lambda, delta, eps = 0.001, ...)
 }
 \arguments{
-\item{X_futu}{A \code{numeric} matrix of time series at one step ahead.}
+\item{X_futu}{A \code{numeric} matrix of time series at one step ahead, with horizontal axis being time.}
 
-\item{X_curr}{A \code{numeric} matrix of time series at current step.}
+\item{X_curr}{A \code{numeric} matrix of time series at current step, with horizontal axis being time.}
 
-\item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l_0 penalty.}
+\item{gamma}{A \code{numeric} scalar of the tuning parameter associated with \eqn{l_0} penalty.}
 
-\item{lambda}{A \code{numeric} scalar of tuning parameter for lasso penalty.}
+\item{lambda}{A \code{numeric} scalar of the tuning parameter for lasso penalty.}
 
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
 
@@ -25,7 +25,7 @@ DP.VAR1(X_futu, X_curr, gamma, lambda, delta, eps = 0.001)
 partition: A vector of the best partition.
 }
 \description{
-Perform dynamic programming for VAR1 change points detection through l_0 penalty.
+Perform dynamic programming for VAR1 change points detection through \eqn{l_0} penalty.
 }
 \examples{
 p = 20

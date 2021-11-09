@@ -397,8 +397,8 @@ CV.search.DP.LR.gl = function(y, X, gamma.set, lambda.set, zeta, delta, eps = 0.
 
 
 
-#' @title Grid search based on Cross-Validation (all tuning parameters (gamma, lambda and zeta)) of local refinement for regression.
-#' @description TO DO
+#' @title Grid search based on Cross-Validation of all tuning parameters (gamma, lambda and zeta) for regression.
+#' @description Perform grid search based on Cross-Validation of all tuning parameters (gamma, lambda and zeta)
 #' @param y             A \code{numeric} vector of response variable.
 #' @param X             A \code{numeric} matrix of covariates with horizontal axis being time.
 #' @param gamma_set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.

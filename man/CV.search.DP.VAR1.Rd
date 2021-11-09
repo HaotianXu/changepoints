@@ -2,28 +2,33 @@
 % Please edit documentation in R/VAR.R
 \name{CV.search.DP.VAR1}
 \alias{CV.search.DP.VAR1}
-\title{Grid search based on Cross-Validation of Dynamic Programming for regression change points detection via l0 penalty}
+\title{Grid search based on cross-validation of dynamic programming for VAR change points detection via \eqn{l_0} penalty.}
 \usage{
-CV.search.DP.VAR1(DATA, gamma.set, lambda.set, delta, eps = 0.001, ...)
+CV.search.DP.VAR1(DATA, gamma_set, lambda_set, delta, eps = 0.001, ...)
 }
 \arguments{
 \item{DATA}{A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being dimensions.}
 
-\item{gamma.set}{A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.}
+\item{gamma_set}{A \code{numeric} vector of candidate tuning parameters associated with the \eqn{l_0} penalty.}
 
-\item{lambda.set}{A \code{numeric} vector of candidate tuning parameter for the lasso penalty.}
+\item{lambda_set}{A \code{numeric} vector of candidate tuning parameters for lasso penalty.}
 
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
 
 \item{...}{Additional arguments.}
 }
 \value{
-Row: lambda.set; column: gamma.set
+A \code{list} with the following structure:
+ \item{cpt_hat}{A list of vector of estimated change points}
+ \item{K_hat}{A list of scalar of number of estimated change points}
+ \item{test_error}{A list of vector of testing errors (each row corresponding to each gamma, and each column corresponding to each lambda)}
+ \item{train_error}{A list of vector of training errors}
 }
 \description{
-TO DO
+Perform grid search based on cross-validation of dynamic programming for VAR change points detection.
 }
 \examples{
+set.seed(123)
 p = 20
 sigma = 1
 n = 20
@@ -33,16 +38,18 @@ AA = matrix(0, nrow = p, ncol = p-2)
 A1 = cbind(v1,v2,AA)*0.1
 A2 = cbind(v2,v1,AA)*0.1
 A3 = A1
+cpt_true = c(40, 80)
 data = simu.VAR1(sigma, p, 2*n+1, A1)
 data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
 data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
-gamma.set = c(0.1, 1)
-lambda.set = c(0.1, 1, 2, 3)
-temp = CV.search.DP.VAR1(data, gamma.set, lambda.set, delta = 10)
+gamma_set = c(0.1, 0.5, 1)
+lambda_set = c(0.1, 1, 3.2)
+temp = CV.search.DP.VAR1(data, gamma_set, lambda_set, delta = 5)
 temp$test_error # test error result
 min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
-cpt.init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
+cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
+Hausdorff.dist(cpt_init, cpt_true)
 }
 \author{
-
+Daren Wang & Haotian Xu
 }

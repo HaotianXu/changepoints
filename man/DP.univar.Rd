@@ -2,32 +2,33 @@
 % Please edit documentation in R/univariate_mean.R
 \name{DP.univar}
 \alias{DP.univar}
-\title{Dynamic programming for univariate mean changepoints detection.}
+\title{Dynamic programming for univariate mean change points detection through \eqn{l_0} penalty.}
 \usage{
 DP.univar(y, gamma, delta, ...)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of observations.}
 
-\item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
+\item{gamma}{A \code{numeric} scalar of the tuning parameter associated with \eqn{l_0} penalty.}
 
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
 
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{list} with the structure:
-\itemize{
- \item{partition}: {A vector of the best partition.}
- \item{yhat}: {A vector of mean estimation for corresponding to the best partition.}
-}
+A \code{list} with the following structure:
+ \item{partition}{A vector of the best partition}
+ \item{yhat}{A vector of mean estimation for corresponding to the best partition}
 }
 \description{
-Perform dynamic programming for univariate mean changepoints detection through l0 penalty
+Perform dynamic programming for univariate mean change points detection.
 }
 \examples{
-y = rnorm(300) + c(rep(0,130),rep(1,20),rep(0,20),rep(1,130))
-part2local(DP.univar(y, 3, 5)$partition)
+set.seed(123)
+cpt_true = c(20, 50, 170)
+y = rnorm(300) + c(rep(0,20),rep(1,30),rep(0,120),rep(1,130))
+cpt_hat = part2local(DP.univar(y, gamma = 5, delta = 5)$partition)
+Hausdorff.dist(cpt_hat, cpt_true)
 }
 \author{
 Haotian Xu

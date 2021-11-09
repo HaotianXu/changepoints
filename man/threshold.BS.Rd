@@ -14,12 +14,10 @@ threshold.BS(BS_object, tau, ...)
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{list} with the structure:
-\itemize{
- \item{BS_tree}: {A list of data.frame containing "current" indices, "parent" indices, "location" indices and "value" of CUSUM at all steps.}
- \item{BS_tree_trimmed}: {BS_tree with change points which do not satisfy the thresholding criteria removed.}
- \item{change_points}: {A matrix contains change point locations, values of corresponding statistic, and levels at which each change point is detected.}
-}
+A \code{list} with the following structure:
+ \item{BS_tree}{A list of data.frame containing "current" indices, "parent" indices, "location" indices and "value" of CUSUM at all steps}
+ \item{BS_tree_trimmed}{BS_tree with change points which do not satisfy the thresholding criteria removed}
+ \item{cpt_hat}{A matrix contains change point locations, values of corresponding statistic, and levels at which each change point is detected}
 }
 \description{
 Given a BS object, perform thresholding to find the change point locations.

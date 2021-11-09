@@ -24,25 +24,31 @@ WBS.univar(y, s, e, Alpha, Beta, delta = 2, level = 0)
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{list} with the structure:
-\itemize{
- \item{S}: A vector of estimated change point locations (sorted in strictly increasing order).
- \item{Dval}: A vector of values of CUSUM statistic based on KS distance.
- \item{Level}: A vector representing the levels at which each change point is detected.
- \item{Parent}: A matrix with the starting indices on the first row and the ending indices on the second row.
-}
+A \code{list} with the following structure:
+ \item{S}{A vector of estimated change point locations (sorted in strictly increasing order)}
+ \item{Dval}{A vector of values of CUSUM statistic}
+ \item{Level}{A vector representing the levels at which each change point is detected}
+ \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row}
 }
 \description{
 Perform wild binary segmentation for univariate mean changepoint detection.
 }
 \examples{
-y = c(rnorm(100, 0, 1), rnorm(100, 1, 1), rnorm(100, 0, 1))
+set.seed(0)
+cpt_true = c(20, 50, 170)
+y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
 intervals = WBS.intervals(M = 300, lower = 1, upper = length(y))
-temp = WBS.univar(y, 1, length(y), intervals$Alpha, intervals$Beta, delta = 10)
+temp = WBS.univar(y, 1, length(y), intervals$Alpha, intervals$Beta, delta = 5)
 plot.ts(y)
-points(x = tail(temp$S[order(temp$Dval)], 4),
+points(x = tail(temp$S[order(temp$Dval)],4),
        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-threshold.BS(temp, 3)
+cpt_hat = sort(threshold.BS(temp, tau = 4)$cpt_hat[,1]) # the threshold tau is specified to be 4
+Hausdorff.dist(cpt_hat, cpt_true)
+cpt_LR = local.refine.univar(cpt_hat, y)
+Hausdorff.dist(cpt_LR, cpt_true)
+}
+\seealso{
+\code{threshold.BS()} for obtain change points estimation, \code{WBS.univar.CPD()} for tuning free change point detection based on WBS.
 }
 \author{
 Haotian Xu

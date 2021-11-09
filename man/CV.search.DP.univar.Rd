@@ -16,23 +16,24 @@ CV.search.DP.univar(y, gamma_set, delta, ...)
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{list} with the structure:
-\itemize{
- \item{cpt_hat}: A list of vector of estimated change points locations (sorted in strictly increasing order).
- \item{K_hat}: A list of scalar of number of estimated change points.
- \item{test_error}: A list of vector of testing errors.
- \item{train_error}: A list of vector of training errors.
-}
+A \code{list} with the following structure:
+ \item{cpt_hat}{A list of vector of estimated change points (sorted in strictly increasing order)}
+ \item{K_hat}{A list of scalar of number of estimated change points}
+ \item{test_error}{A list of vector of testing errors}
+ \item{train_error}{A list of vector of training errors}
 }
 \description{
 Perform grid search for dynamic programming to select the tuning parameter through Cross-Validation.
 }
 \examples{
-y = rnorm(300) + c(rep(0,130),rep(1,20),rep(0,20),rep(1,130))
-gamma_set = 3:9
+set.seed(0)
+cpt_true = c(20, 50, 170)
+y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
+gamma_set = 1:5
 DP_result = CV.search.DP.univar(y, gamma_set, delta = 5)
 min_idx = which.min(DP_result$test_error)
-part2local(DP.univar(y, gamma_set[min_idx], delta = 5)$partition)
+cpt_hat = unlist(DP_result$cpt_hat[min_idx])
+Hausdorff.dist(cpt_hat, cpt_true)
 }
 \author{
 Daren Wang and Haotian Xu

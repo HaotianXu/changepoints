@@ -4,26 +4,29 @@
 \alias{local.refine.CV.VAR1}
 \title{Local refinement for VAR1 change points detection.}
 \usage{
-local.refine.CV.VAR1(cpt.init, DATA, zeta_group_set, delta.local, ...)
+local.refine.CV.VAR1(cpt_init, DATA, zeta_set, delta_local, ...)
 }
 \arguments{
-\item{cpt.init}{A \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
+\item{cpt_init}{A \code{integer} vector of initial change points estimation (sorted in strictly increasing order).}
 
 \item{DATA}{A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.}
 
-\item{zeta_group_set}{A \code{numeric} scalar of lasso penalty.}
+\item{zeta_set}{A \code{numeric} vector of candidate tuning parameters for group lasso penalty.}
+
+\item{delta_local}{A strictly \code{integer} scalar of minimum spacing for group lasso.}
 
 \item{...}{Additional arguments.}
-
-\item{w}{A \code{numeric} scalar of weight for interpolation.}
 }
 \value{
-An \code{integer} vector of locally refined change points estimation.
+A \code{list} with the following structure:
+ \item{cpt_hat}{A vector of estimated change point locations (sorted in strictly increasing order)}
+ \item{zeta}{A scalar of selected zeta by cross-validation}
 }
 \description{
 Perform local refinement for VAR1 change points detection.
 }
 \examples{
+set.seed(123)
 p = 20
 sigma = 1
 n = 20
@@ -36,15 +39,15 @@ A3 = A1
 data = simu.VAR1(sigma, p, 2*n+1, A1)
 data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
 data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
-gamma.set = c(0.1, 1)
-lambda.set = c(0.1, 1, 2, 3)
-temp = CV.search.DP.VAR1(data, gamma.set, lambda.set, delta = 10)
+gamma_set = c(0.1, 0.5, 1)
+lambda_set = c(0.1, 1, 3.2)
+temp = CV.search.DP.VAR1(data, gamma_set, lambda_set, delta = 5)
 temp$test_error # test error result
 min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
-cpt.init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
-local.refine.VAR1(cpt.init, data, 1)
-local.refine.CV.VAR1(cpt.init, data, c(0.5, 1, 1.5), delta.local = 10)
+cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
+temp_zeta = local.refine.CV.VAR1(cpt_init, data, c(0.1, 0.5, 1, 2), delta_local = 10)
+temp_zeta$cpt_hat
 }
 \author{
-
+Daren Wang & Haotian Xu
 }

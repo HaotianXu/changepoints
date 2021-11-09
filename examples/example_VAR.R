@@ -61,7 +61,7 @@ for(candidate in 1:ll){
     
     zeta_group_set = c(0.5, 1, 1.5)
     #START  local refinement#include X and Y
-    lr_estimate = local.refine.CV.VAR1(dp_estimate, data, zeta_group_set, delta.local)
+    lr_estimate = local.refine.CV.VAR1(dp_estimate, data, zeta_group_set, delta.local)$cpt_hat
     lr_estimate_ext = c(0, lr_estimate, 6*n)
     print( "lr=")
     print(lr_estimate_ext)

@@ -22,7 +22,16 @@ An \code{integer} vector of locally refined changepoint estimation.
 Perform local refinement for univariate mean changepoint detection.
 }
 \examples{
-TO DO
+set.seed(0)
+cpt_true = c(20, 50, 170)
+y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
+gamma_set = 1:5
+DP_result = CV.search.DP.univar(y, gamma_set, delta = 5)
+min_idx = which.min(DP_result$test_error)
+cpt_hat = unlist(DP_result$cpt_hat[min_idx])
+Hausdorff.dist(cpt_hat, cpt_true)
+cpt_LR = local.refine.univar(cpt_hat, y)
+Hausdorff.dist(cpt_LR, cpt_true)
 }
 \author{
 

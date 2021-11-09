@@ -57,12 +57,10 @@ Hausdorff.dist = function(vec1, vec2, ...){
 #' @param BS_object     A \code{numeric} vector of observations.
 #' @param tau           A positive \code{numeric} scalar of thresholding value.
 #' @param ...           Additional arguments.
-#' @return  A \code{list} with the structure:
-#' \itemize{
-#'  \item{BS_tree}: {A list of data.frame containing "current" indices, "parent" indices, "location" indices and "value" of CUSUM at all steps.}
-#'  \item{BS_tree_trimmed}: {BS_tree with change points which do not satisfy the thresholding criteria removed.}
-#'  \item{change_points}: {A matrix contains change point locations, values of corresponding statistic, and levels at which each change point is detected.}
-#' } 
+#' @return  A \code{list} with the following structure:
+#'  \item{BS_tree}{A list of data.frame containing "current" indices, "parent" indices, "location" indices and "value" of CUSUM at all steps}
+#'  \item{BS_tree_trimmed}{BS_tree with change points which do not satisfy the thresholding criteria removed}
+#'  \item{cpt_hat}{A matrix contains change point locations, values of corresponding statistic, and levels at which each change point is detected}
 #' @export
 #' @author Haotian Xu
 #' @examples
@@ -106,7 +104,7 @@ threshold.BS = function(BS_object, tau, ...){
   change_points = do.call(rbind, BS_tree_trimmed)[,c(3,4)]
   change_points$level = level
   rownames(change_points) = c()
-  return(list(BS_tree = BS_tree, BS_tree_trimmed = BS_tree_trimmed, change_points = change_points))
+  return(list(BS_tree = BS_tree, BS_tree_trimmed = BS_tree_trimmed, cpt_hat = change_points))
 }
 
 
@@ -114,11 +112,9 @@ threshold.BS = function(BS_object, tau, ...){
 #' @title Internal Function for BS thresholding: Given a set of indices in the current step, search for all indices of children in the next step.
 #' @param idx_remove_parent     A \code{integer} vector of indices in the current step.
 #' @param data_children         A \code{data.frame} including "current" indices, "parent" indices, "location" indices and "value" of CUSUM at the next step.
-#' @return  A \code{list} with the structure:
-#' \itemize{
-#'  \item{idx_remove_children}: {A vector of indices of children in the next step.}
-#'  \item{data_children_trimmed}: {A data.frame being data_children with the observations (idx_remove_children) removed.}
-#' } 
+#' @return  A \code{list} with the following structure:
+#'  \item{idx_remove_children}{A vector of indices of children in the next step}
+#'  \item{data_children_trimmed}{A data.frame being data_children with the observations (idx_remove_children) removed}
 #' @noRd
 one.step.trim = function(idx_remove_parent, data_children){
   idx_remove_children = NULL

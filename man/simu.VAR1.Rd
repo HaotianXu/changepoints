@@ -15,7 +15,7 @@ simu.VAR1(sigma, p, n, A, vzero = NULL, ...)
 
 \item{A}{A \code{numeric} p-by-p matrix representing the transition matrix of the VAR1 model.}
 
-\item{vzero}{A \code{numeric} vector representing the observation at time 0.}
+\item{vzero}{A \code{numeric} vector representing the observation at time 0. If \code{vzero = NULL},it is generated following the distribution of the error terms.}
 
 \item{...}{Additional arguments.}
 }
@@ -29,7 +29,7 @@ Simulate data of size n and dimension p from a VAR1 model (without change point)
 p = 20
 sigma = 1
 n = 100
-A = matrix(rnorm(p*p), nrow = p)
+A = matrix(rnorm(p*p), nrow = p)*0.1  # transition matrix
 simu.VAR1(sigma, p, n, A)
 }
 \author{
