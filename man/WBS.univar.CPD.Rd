@@ -42,5 +42,5 @@ Hausdorff.dist(cpt_LR, cpt_true)
 Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection,  Ann. Statist. 42(6): 2243-2281 (December 2014). DOI: 10.1214/14-AOS1245
 }
 \author{
-Haotian Xu
+Daren Wang & Haotian Xu
 }

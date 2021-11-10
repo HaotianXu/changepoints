@@ -2,24 +2,22 @@
 % Please edit documentation in R/univariate_mean.R
 \name{local.refine.univar}
 \alias{local.refine.univar}
-\title{Local refinement for univariate mean changepoint detection.}
+\title{Local refinement for univariate mean change point detection.}
 \usage{
 local.refine.univar(cpt_init, y, ...)
 }
 \arguments{
-\item{cpt_init}{An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
+\item{cpt_init}{An \code{integer} vector of initial change points estimation (sorted in strictly increasing order).}
 
 \item{y}{A \code{numeric} vector of univariate time series.}
 
 \item{...}{Additional arguments.}
-
-\item{zeta}{A \code{numeric} scalar of lasso penalty.}
 }
 \value{
-An \code{integer} vector of locally refined changepoint estimation.
+An \code{integer} vector of locally refined change point estimation.
 }
 \description{
-Perform local refinement for univariate mean changepoint detection.
+Perform local refinement for univariate mean change point detection.
 }
 \examples{
 set.seed(0)
@@ -34,5 +32,5 @@ cpt_LR = local.refine.univar(cpt_hat, y)
 Hausdorff.dist(cpt_LR, cpt_true)
 }
 \author{
-
+Haotian Xu
 }

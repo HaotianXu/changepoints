@@ -14,19 +14,21 @@ basis.poly <- function(n, s, e, r) {
 #' @description Perform dynamic programming algorithm for univariate polynomials change points detection.
 #' @param y         A \code{numeric} vector of observations.
 #' @param r         An \code{integer} scalar order of polynomials.
-#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
+#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the \eqn{l_0} penalty.
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
 #' @param ...       Additional arguments.
-#' @return A \code{list} with the structure:
-#' \itemize{
-#'  \item{partition}: {A vector of the best partition.}
-#'  \item{yhat}: {A vector of mean estimation for corresponding to the best partition.}
-#' }
+#' @return A \code{list} with the following structure:
+#'  \item{partition}{A vector of the best partition}
+#'  \item{yhat}{A vector of mean estimation for corresponding to the best partition}
 #' @export
-#' @author 
+#' @author  Haotian Xu
 #' @examples
-#' data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-#' DP.poly(2, 5, data$y, X = data$X, lambda = 1)
+#' set.seed(0)
+#' cpt_true = c(20, 50, 170)
+#' y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
+#' plot.ts(y)
+#' temp = DP.poly(y, r = 2, gamma = 15, delta = 5)
+#' part2local(temp$partition)
 DP.poly <- function(y, r, gamma, delta, ...) {
   .Call('_changepoints_rcpp_DP_poly', PACKAGE = 'changepoints', y, r, gamma, delta)
 }
@@ -72,13 +74,11 @@ DP.poly <- function(y, r, gamma, delta, ...) {
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param ...       Additional arguments.
-#' @return  A \code{list} with the structure:
-#' \itemize{
-#'  \item{cpt_hat}: A vector of estimated change points locations (sorted in strictly increasing order).
-#'  \item{K_hat}: A scalar of number of estimated change points.
-#'  \item{test_error}: A vector of testing errors.
-#'  \item{train_error}: A vector of training errors.
-#' } 
+#' @return  A \code{list} with the following structure:
+#'  \item{cpt_hat}{A vector of estimated change points locations (sorted in strictly increasing order)}
+#'  \item{K_hat}{A scalar of number of estimated change points}
+#'  \item{test_error}{A vector of testing errors}
+#'  \item{train_error}{A vector of training errors}
 #' @noRd
 CV.DP.poly = function(y, r, gamma, delta, ...){
   N = length(y)
@@ -110,28 +110,30 @@ CV.DP.poly = function(y, r, gamma, delta, ...){
 
 #' @title Grid search for dynamic programming to select the tuning parameter through Cross-Validation.
 #' @description Perform grid search for dynamic programming to select the tuning parameter through Cross-Validation.
-#' @param gamma.set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
+#' @param gamma_set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
 #' @param y             A \code{numeric} vector of observations.
 #' @param r             An \code{integer} scalar order of polynomials.
 #' @param delta         A positive \code{integer} scalar of minimum spacing.
 #' @param ...           Additional arguments.
-#' @return  A \code{list} with the structure:
-#' \itemize{
-#'  \item{cpt_hat}: A list of vector of estimated change points locations (sorted in strictly increasing order).
-#'  \item{K_hat}: A list of scalar of number of estimated change points.
-#'  \item{test_error}: A list of vector of testing errors.
-#'  \item{train_error}: A list of vector of training errors.
-#' } 
+#' @return  A \code{list} with the following structure:
+#'  \item{cpt_hat}{A list of vector of estimated change points locations (sorted in strictly increasing order)}
+#'  \item{K_hat}{A list of scalar of number of estimated change points}
+#'  \item{test_error}{A list of vector of testing errors}
+#'  \item{train_error}{A list of vector of training errors}
 #' @export
-#' @author  Daren Wang and Haotian Xu
+#' @author  Haotian Xu
 #' @examples
-#' y = rnorm(300) + c(rep(0,130),rep(1,20),rep(0,20),rep(1,130))
-#' gamma.set = 3:9
-#' DP_result = CV.search.DP.univar(y, gamma.set, delta = 5)
+#' set.seed(0)
+#' cpt_true = c(20, 50, 170)
+#' y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
+#' plot.ts(y)
+#' gamma_set = 3:9
+#' DP_result = CV.search.DP.poly(y, r = 2, gamma_set, delta = 5)
 #' min_idx = which.min(DP_result$test_error)
-#' part2local(DP.univar(y, gamma.set[min_idx], delta = 5)$partition)
-CV.search.DP.poly = function(y, r, gamma.set, delta, ...){
-  output = sapply(1:length(gamma.set), function(j) CV.DP.poly(y, r, gamma.set[j], delta))
+#' cpt_init = unlist(DP_result$cpt_hat[min_idx])
+#' local.refine.poly(cpt_init, y, r = 2, delta_lr = 5)
+CV.search.DP.poly = function(y, r, gamma_set, delta, ...){
+  output = sapply(1:length(gamma_set), function(j) CV.DP.poly(y, r, gamma_set[j], delta))
   print(output)
   cpt_hat = output[1,]## estimated change points
   K_hat = output[2,]## number of estimated change points
@@ -142,9 +144,28 @@ CV.search.DP.poly = function(y, r, gamma.set, delta, ...){
 }
 
 
-
+#' @title Local refinement for univariate polynomials change point detection.
+#' @description     Perform local refinement for univariate polynomials change point detection.
+#' @param cpt_init  An \code{integer} vector of initial change points estimation (sorted in strictly increasing order).
+#' @param y         A \code{numeric} vector of univariate time series.
+#' @param r         An \code{integer} scalar order of polynomials.
+#' @param delta_lr A positive \code{integer} scalar of minimum spacing for local refinement.
+#' @param ...       Additional arguments.
+#' @return  An \code{integer} vector of locally refined change point estimation.
 #' @export
-local.refine.poly = function(cpt.init, y, w = 1/2){
+#' @author  Haotian Xu
+#' @examples
+#' set.seed(0)
+#' cpt_true = c(20, 50, 170)
+#' y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
+#' plot.ts(y)
+#' gamma_set = 3:9
+#' DP_result = CV.search.DP.poly(y, r = 2, gamma_set, delta = 5)
+#' min_idx = which.min(DP_result$test_error)
+#' cpt_init = unlist(DP_result$cpt_hat[min_idx])
+#' local.refine.poly(cpt_init, y, r = 2, delta_lr = 5)
+local.refine.poly = function(cpt_init, y, r, delta_lr, ...){
+  w = 0.9
   n = length(y)
   cpt_init_ext = c(0, cpt_init, n)
   cpt_init_numb = length(cpt_init)
@@ -154,10 +175,10 @@ local.refine.poly = function(cpt.init, y, w = 1/2){
     e = (1-w)*cpt_init_ext[k+1] + w*cpt_init_ext[k+2]
     lower = ceiling(s) + 1
     upper = floor(e) - 1
-    b = sapply(lower:upper, function(eta) obj.func.lr.poly(y, s, e, eta))
-    cpt.refined[k+1] = ceiling(s) + which.min(b)
+    b = sapply(lower:upper, function(eta) obj.func.lr.poly(y, s, e, eta, r, delta_lr))
+    cpt_refined[k+1] = ceiling(s) + which.min(b)
   }
-  return(cpt.refined[-1])
+  return(cpt_refined[-1])
 }
 
 
@@ -167,15 +188,19 @@ local.refine.poly = function(cpt.init, y, w = 1/2){
 #' @param e.inter   A \code{numeric} scalar of interpolated ending index.
 #' @param eta       An \code{integer} scalar between s.inter and e.inter.
 #' @noRd
-obj.func.lr.poly = function(y, s.inter, e.inter, eta){
+obj.func.lr.poly = function(y, s.inter, e.inter, eta, r, delta_lr){
   n = length(y)
   s_star = ceiling(s.inter)
   e_star = floor(e.inter)
-  u_mat1 = basis.poly(n, s_star, eta-1, r)
-  proj_mat1 = u_mat1 %*% solve(t(u_mat1)%*%u_mat1) %*% t(u_mat1)
-  u_mat2 = basis.poly(n, eta, e_star, r)
-  proj_mat2 = u_mat2 %*% solve(t(u_mat2)%*%u_mat2) %*% t(u_mat2)
-  btemp = norm(y[s_star:(eta-1)] - proj_mat1 %*% y[s_star:(eta-1)], type = "2")^2 + norm(y[eta:e_star] - proj_mat2 %*% y[eta:e_star], type = "2")^2
+  if((eta - s_star < 2*delta_lr) | (e_star - eta + 1 < 2*delta_lr)){
+    btemp = Inf
+  }else{
+    u_mat1 = basis.poly(n, s_star, eta-1, r)
+    proj_mat1 = u_mat1 %*% solve(t(u_mat1)%*%u_mat1) %*% t(u_mat1)
+    u_mat2 = basis.poly(n, eta, e_star, r)
+    proj_mat2 = u_mat2 %*% solve(t(u_mat2)%*%u_mat2) %*% t(u_mat2)
+    btemp = norm(y[s_star:(eta-1)] - proj_mat1 %*% y[s_star:(eta-1)], type = "2")^2 + norm(y[eta:e_star] - proj_mat2 %*% y[eta:e_star], type = "2")^2
+  }
   return(btemp)
 }
 

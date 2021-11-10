@@ -19,7 +19,7 @@ online.univar(
 
 \item{b_vec}{A \code{numeric} vector of thresholds b_t with t >= 2.}
 
-\item{train_vec}{A \code{numeric} vector of training data from a pre-change distribution (no changepoint), which is only needed to when b_vec is NULL in order to calibrate b_t.}
+\item{train_vec}{A \code{numeric} vector of training data from a pre-change distribution (no change point), which is only needed to when b_vec is NULL in order to calibrate b_t.}
 
 \item{alpha}{A \code{numeric} scalar of desired false alarm rate.}
 
@@ -30,13 +30,9 @@ online.univar(
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{list} with the structure:
-\itemize{
- \item cpt_hat:     An \code{integer} scalar of estimated change point location.
- \item b_vec:       A \code{numeric} vector of thresholds b_t with t >= 2.
-}
-
-
+A \code{list} with the following structure:
+ \item{cpt_hat}{An \code{integer} scalar of estimated change point location}
+ \item{b_vec}{A \code{numeric} vector of thresholds b_t with t >= 2}
 }
 \description{
 Perform online change point detection with controlled false alarm rate or average run length.
@@ -44,12 +40,14 @@ Perform online change point detection with controlled false alarm rate or averag
 \examples{
 y_vec = rnorm(300) + c(rep(0, 150), rep(1, 150))
 train_vec = rnorm(200)
+# control the false alarm rate
 temp1 = online.univar(y_vec = y_vec, train_vec = train_vec, alpha = 0.05, permu_num = 100)
 temp1$cpt_hat
-temp1$b_vec
+temp1$b_vec # calibrated threshold
+# control the average run length
 temp2 = online.univar(y_vec = y_vec, train_vec = train_vec, gamma = 300, permu_num = 100)
 temp2$cpt_hat
-temp2$b_vec
+temp2$b_vec # calibrated threshold
 }
 \author{
 Haotian Xu

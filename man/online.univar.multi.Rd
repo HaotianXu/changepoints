@@ -4,17 +4,33 @@
 \alias{online.univar.multi}
 \title{Online change point detection with potentially multiple change points.}
 \usage{
-online.univar.multi(y_vec, b_vec, ...)
+online.univar.multi(
+  y_vec,
+  b_vec = NULL,
+  train_vec = NULL,
+  alpha = NULL,
+  gamma = NULL,
+  permu_num = NULL,
+  ...
+)
 }
 \arguments{
 \item{y_vec}{A \code{numeric} vector of observations.}
 
-\item{b_vec}{A \code{numeric} vector of thresholds b_t at time t>= 2.}
+\item{b_vec}{A \code{numeric} vector of thresholds b_t with t >= 2.}
+
+\item{train_vec}{A \code{numeric} vector of training data from a pre-change distribution (no change point), which is only needed to when b_vec is NULL in order to calibrate b_t.}
+
+\item{alpha}{A \code{numeric} scalar of desired false alarm rate.}
+
+\item{gamma}{An \code{integer} scalar of desired average run length.}
+
+\item{permu_num}{An \code{integer} scalar of number of random permutation for calibration.}
 
 \item{...}{Additional arguments.}
 }
 \value{
-An \code{integer} scalar of estimated change point location.
+An \code{integer} vector of estimated change points.
 }
 \description{
 Perform Online change point detection with potentially multiple change points.
@@ -26,7 +42,7 @@ Perform Online change point detection with potentially multiple change points.
 #' @param gamma       A \code{integer} scalar of interval length (>= 2).
 #' @param tau_gamma   A \code{numeric} scalar of threshold.
 #' @param ...         Additional arguments.
-#' @return  An \code{integer} scalar of estimated change point location.
+#' @return  An \code{integer} scalar of estimated change points location.
 #' @export
 #' @author Haotian Xu
 #' @examples
@@ -76,7 +92,14 @@ online.univar.one3 = function(y_vec, tau_vec, ...){
 }
 }
 \examples{
-TO DO
+y_vec = rnorm(300) + c(rep(0, 100), rep(1, 100), rep(0, 100))
+train_vec = rnorm(200)
+# control the false alarm rate
+temp1 = online.univar.multi(y_vec = y_vec, train_vec = train_vec, alpha = 0.05, permu_num = 100)
+temp1
+# control the average run length
+temp2 = online.univar.multi(y_vec = y_vec, train_vec = train_vec, gamma = 300, permu_num = 100)
+temp2
 }
 \author{
 Haotian Xu

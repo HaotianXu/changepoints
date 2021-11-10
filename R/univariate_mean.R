@@ -70,7 +70,7 @@ CV.DP.univar = function(y, gamma, delta, ...){
 #'  \item{test_error}{A list of vector of testing errors}
 #'  \item{train_error}{A list of vector of training errors}
 #' @export
-#' @author  Daren Wang and Haotian Xu
+#' @author  Daren Wang & Haotian Xu
 #' @examples
 #' set.seed(0)
 #' cpt_true = c(20, 50, 170)
@@ -92,15 +92,14 @@ CV.search.DP.univar = function(y, gamma_set, delta, ...){
 }
 
 
-#' @title Local refinement for univariate mean changepoint detection.
-#' @description     Perform local refinement for univariate mean changepoint detection.
-#' @param cpt_init  An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
+#' @title Local refinement for univariate mean change point detection.
+#' @description     Perform local refinement for univariate mean change point detection.
+#' @param cpt_init  An \code{integer} vector of initial change points estimation (sorted in strictly increasing order).
 #' @param y         A \code{numeric} vector of univariate time series.
-#' @param zeta      A \code{numeric} scalar of lasso penalty.
 #' @param ...       Additional arguments.
-#' @return  An \code{integer} vector of locally refined changepoint estimation.
+#' @return  An \code{integer} vector of locally refined change point estimation.
 #' @export
-#' @author 
+#' @author Haotian Xu
 #' @examples
 #' set.seed(0)
 #' cpt_true = c(20, 50, 170)
@@ -280,7 +279,7 @@ WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){
 #'  \item{cpt}{A vector of estimated change point locations (sorted in strictly increasing order)}
 #'  \item{tau}{A scalar of selected threshold tau based on sSIC}
 #' @export
-#' @author Haotian Xu
+#' @author Daren Wang & Haotian Xu
 #' @references Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection,  Ann. Statist. 42(6): 2243-2281 (December 2014). DOI: 10.1214/14-AOS1245
 #' @examples
 #' set.seed(0)
@@ -330,7 +329,7 @@ WBS.univar.CPD = function(y, Alpha, Beta, delta){
 #'  \item{cpt}{A vector of estimated change point locations (sorted in strictly increasing order)}
 #'  \item{tau}{A scalar of selected threshold tau based on sSIC}
 #' @export
-#' @author Haotian Xu
+#' @author Daren Wang & Haotian Xu
 #' @references Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection,  Ann. Statist. 42(6): 2243-2281 (December 2014). DOI: 10.1214/14-AOS1245
 #' @examples
 #' set.seed(0)

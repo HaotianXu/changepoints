@@ -36,5 +36,5 @@ cpt_hat = unlist(DP_result$cpt_hat[min_idx])
 Hausdorff.dist(cpt_hat, cpt_true)
 }
 \author{
-Daren Wang and Haotian Xu
+Daren Wang & Haotian Xu
 }

@@ -61,8 +61,10 @@ NBS = function(Y, s, e, N, delta, level = 0, ...){
 #' @examples
 #' Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))
 #' N = rep(1, 300)
-#' temp = NBS.tune(Y, N, 5)
-NBS.tune = function(Y, N, delta){
+#' temp = NBS.tune(Y, N, len_tau = 20, 5)
+#' plot.ts(t(Y))
+#' points(x = tail(temp$S[order(temp$Dval)],4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
+NBS.tune = function(Y, N, len_tau, delta){
   Y_odd = t(as.matrix(Y[,seq(1,ncol(Y),2)]))
   N_odd = N[seq(1,ncol(Y),2)]
   Y_even = t(as.matrix(Y[,seq(2,ncol(Y),2)]))
@@ -71,7 +73,7 @@ NBS.tune = function(Y, N, delta){
   temp1 = NBS(Y_even, 1, ncol(Y_even), N_even, delta, level = 0)  
   Dval = temp1$Dval
   aux = sort(Dval, decreasing = TRUE)
-  tau_grid = rev(aux[1:min(30,length(Dval))])
+  tau_grid = rev(aux[1:min(len_tau,length(Dval))])
   tau_grid = c(tau_grid, 10)
   B_list = c()
   for(j in 1:length(tau_grid)){
@@ -83,7 +85,7 @@ NBS.tune = function(Y, N, delta){
   }
   B_list = unique(B_list)
   O_set = B_list[[1]]
-  lambda = log(sum(N_odd))*2/3 #2.5#1.5#2#2.555#
+  lambda = log(sum(N_odd))/1.5#2.5#1.5#2#2.555#
   for(m in 1:(length(B_list)-1)){
     eta = min(setdiff(O_set, B_list[[m+1]]))
     B_set_ext = c(1, B_list[[m+1]], len_time)
@@ -100,7 +102,40 @@ NBS.tune = function(Y, N, delta){
   return(2*O_set)
 }
 
-
+NBS.tune2 = function(Y, W, N, len_tau, delta){
+  #n = max(N)
+  len_time = ncol(Y)
+  temp1 = NBS(W, 1, len_time, N, delta, level = 0)  
+  Dval = temp1$Dval
+  aux = sort(Dval, decreasing = TRUE)
+  tau_grid = rev(aux[1:min(len_tau,length(Dval))])
+  tau_grid = c(tau_grid, 10)
+  B_list = c()
+  for(j in 1:length(tau_grid)){
+    aux = threshold.BS(temp1, tau_grid[j])$cpt_hat[,1]
+    if(length(aux) == 0){
+      break;
+    }
+    B_list[[j]] = sort(aux)
+  }
+  B_list = unique(B_list)
+  O_set = B_list[[1]]
+  lambda = log(sum(N))/1.5#2.5#1.5#2#2.555#
+  for(m in 1:(length(B_list)-1)){
+    eta = min(setdiff(O_set, B_list[[m+1]]))
+    B_set_ext = c(1, B_list[[m+1]], len_time)
+    k = which.max(B_set_ext < eta)
+    eta1 = B_set_ext[k]
+    eta2 = B_set_ext[k+1]
+    z_hat = as.vector(Y[,eta1:eta2])[which.max(CUSUM.KS(Y, eta1, eta2, eta, N, vector = TRUE))]
+    if(error.ECDF(Y, eta1, eta, N, z_hat) + error.ECDF(Y, eta+1, eta2, N, z_hat) - error.ECDF(Y, eta1, eta2, N, z_hat) > lambda){
+      O_set = B_list[[m+1]]
+    }else{
+      break;
+    }
+  }
+  return(O_set)
+}
 
 #' @title Internal Function: Compute the CUSUM statistic based on KS distance.
 #' @param Y         A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being multiple observations on each time point.
@@ -165,13 +200,12 @@ error.ECDF = function(Y, s, e, N, z){
 #' @author Oscar Hernan Madrid Padilla, Haotian Xu
 #' @examples
 #' Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))
-#' N = rep(1, 300)
 #' M = 120
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y))
 #' temp = NWBS(Y, 1, 300, intervals$Alpha, intervals$Beta, N, 5)
 #' plot.ts(t(Y))
 #' points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
-#' threshold.BS(temp, 2)
+#' threshold.BS(temp, 1)
 NWBS = function(Y, s, e, Alpha, Beta, N, delta, level = 0, ...){ 
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
@@ -224,35 +258,18 @@ NWBS = function(Y, s, e, Alpha, Beta, N, delta, level = 0, ...){
 
 
 
-#' @title Wild binary segmentation for univariate nonparametric change points detection with tuning parameter selection.
-#' @description Perform wild binary segmentation with tuning parameter selection based on sample splitting.
-#' @param Y         A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being multiple observations on each time point.
-#' @param N         A \code{integer} vector representing number of multiple observations on each time point.
-#' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @param ...       Additional arguments.
-#' @return  A vector of estimated change points (sorted in strictly increasing order).
 #' @export
-#' @author Oscar Hernan Madrid Padilla & Haotian Xu
-#' @examples
-#' Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))
-#' N = rep(1, 300)
-#' M = 120
-#' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y))
-#' temp = NWBS.tune(Y, intervals$Alpha, intervals$Beta, N, 5)
-NWBS.tune = function(Y, Alpha, Beta, N, delta){
-  Y_odd = t(as.matrix(Y[,seq(1,ncol(Y),2)]))
-  N_odd = N[seq(1,ncol(Y),2)]
-  Y_even = t(as.matrix(Y[,seq(2,ncol(Y),2)]))
-  N_even = N[seq(2,ncol(Y),2)]
-  len_time = ncol(Y_odd)
-  temp1 = NWBS(Y_even, 1, ncol(Y_even), Alpha, Beta, N_even, delta, level = 0)  
+NWBS.tune = function(Y, W, Alpha, Beta, N, len_tau = 20, delta){
+  #n = max(N)
+  len_time = ncol(Y)
+  temp1 = NWBS(W, 1, len_time, Alpha, Beta, N, delta, level = 0)  
   Dval = temp1$Dval
   aux = sort(Dval, decreasing = TRUE)
-  tau_grid = rev(aux[1:min(30,length(Dval))]-10^{-5})
+  tau_grid = rev(aux[1:min(len_tau,length(Dval))]-10^{-5})
   tau_grid = c(tau_grid, 10)
-  B_list = c()
+  B_list =  c()
   for(j in 1:length(tau_grid)){
-    aux = threshold.BS(temp1, tau_grid[j])$cpt_hat[,1]
+    aux = threshold.BS(temp1, tau_grid[j])$change_points[,1]
     if(length(aux) == 0){
       break;
     }
@@ -260,18 +277,18 @@ NWBS.tune = function(Y, Alpha, Beta, N, delta){
   }
   B_list = unique(B_list)
   O_set = B_list[[1]]
-  lambda = log(sum(N_odd))*2/3 #2.5#1.5#2#2.555#
+  lambda = log(sum(N))/1.5#2.5#1.5#2#2.555#
   for(m in 1:(length(B_list)-1)){
     eta = min(setdiff(O_set, B_list[[m+1]]))
     k = which.max(B_list[[m+1]] < eta)
     eta1 = B_list[[m+1]][k]
     eta2 = B_list[[m+1]][k+1]
-    z_hat = as.vector(Y_odd[,eta1:eta2])[which.max(CUSUM.KS(Y_odd, eta1, eta2, eta, N_odd, vector = TRUE))]
-    if(error.ECDF(Y_odd, eta1, eta, N_odd, z_hat) + error.ECDF(Y_odd, eta+1, eta2, N_odd, z_hat) - error.ECDF(Y_odd, eta1, eta2, N_odd, z_hat) > lambda){
+    z_hat = as.vector(Y[,eta1:eta2])[which.max(CUSUM.KS(Y, eta1, eta2, eta, N, vector = TRUE))]
+    if(error.ECDF(Y, eta1, eta, N, z_hat) + error.ECDF(Y, eta+1, eta2, N, z_hat) - error.ECDF(Y, eta1, eta2, N, z_hat) > lambda){
       O_set = B_list[[m+1]]
     }else{
       break;
     }
   }
-  return(2*O_set)
+  return(O_set)
 }

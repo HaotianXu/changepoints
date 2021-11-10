@@ -11,26 +11,28 @@ DP.poly(y, r, gamma, delta, ...)
 
 \item{r}{An \code{integer} scalar order of polynomials.}
 
-\item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
+\item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the \eqn{l_0} penalty.}
 
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
 
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{list} with the structure:
-\itemize{
- \item{partition}: {A vector of the best partition.}
- \item{yhat}: {A vector of mean estimation for corresponding to the best partition.}
-}
+A \code{list} with the following structure:
+ \item{partition}{A vector of the best partition}
+ \item{yhat}{A vector of mean estimation for corresponding to the best partition}
 }
 \description{
 Perform dynamic programming algorithm for univariate polynomials change points detection.
 }
 \examples{
-data = simu.change.regression(10, c(10, 30, 40, 70, 90), 30, 100, 1, 9)
-DP.poly(2, 5, data$y, X = data$X, lambda = 1)
+set.seed(0)
+cpt_true = c(20, 50, 170)
+y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
+plot.ts(y)
+temp = DP.poly(y, r = 2, gamma = 15, delta = 5)
+part2local(temp$partition)
 }
 \author{
-
+Haotian Xu
 }
