@@ -73,8 +73,8 @@ MNWBS = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...){
     }
     m_star = which.max(a)
   }
-  temp1 = MNWBS(Y, Y, s, b[m_star]-1, Alpha, Beta, h, delta, level)
-  temp2 = MNWBS(Y, Y, b[m_star], e, Alpha, Beta, h, delta, level)
+  temp1 = MNWBS(Y, W, s, b[m_star]-1, Alpha, Beta, h, delta, level)
+  temp2 = MNWBS(Y, W, b[m_star], e, Alpha, Beta, h, delta, level)
   S = c(temp1$S, b[m_star], temp2$S)
   Dval = c(temp1$Dval, a[m_star], temp2$Dval)
   Level = c(temp1$Level, level, temp2$Level)
@@ -96,13 +96,13 @@ MNWBS = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...){
 #' @author Oscar Hernan Madrid Padilla
 #' @export
 #' @examples 
-#' n = 300
+#' n = 200
 #' v = c(floor(n/3), 2*floor(n/3)) # location of change points
-#' p = 20
+#' p = 10
 #' Y = matrix(0, p, n) # matrix for data
 #' mu0 = rep(0, p) # mean of the data
 #' mu1 = rep(0, p)
-#' mu1[1:floor(p/2)] = 1
+#' mu1[1:floor(p/2)] = 2
 #' Sigma0 = diag(p) #Covariance matrices of the data
 #' Sigma1 = diag(p)*2
 #' # Generate data
@@ -114,11 +114,11 @@ MNWBS = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...){
 #'      Y[,t] = MASS::mvrnorm(n = 1, mu1, Sigma1)
 #'   }
 #' }## close for generate data
-#' M = 50
+#' M = 25
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y)) #Random intervals
 #' K_max = 30
 #' h = 5*(K_max*log(n)/n)^{1/p} # bandwith
-#' S = MNWBS.tune(Y, Y, intervals$Alpha, intervals$Beta, h, delta = 5)
+#' S = MNWBS.tune(Y, Y, intervals$Alpha, intervals$Beta, h, delta = 10)
 #' S
 MNWBS.tune = function(Y, W, Alpha, Beta, h, delta){
   p = nrow(Y)
@@ -130,7 +130,6 @@ MNWBS.tune = function(Y, W, Alpha, Beta, h, delta){
   tau_grid = rev(aux[1:min(len_tau,length(Dval))]) - 10^{-30}
   B_list = c()
   for(j in 1:length(tau_grid)){
-    print(j)
     aux = threshold.BS(temp1, tau_grid[j])$cpt_hat[,1]
     if(length(aux) == 0){
       break
@@ -205,7 +204,6 @@ MNWBS.tune = function(Y, W, Alpha, Beta, h, delta){
       break
     }
   }##### j 
-  print(min_pval)
   if(min_pval > .1){
     est = NULL
     return(est)
