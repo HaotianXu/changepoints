@@ -9,7 +9,7 @@ NonPar.RDPG.CPD(data_mat, d, Alpha, Beta, delta)
 \arguments{
 \item{data_mat}{A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being vectorized adjacency matrix.}
 
-\item{d}{A \code{numeric} scalar used in the scaledPCA algorithm, which corresponds to the number of leading singular values of an adjacency matrix considered.}
+\item{d}{A \code{numeric} scalar of the number of leading singular values of an adjacency matrix considered in the scaled PCA algorithm.}
 
 \item{Alpha}{A \code{integer} vector of starting indices of random intervals.}
 
@@ -20,7 +20,7 @@ NonPar.RDPG.CPD(data_mat, d, Alpha, Beta, delta)
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{numeric} vector of estimated changepoint locations.
+A \code{numeric} vector of estimated change point locations.
 }
 \description{
 Perform Change point detection for dependent dynamic random dot product graph models. The tuning parameter tau for WBS is automatically selected based on the BIC-type scores defined in Equation (2.4) in Zou et al. (2014).
@@ -90,7 +90,7 @@ cpt_hat = NonPar.RDPG.CPD(data_mat, d, Alpha = intervals$Alpha, Beta = intervals
 
 }
 \references{
-Zou et al. (2014), Nonparametric maximum likelihood approach to multiple change-point problems,  Ann. Statist. 42(3): 970-1002 (June 2014). DOI: 10.1214/14-AOS1210
+Padilla, O. H. M., Yu, Y., & Priebe, C. E. (2019). Change point localization in dependent dynamic nonparametric random dot product graphs. arXiv preprint arXiv:1911.07494.
 }
 \author{
 Oscar Hernan Madrid Padilla, Haotian Xu

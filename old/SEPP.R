@@ -76,7 +76,7 @@ simu.SEPP = function(intercept, n, A, threshold, vzero = NULL, ...){
 #' @references Wang, D., Yu, Y., & Willett, R. (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. arXiv preprint arXiv:2006.03572.
 #' @examples
 #' p = 20 # dimension
-#' n = 50
+#' n = 60
 #' s = 10 # s is sparsity
 #' factor = 0.12 # large factor gives exact recovery
 #' threshold = 4 # thresholding makes the process stable
@@ -101,12 +101,12 @@ simu.SEPP = function(intercept, n, A, threshold, vzero = NULL, ...){
 #' data2 = simu.SEPP(intercept, n, A2, threshold, vzero = data1[,n])
 #' data3 = simu.SEPP(intercept, n, A3, threshold, vzero = data2[,n])
 #' data = cbind(data1, data2, data3)
-#' gamma = n*10
+#' gamma = 2*n/50
 #' delta = n/2-1
 #' delta2 = 1.5*n
 #' intercept = 1/2
 #' threshold = 4
-#' parti = DP.SEPP(data, gamma = gamma, lambda = 0.03, delta, delta2, intercept, threshold)$partition
+#' parti = DP.SEPP(data, gamma = gamma, lambda = 100, delta, delta2, intercept, threshold)$partition
 #' cpt_hat = part2local(parti)
 DP.SEPP = function(DATA, gamma, lambda, delta, delta2, intercept, threshold, ...){
   M = nrow(DATA)
@@ -161,18 +161,29 @@ error.seg.SEPP = function(s, e, DATA, lambda, delta, delta2, intercept, threshol
   DATA.x[which(DATA.x > threshold)] = threshold
   if(n.temp - 1 > delta & n.temp - 1 < delta2){
     for(m in 1:M){
-      pen <- glmnet(y = DATA[m, (s+1):e]/exp(intercept), x = t(DATA.x[, s:(e-1)]),
-                       lambda = lambda*(n.temp)^(1/2), family = c("poisson"), intercept = F)
-      estimate[m,] = as.vector(pen$beta)
+      pen <- penalized(DATA[m, (s+1):e]/exp(intercept), 
+                       penalized = t(DATA.x[, s:(e-1)]), unpenalized = ~0,
+                       lambda1 = lambda/(n.temp)^(1/2), lambda2 = 10, model = c("poisson"), trace = F, maxiter = 500) # lambda is rescaled
+      estimate[m,] = coefficients(pen, "all")
       d[m] = sum(abs(sapply((s+1):e, function(x) exp(intercept + estimate[m,] %*% DATA.x[,x-1]) - DATA[m,x] * (intercept + estimate[m,] %*% DATA.x[,x-1]))))
     }
   }else{
     estimate = NA
     d = Inf
   }
-  result = list(dist = mean(d), transition.hat = estimate)
+  result = list(dist = sum(d), transition.hat = estimate)
   return(result)
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

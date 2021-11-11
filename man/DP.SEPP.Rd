@@ -2,18 +2,18 @@
 % Please edit documentation in R/SEPP.R
 \name{DP.SEPP}
 \alias{DP.SEPP}
-\title{Dynamic programming for SEPP change points detection through l0 penalty.}
+\title{Dynamic programming for SEPP change points detection through \eqn{l_0} penalty.}
 \usage{
 DP.SEPP(DATA, gamma, lambda, delta, delta2, intercept, threshold, ...)
 }
 \arguments{
 \item{DATA}{A \code{numeric} matrix of observations with horizontal axis being time.}
 
-\item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.}
+\item{gamma}{A \code{numeric} scalar of tuning parameter associated with the \eqn{l_0} penalty.}
 
 \item{lambda}{A \code{numeric} scalar of tuning parameter for lasso penalty.}
 
-\item{delta}{An \code{integer} scalar of minimum spacing.}
+\item{delta}{An \code{integer} scalar of minimum spacing for dynamic programming.}
 
 \item{delta2}{An \code{integer} scalar representing the maximal of the change point spacing (for reducing computation cost).}
 
@@ -27,15 +27,41 @@ DP.SEPP(DATA, gamma, lambda, delta, delta2, intercept, threshold, ...)
 A vector of the best partition.
 }
 \description{
-Perform dynamic programming for SEPP change points detection through l0 penalty.
+Perform dynamic programming for SEPP change points detection.
 }
 \examples{
-gamma = n/50
+p = 20 # dimension
+n = 50
+s = 10 # s is sparsity
+factor = 0.12 # large factor gives exact recovery
+threshold = 4 # thresholding makes the process stable
+intercept = 1/2 # intercept of the model. Assume to be known as in the existing literature
+A1 = A2 = A3 = matrix(0, p, p)
+diag(A1[,-1]) = 1
+diag(A1) = 1
+diag(A1[-1,]) = -1
+A1 = A1*factor
+A1[(s+1):p, (s+1):p] = 0
+diag(A2[,-1]) = 1
+diag(A2) = -1
+diag(A2[-1,]) = 1
+A2 = A2*factor
+A2[(s+1):p, (s+1):p] = 0
+diag(A3[,-1]) = 1
+diag(A3) = 1
+diag(A3[-1,]) = -1
+A3 = A3*factor
+A3[(s+1):p, (s+1):p] = 0
+data1 = simu.SEPP(intercept, n, A1, threshold, vzero = NULL)
+data2 = simu.SEPP(intercept, n, A2, threshold, vzero = data1[,n])
+data3 = simu.SEPP(intercept, n, A3, threshold, vzero = data2[,n])
+data = cbind(data1, data2, data3)
+gamma = n*10
 delta = n/2-1
 delta2 = 1.5*n
 intercept = 1/2
 threshold = 4
-parti = DP.SEPP(DATA, gamma = gamma, lambda = 500, delta, delta2, intercept, threshold)$partition
+parti = DP.SEPP(data, gamma = gamma, lambda = 0.03, delta, delta2, intercept, threshold)$partition
 cpt_hat = part2local(parti)
 }
 \references{

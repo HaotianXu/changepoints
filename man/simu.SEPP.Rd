@@ -4,20 +4,18 @@
 \alias{simu.SEPP}
 \title{Simulate a (stable) SEPP model (without change point).}
 \usage{
-simu.SEPP(intercept, M, A, threshold, n, vzero = NULL, ...)
+simu.SEPP(intercept, n, A, threshold, vzero = NULL, ...)
 }
 \arguments{
 \item{intercept}{A \code{numeric} scalar representing the intercept of the model.}
 
-\item{M}{An \code{integer} scalar representing dimensionality.}
+\item{n}{An \code{integer} scalar representing sample size.}
 
-\item{A}{A \code{numeric} M-by_M matrix representing the coefficient matrix.}
+\item{A}{A \code{numeric} pXp matrix representing the coefficient matrix.}
 
 \item{threshold}{A \code{numeric} scalar representing the upper bound for each coordinate of X_t (for stability).}
 
-\item{n}{An \code{integer} scalar representing sample size.}
-
-\item{vzero}{A \code{numeric} vector representing the observation at time 0.}
+\item{vzero}{A \code{numeric} vector representing the observation at time 0. If \code{vzero = NULL}, each coordinate is generated from a Poisson distribution with mean \code{lambda}.}
 
 \item{...}{Additional arguments.}
 }
@@ -28,33 +26,31 @@ A p-by-n matrix.
 Simulate a (stable) SEPP model (without change point).
 }
 \examples{
-M = 50 #M is dimension
-n = 100
+p = 50 # dimension
+n = 50
 s = 30 # s is sparsity
-factor = 0.12 #large factor gives exact recovery
-threshold = 4 #thresholding makes the process stable
-intercept = 1/2 #intercept of the model. Assume to be known as in the existing literature
-A1 = matrix(0,M,M)
+factor = 0.12 # large factor gives exact recovery
+threshold = 4 # thresholding makes the process stable
+intercept = 1/2 # intercept of the model. Assume to be known as in the existing literature
+A1 = A2 = A3 = matrix(0, p, p)
 diag(A1[,-1]) = 1
 diag(A1) = 1
 diag(A1[-1,]) = -1
 A1 = A1*factor
-A1[(s+1):M,(s+1):M] = 0
-A2 = matrix(0,M,M)
+A1[(s+1):p, (s+1):p] = 0
 diag(A2[,-1]) = 1
 diag(A2) = -1
 diag(A2[-1,]) = 1
 A2 = A2*factor
-A2[(s+1):M,(s+1):M] = 0
-A3 = matrix(0,M,M)
+A2[(s+1):p, (s+1):p] = 0
 diag(A3[,-1]) = 1
 diag(A3) = 1
 diag(A3[-1,]) = -1
 A3 = A3*factor
-A3[(s+1):M,(s+1):M] = 0
-data1 = simu.SEPP(intercept, M, A1, threshold, n, vzero = NULL)
-data2 = simu.SEPP(intercept, M, A2, threshold, n, vzero = data1[,n])
-data3 = simu.SEPP(intercept, M, A3, threshold, n, vzero = data2[,n])
+A3[(s+1):p, (s+1):p] = 0
+data1 = simu.SEPP(intercept, n, A1, threshold, vzero = NULL)
+data2 = simu.SEPP(intercept, n, A2, threshold, vzero = data1[,n])
+data3 = simu.SEPP(intercept, n, A3, threshold, vzero = data2[,n])
 data = cbind(data1, data2, data3)
 dim(data)
 }

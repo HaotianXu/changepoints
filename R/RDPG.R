@@ -1,15 +1,16 @@
 #' @title Change point detection for dependent dynamic random dot product graph models.
 #' @description Perform Change point detection for dependent dynamic random dot product graph models. The tuning parameter tau for WBS is automatically selected based on the BIC-type scores defined in Equation (2.4) in Zou et al. (2014).
 #' @param data_mat  A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being vectorized adjacency matrix.
-#' @param d         A \code{numeric} scalar used in the scaledPCA algorithm, which corresponds to the number of leading singular values of an adjacency matrix considered.
+#' @param d         A \code{numeric} scalar of the number of leading singular values of an adjacency matrix considered in the scaled PCA algorithm.
 #' @param Alpha     A \code{integer} vector of starting indices of random intervals.
 #' @param Beta      A \code{integer} vector of ending indices of random intervals.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param ...      Additional arguments.
-#' @return  A \code{numeric} vector of estimated changepoint locations.
+#' @return  A \code{numeric} vector of estimated change point locations.
 #' @export
 #' @author Oscar Hernan Madrid Padilla, Haotian Xu
-#' @references Zou et al. (2014), Nonparametric maximum likelihood approach to multiple change-point problems,  Ann. Statist. 42(3): 970-1002 (June 2014). DOI: 10.1214/14-AOS1210
+#' @references
+#'    Padilla, O. H. M., Yu, Y., & Priebe, C. E. (2019). Change point localization in dependent dynamic nonparametric random dot product graphs. arXiv preprint arXiv:1911.07494.
 #' @examples
 #' ### generate data 
 #' d = 10
@@ -94,9 +95,10 @@ NonPar.RDPG.CPD = function(data_mat, d, Alpha, Beta, delta){
   tau_grid = c(tau_grid,10) 
   S = c()
   for(j in 1:length(tau_grid)){
-    aux = threshold.BS(temp1, tau_grid[j])$change_points[,1]
-    if(length(aux) == 0)
-      break;
+    aux = unlist(threshold.BS(temp1, tau_grid[j])$cpt_hat[,1])
+    if(length(aux) == 0){
+      break
+    }
     S[[j]] = sort(aux)
   }
   S = unique(S)
