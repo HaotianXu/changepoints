@@ -78,7 +78,7 @@ simu.SEPP = function(intercept, n, A, threshold, vzero = NULL, ...){
 #' p = 20 # dimension
 #' n = 50
 #' s = 10 # s is sparsity
-#' factor = 0.12 # large factor gives exact recovery
+#' factor = 0.2 # large factor gives exact recovery
 #' threshold = 4 # thresholding makes the process stable
 #' intercept = 1/2 # intercept of the model. Assume to be known as in the existing literature
 #' A1 = A2 = A3 = matrix(0, p, p)
@@ -101,11 +101,11 @@ simu.SEPP = function(intercept, n, A, threshold, vzero = NULL, ...){
 #' data2 = simu.SEPP(intercept, n, A2, threshold, vzero = data1[,n])
 #' data3 = simu.SEPP(intercept, n, A3, threshold, vzero = data2[,n])
 #' data = cbind(data1, data2, data3)
-#' gamma = n*10
-#' delta = n/2-1
+#' gamma = 0.1
+#' delta = 0.5*n
 #' delta2 = 1.5*n
 #' intercept = 1/2
-#' threshold = 4
+#' threshold = 6
 #' parti = DP.SEPP(data, gamma = gamma, lambda = 0.03, delta, delta2, intercept, threshold)$partition
 #' cpt_hat = part2local(parti)
 DP.SEPP = function(DATA, gamma, lambda, delta, delta2, intercept, threshold, ...){
