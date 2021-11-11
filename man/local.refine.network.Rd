@@ -19,7 +19,7 @@ local.refine.network(
 
 \item{data_mat1}{A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.}
 
-\item{data_mat2}{A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).}
+\item{data_mat2}{A independent copy of data_mat1.}
 
 \item{self}{A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.}
 
@@ -54,10 +54,10 @@ intervals = WBS.intervals(M = M, lower = 1, upper = ncol(data_mat1))
 temp = WBS.network(data_mat1, data_mat2, 1, ncol(data_mat1), intervals$Alpha, intervals$Beta, delta = 5)
 rho_hat = quantile(rowMeans(data_mat), 0.95)
 tau = p*rho_hat*(log(n))^2/20 # default threshold given in the paper
-cpt_init = unlist(threshold.BS(temp, tau)$change_points[1])
+cpt_init = unlist(threshold.BS(temp, tau)$cpt_hat[,1])
 cpt_refined = local.refine.network(cpt_init, data_mat1, data_mat2, self = TRUE, tau2 = p*rho_hat/3, tau3 = Inf)
 cpt_WBS = 2*cpt_init
-cpt_refin = 2*cpt_refined
+cpt_refined = 2*cpt_refined
 }
 \references{
 Wang D, Yu Y, Rinaldo A. Optimal change point detection and localization in sparse dynamic networks. The Annals of Statistics. 2021 Feb;49(1):203-32.

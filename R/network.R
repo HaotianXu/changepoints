@@ -1,18 +1,16 @@
 #' @title Simulate a Stochastic Block Model (without change point).
 #' @description  Simulate a Stochastic Block Model (without change point). The generated data is a matrix with each column corresponding to the vectorized adjacency (sub)matrix at a time point. For example, if the network matrix is required to be symmetric and without self-loop, only the strictly lower diagonal entries are considered.
-#' @param connec_mat  A \code{numeric} symmetric matrix representing the connectivity matrix (each entry takes value in [0,1]).
+#' @param connec_mat  A \code{numeric} symmetric matrix representing the connectivity matrix (each entry takes value in \eqn{[0,1]}).
 #' @param can_vec     A \code{integer} p-dim vector of node indices. can_vec is then divided into subvectors corresponding to blocks.
 #' @param n           A \code{integer} scalar representing the number of observations.
 #' @param symm        A \code{logic} scalar indicating if adjacency matrices are required to be symmetric.
 #' @param self        A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.
 #' @param ...        Additional arguments.
-#' @return  A \code{list} with the structure:
-#' \itemize{
-#'  \item obs_mat:       A matrix, with each column be the vectorized adjacency (sub)matrix. For example, if "symm = TRUE" and "self = FALSE", only the strictly lower triangular matrix is considered.
-#'  \item graphon_mat:   Underlying graphon matrix.
-#' } 
+#' @return  A \code{list} with the following structure:
+#'  \item{obs_mat}{A matrix, with each column be the vectorized adjacency (sub)matrix. For example, if "symm = TRUE" and "self = FALSE", only the strictly lower triangular matrix is considered}
+#'  \item{graphon_mat}{Underlying graphon matrix}
 #' @export
-#' @author 
+#' @author Daren Wang & Haotian Xu
 #' @examples
 #' p = 100 # number of nodes
 #' rho = 0.5 # sparsity parameter
@@ -78,7 +76,7 @@ CUSUM.vec = function(data_mat, s, e, t){
 
 #' @title Internal Function: Compute inner product of two CUSUM vectors based on two independent samples.
 #' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.
-#' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension (data_mat1 and data_mat2 are independent and have the same dimensions ).
+#' @param data_mat2  An independent copy of data_mat1.
 #' @param s          A \code{integer} scalar of starting index.
 #' @param e          A \code{integer} scalar of ending index.
 #' @param t          A \code{integer} scalar of splitting index.
@@ -93,7 +91,7 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 #' @title Wild binary segmentation for network change points detection.
 #' @description  Perform wild binary segmentation for network change points detection.
 #' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.
-#' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).
+#' @param data_mat2  An independent copy of data_mat1.
 #' @param s          A \code{integer} scalar of starting index.
 #' @param e          A \code{integer} scalar of ending index.
 #' @param Alpha      A \code{integer} vector of starting indices of random intervals.
@@ -101,13 +99,11 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 #' @param delta      A positive \code{integer} scalar of minimum spacing.
 #' @param level      Should be fixed as 0.
 #' @param ...        Additional arguments.
-#' @return  A \code{list} with the structure:
-#' \itemize{
-#'  \item S:           A vector of estimated changepoints (sorted in strictly increasing order).
-#'  \item Dval:        A vector of values of CUSUM statistic based on KS distance.
-#'  \item Level:       A vector representing the levels at which each change point is detected.
-#'  \item Parent:      A matrix with the starting indices on the first row and the ending indices on the second row.
-#' } 
+#' @return  A \code{list} with the following structure:
+#'  \item{S}{A vector of estimated change points (sorted in strictly increasing order)}
+#'  \item{Dval}{A vector of values of CUSUM statistic based on KS distance}
+#'  \item{Level}{A vector representing the levels at which each change point is detected}
+#'  \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row}
 #' @export
 #' @author  Daren Wang & Haotian Xu
 #' @references Wang D, Yu Y, Rinaldo A. Optimal change point detection and localization in sparse dynamic networks. The Annals of Statistics. 2021 Feb;49(1):203-32.
@@ -130,10 +126,10 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 #' temp = WBS.network(data_mat1, data_mat2, 1, ncol(data_mat1), intervals$Alpha, intervals$Beta, delta = 5)
 #' rho_hat = quantile(rowMeans(data_mat), 0.95)
 #' tau = p*rho_hat*(log(n))^2/20 # default threshold given in the paper
-#' cpt_init = unlist(threshold.BS(temp, tau)$change_points[1])
+#' cpt_init = unlist(threshold.BS(temp, tau)$cpt_hat[,1])
 #' cpt_refined = local.refine.network(cpt_init, data_mat1, data_mat2, self = TRUE, tau2 = p*rho_hat/3, tau3 = Inf)
 #' cpt_WBS = 2*cpt_init
-#' cpt_refin = 2*cpt_refined
+#' cpt_refined = 2*cpt_refined
 WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0, ...){
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
@@ -186,7 +182,7 @@ WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0
 #' @description Perform local refinement for network change points detection.
 #' @param cpt_init   A \code{integer} vector of initial change points estimation (sorted in strictly increasing order).
 #' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.
-#' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).
+#' @param data_mat2  A independent copy of data_mat1.
 #' @param self       A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.
 #' @param tau2       A positive \code{numeric} scalar for USVT corresponding to the threshold for singular values of input matrix.
 #' @param tau3       A positive \code{numeric} scalar for USVT corresponding to the threshold for entries of output matrix.
@@ -214,18 +210,19 @@ WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0
 #' temp = WBS.network(data_mat1, data_mat2, 1, ncol(data_mat1), intervals$Alpha, intervals$Beta, delta = 5)
 #' rho_hat = quantile(rowMeans(data_mat), 0.95)
 #' tau = p*rho_hat*(log(n))^2/20 # default threshold given in the paper
-#' cpt_init = unlist(threshold.BS(temp, tau)$change_points[1])
+#' cpt_init = unlist(threshold.BS(temp, tau)$cpt_hat[,1])
 #' cpt_refined = local.refine.network(cpt_init, data_mat1, data_mat2, self = TRUE, tau2 = p*rho_hat/3, tau3 = Inf)
 #' cpt_WBS = 2*cpt_init
-#' cpt_refin = 2*cpt_refined
+#' cpt_refined = 2*cpt_refined
 local.refine.network = function(cpt_init, data_mat1, data_mat2, self = FALSE, tau2, tau3 = Inf, ...){
   obs_num = ncol(data_mat1)
   cpt_init_ext = c(0, cpt_init, obs_num)
   K = length(cpt_init)
   cpt_refined = rep(0, K+1)
+  w = 0.9
   for(k in 1:K){
-    s_inter = ceiling(0.5*cpt_init_ext[k] + 0.5*cpt_init_ext[k+1])
-    e_inter = floor(0.5*cpt_init_ext[k+1] + 0.5*cpt_init_ext[k+2])
+    s_inter = ceiling(w*cpt_init_ext[k] + (1-w)*cpt_init_ext[k+1])
+    e_inter = floor(w*cpt_init_ext[k+1] + (1-w)*cpt_init_ext[k+2])
     Delta_tilde = sqrt((e_inter-cpt_init_ext[k+1])*(cpt_init_ext[k+1]-s_inter)/(e_inter-s_inter))
     A_tilde = sapply((s_inter + 1):(e_inter - 1), function(eta) CUSUM.vec(data_mat1, s_inter, e_inter, eta))
     cpt_refined[k+1] = s_inter + which.max(sapply((s_inter + 1):(e_inter - 1), function(x) USVT.norm(A_tilde[,x-s_inter], CUSUM.vec(data_mat2, s_inter, e_inter, cpt_init_ext[k+1]), self, tau2, Delta_tilde*tau3)))
@@ -292,7 +289,7 @@ USVT.norm = function(cusum_vec1, cusum_vec2, self = FALSE, tau2, tau3 = Inf){
     p = 1/2 + sqrt(2*length(cusum_vec1) + 1/4) #obtain p
     cusum_mat1 = lowertri2mat(cusum_vec1, p, diag = self)
   }
-  Theta_mat2 = USVT(cusum_vec2, self = FALSE, tau2, tau3)
+  Theta_mat2 = USVT(cusum_vec2, self, tau2, tau3)
   return(sum(cusum_mat1*Theta_mat2))
 }
 
@@ -345,22 +342,20 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, rho, a
 
 
 
-#' @title Online changepoint detection for network data by controlling the false alarm rate at level alpha.
-#' @description  Perform online changepoint detection for network data by controlling the false alarm rate at level alpha or controlling the average run length gamma. The default choice of the tuning parameters tau1, tau2 and tau3 are used (see Section 4.1 of the reference). 
+#' @title Online change point detection for network data by controlling the false alarm rate at level alpha.
+#' @description  Perform online change point detection for network data by controlling the false alarm rate at level alpha or controlling the average run length gamma. The default choice of the tuning parameters tau1, tau2 and tau3 are used (see Section 4.1 of the reference). 
 #' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.
 #' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).
 #' @param b_vec      A \code{numeric} vector of thresholds b_t with t >= 2.
-#' @param train_mat  A \code{numeric} matrix of training data from a pre-change distribution(no changepoint), which is only needed to when b_vec is NULL in order to calibrate b_t.
+#' @param train_mat  A \code{numeric} matrix of training data from a pre-change distribution(no change point), which is only needed to when b_vec is NULL in order to calibrate b_t.
 #' @param alpha      A \code{numeric} scalar in (0,1) representing the level.
 #' @param gamma      An \code{integer} scalar of desired average run length.
 #' @param permu_num  An \code{integer} scalar of number of random permutation for calibration.
 #' @param ...        Additional arguments.
-#' @return  A \code{list} with the structure:
-#' \itemize{
-#'  \item t:           Estimated changepoint.
-#'  \item score:       A \code{numeric} vector of computed cumsum statistics.
-#'  \item b_vec        A \code{numeric} vector of thresholds b_t with t >= 2.
-#' } 
+#' @return  A \code{list} with the following structure:
+#'  \item{cpt}{Estimated change point}
+#'  \item{score}{A \code{numeric} vector of computed cumsum statistics}
+#'  \item{b_vec}{A \code{numeric} vector of thresholds b_t with t >= 2}
 #' @export
 #' @author  Oscar Hernan Madrid Padilla & Haotian Xu
 #' @references Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
@@ -380,9 +375,9 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, rho, a
 #' data_mat2 = data_mat[,seq(2,ncol(data_mat),2)]
 #' train_mat = simu.SBM(conn1_mat, can_vec, n = 200, symm = TRUE, self = TRUE)$obs_mat
 #' temp = online.network(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat, alpha = 0.05, gamma = NULL, permu_num = 100)
-#' cpt_hat = 2 * temp$t
+#' cpt_hat = 2 * temp$cpt
 #' temp2 = online.network(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat, alpha = NULL, gamma = 200, permu_num = 100)
-#' cpt_hat2 = 2 * temp2$t
+#' cpt_hat2 = 2 * temp2$cpt
 online.network = function(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat = NULL, alpha = NULL, gamma = NULL, permu_num = NULL, ...){
   n = ncol(data_mat1)
   if(self == TRUE){
@@ -491,7 +486,7 @@ online.network = function(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train
   }
   #ind =  which(score/b >1)
   if(score[t] > b_vec[t]){
-    return(list(t = t, score = score, b_vec = b_vec))
+    return(list(cpt = t, score = score, b_vec = b_vec))
   }
-  return(list(t = Inf, score = score, b_vec = b_vec))
+  return(list(cpt = Inf, score = score, b_vec = b_vec))
 }

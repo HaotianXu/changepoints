@@ -23,6 +23,7 @@ CUSUM.KS.multivariate = function(Y, W, s, e, t, h){
 #' @title Wild binary segmentation for multivariate nonparametric change points detection.
 #' @description Perform wild binary segmentation for multivariate nonparametric change points detection.
 #' @param Y         A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.
+#' @param W         A copy of the matrix Y, it can be Y itself.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
 #' @param Alpha     A \code{integer} vector of starting indices of random intervals.
@@ -41,7 +42,7 @@ CUSUM.KS.multivariate = function(Y, W, s, e, t, h){
 #' new_MWBS
 #' 
 MNWBS = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...){
-  print("aaa")
+  print(paste0("WBS at level: ", level))
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
   idx = which(Beta_new - Alpha_new > 2*delta)
@@ -93,7 +94,7 @@ MNWBS = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...){
 #' @param Beta      A \code{integer} vector of ending indices of random intervals.
 #' @param h         A \code{numeric} scalar of bandwith parameter.
 #' @return A vector of estimated change points
-#' @author Oscar Hernan Madrid Padilla
+#' @author Oscar Hernan Madrid Padilla & Haotian Xu
 #' @export
 #' @examples 
 #' n = 200
@@ -143,11 +144,8 @@ MNWBS.tune = function(Y, W, Alpha, Beta, h, delta){
   if(length(B_list[[1]]) == 0){
     return(B_list[[1]])
   }
-  indicator = 0
   lambda = 1.8^2
-  h_grid = 1
   v_n = 100
-  best_count = matrix(0, length(B_list)+1, v_n)
   min_pval = 10
   for(j in 1:length(B_list)){
     B2 = B_list[[j]]
@@ -157,7 +155,6 @@ MNWBS.tune = function(Y, W, Alpha, Beta, h, delta){
       B1 = NULL
     }
     temp = setdiff(B2,B1)
-    st = 10^{-10}
     for(l in 1:length(temp)){
       eta = temp[l]
       if(length(B1) == 0){
@@ -182,11 +179,9 @@ MNWBS.tune = function(Y, W, Alpha, Beta, h, delta){
         }
       }######## if length(B1) > 0
       pval = rep(0, length(v_n))
-      vec_s = matrix(0, v_n, p)
       for(ind_v in 1:v_n){
         vec = runif(p)
         vec = vec/sqrt(sum(vec^2))
-        vec_s[ind_v,] = vec 
         if(ind_v < p+1){
           vec = rep(0, p)
           vec[ind_v] = 1

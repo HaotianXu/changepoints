@@ -4,10 +4,16 @@
 \alias{NWBS.tune}
 \title{Wild binary segmentation for univariate nonparametric change points detection with tuning parameter selection.}
 \usage{
-NWBS.tune(Y, Alpha, Beta, N, delta)
+NWBS.tune(Y, W, Alpha, Beta, N, delta, ...)
 }
 \arguments{
 \item{Y}{A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being multiple observations on each time point.}
+
+\item{W}{A copy of the matrix Y, it can be Y itself.}
+
+\item{Alpha}{A \code{integer} vector of starting indices of random intervals.}
+
+\item{Beta}{A \code{integer} vector of ending indices of random intervals.}
 
 \item{N}{A \code{integer} vector representing number of multiple observations on each time point.}
 
@@ -26,7 +32,7 @@ Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))
 N = rep(1, 300)
 M = 120
 intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y))
-temp = NWBS.tune(Y, intervals$Alpha, intervals$Beta, N, 5)
+temp = NWBS.tune(Y, Y, intervals$Alpha, intervals$Beta, N, 5)
 }
 \author{
 Oscar Hernan Madrid Padilla & Haotian Xu

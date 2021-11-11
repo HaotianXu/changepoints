@@ -50,5 +50,5 @@ S = MNWBS.tune(Y, Y, intervals$Alpha, intervals$Beta, h, delta = 10)
 S
 }
 \author{
-Oscar Hernan Madrid Padilla
+Oscar Hernan Madrid Padilla & Haotian Xu
 }

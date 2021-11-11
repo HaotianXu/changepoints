@@ -7,7 +7,7 @@
 simu.SBM(connec_mat, can_vec, n, symm = FALSE, self = TRUE, ...)
 }
 \arguments{
-\item{connec_mat}{A \code{numeric} symmetric matrix representing the connectivity matrix (each entry takes value in [0,1]).}
+\item{connec_mat}{A \code{numeric} symmetric matrix representing the connectivity matrix (each entry takes value in \eqn{[0,1]}).}
 
 \item{can_vec}{A \code{integer} p-dim vector of node indices. can_vec is then divided into subvectors corresponding to blocks.}
 
@@ -20,11 +20,9 @@ simu.SBM(connec_mat, can_vec, n, symm = FALSE, self = TRUE, ...)
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{list} with the structure:
-\itemize{
- \item obs_mat:       A matrix, with each column be the vectorized adjacency (sub)matrix. For example, if "symm = TRUE" and "self = FALSE", only the strictly lower triangular matrix is considered.
- \item graphon_mat:   Underlying graphon matrix.
-}
+A \code{list} with the following structure:
+ \item{obs_mat}{A matrix, with each column be the vectorized adjacency (sub)matrix. For example, if "symm = TRUE" and "self = FALSE", only the strictly lower triangular matrix is considered}
+ \item{graphon_mat}{Underlying graphon matrix}
 }
 \description{
 Simulate a Stochastic Block Model (without change point). The generated data is a matrix with each column corresponding to the vectorized adjacency (sub)matrix at a time point. For example, if the network matrix is required to be symmetric and without self-loop, only the strictly lower diagonal entries are considered.
@@ -43,5 +41,5 @@ sbm2 = simu.SBM(conn2_mat, can_vec, n, symm = TRUE, self = TRUE)
 data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
 }
 \author{
-
+Daren Wang & Haotian Xu
 }

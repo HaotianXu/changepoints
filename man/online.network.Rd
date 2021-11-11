@@ -2,7 +2,7 @@
 % Please edit documentation in R/network.R
 \name{online.network}
 \alias{online.network}
-\title{Online changepoint detection for network data by controlling the false alarm rate at level alpha.}
+\title{Online change point detection for network data by controlling the false alarm rate at level alpha.}
 \usage{
 online.network(
   data_mat1,
@@ -23,7 +23,7 @@ online.network(
 
 \item{b_vec}{A \code{numeric} vector of thresholds b_t with t >= 2.}
 
-\item{train_mat}{A \code{numeric} matrix of training data from a pre-change distribution(no changepoint), which is only needed to when b_vec is NULL in order to calibrate b_t.}
+\item{train_mat}{A \code{numeric} matrix of training data from a pre-change distribution(no change point), which is only needed to when b_vec is NULL in order to calibrate b_t.}
 
 \item{alpha}{A \code{numeric} scalar in (0,1) representing the level.}
 
@@ -34,15 +34,13 @@ online.network(
 \item{...}{Additional arguments.}
 }
 \value{
-A \code{list} with the structure:
-\itemize{
- \item t:           Estimated changepoint.
- \item score:       A \code{numeric} vector of computed cumsum statistics.
- \item b_vec        A \code{numeric} vector of thresholds b_t with t >= 2.
-}
+A \code{list} with the following structure:
+ \item{cpt}{Estimated change point}
+ \item{score}{A \code{numeric} vector of computed cumsum statistics}
+ \item{b_vec}{A \code{numeric} vector of thresholds b_t with t >= 2}
 }
 \description{
-Perform online changepoint detection for network data by controlling the false alarm rate at level alpha or controlling the average run length gamma. The default choice of the tuning parameters tau1, tau2 and tau3 are used (see Section 4.1 of the reference).
+Perform online change point detection for network data by controlling the false alarm rate at level alpha or controlling the average run length gamma. The default choice of the tuning parameters tau1, tau2 and tau3 are used (see Section 4.1 of the reference).
 }
 \examples{
 p = 100 # number of nodes
@@ -60,9 +58,9 @@ data_mat1 = data_mat[,seq(1,ncol(data_mat),2)]
 data_mat2 = data_mat[,seq(2,ncol(data_mat),2)]
 train_mat = simu.SBM(conn1_mat, can_vec, n = 200, symm = TRUE, self = TRUE)$obs_mat
 temp = online.network(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat, alpha = 0.05, gamma = NULL, permu_num = 100)
-cpt_hat = 2 * temp$t
+cpt_hat = 2 * temp$cpt
 temp2 = online.network(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat, alpha = NULL, gamma = 200, permu_num = 100)
-cpt_hat2 = 2 * temp2$t
+cpt_hat2 = 2 * temp2$cpt
 }
 \references{
 Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.

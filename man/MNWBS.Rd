@@ -9,6 +9,8 @@ MNWBS(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...)
 \arguments{
 \item{Y}{A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.}
 
+\item{W}{A copy of the matrix Y, it can be Y itself.}
+
 \item{s}{A \code{integer} scalar of starting index.}
 
 \item{e}{A \code{integer} scalar of ending index.}
