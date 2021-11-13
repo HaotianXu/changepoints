@@ -37,7 +37,11 @@ temp = BS.univar(y, 1, length(y), delta = 5)
 plot.ts(y)
 points(x = tail(temp$S[order(temp$Dval)],4),
        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-cpt_hat = sort(threshold.BS(temp, tau = 4)$cpt_hat[,1]) # the threshold tau is specified to be 4
+BS_result = threshold.BS(temp, tau = 4)
+BS_result
+print(BS_result$BS_tree_trimmed, "value")
+plot(BS_result$BS_tree_trimmed)
+cpt_hat = sort(BS_result$cpt_hat[,1]) # the threshold tau is specified to be 4
 Hausdorff.dist(cpt_hat, cpt_true)
 cpt_LR = local.refine.univar(cpt_hat, y)
 Hausdorff.dist(cpt_LR, cpt_true)

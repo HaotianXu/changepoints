@@ -73,7 +73,7 @@ threshold.BS = function(BS_object, tau, ...){
   level_unique = unique(BS_object$Level[order(BS_object$Level)])
   level_length = length(level_unique)
   BS_tree = vector("list", level_length)
-  BS_tree[[1]] = data.frame(current = 1, parent = NA, location = BS_object$S[order(BS_object$Level)][1], value = BS_object$Dval[order(BS_object$Level)][1])
+  BS_tree[[1]] = data.frame(current = 1, parent = 1, location = BS_object$S[order(BS_object$Level)][1], value = BS_object$Dval[order(BS_object$Level)][1])
   for(i in 2:level_length){
     idx_curr = cumsum(table(BS_object$Level))[i-1] + 1:table(BS_object$Level)[i]
     idx_prev = cumsum(table(BS_object$Level))[i-1] + 1 - table(BS_object$Level)[i-1]:1
@@ -84,23 +84,6 @@ threshold.BS = function(BS_object, tau, ...){
                               location = BS_object$S[order(BS_object$Level)][idx_curr],
                               value = BS_object$Dval[order(BS_object$Level)][idx_curr])
   }
-  BS_tree_new = BS_tree
-  BS_tree_new[[1]] = BS_tree[[1]][,3:4]
-  BS_tree_new[[1]]$location = paste0("N",BS_tree_new[[1]]$location)
-  for(j in 2:level_length){
-    BS_tree_new[[j]]$parent = sapply(BS_tree_new[[j]]$parent, function(x){BS_tree_new[[j-1]]$location[x]})
-    BS_tree_new[[j]]$location = paste0(BS_tree_new[[j]]$parent, "$N", BS_tree_new[[j]]$location)
-    BS_tree_new[[j]] = BS_tree_new[[j]][,3:4]
-  }
-  binary_tree = list()
-  binary_tree$name = "Binary Segmentation Tree"
-  for(j in 1:level_length){
-    for(k in 1:nrow(BS_tree_new[[j]])){
-      eval(parse(text=paste0("binary_tree$",BS_tree_new[[j]]$location[k],"$value","<-",BS_tree_new[[j]]$value[k])))
-    }
-  }
-  BS_tree_node = data.tree::as.Node(binary_tree)
-  
   BS_tree_trimmed = BS_tree
   for(i in 1:level_length){
     idx_remove = BS_tree_trimmed[[i]]$current[BS_tree_trimmed[[i]]$value <= tau]
@@ -121,30 +104,7 @@ threshold.BS = function(BS_object, tau, ...){
   change_points = do.call(rbind, BS_tree_trimmed)[,c(3,4)]
   change_points$level = level
   rownames(change_points) = c()
-  BS_tree_trimmed = BS_tree_trimmed[points_at_level != 0]
-  if(length(BS_tree_trimmed) == 0){
-    return(list(BS_tree = BS_tree_node, BS_tree_trimmed = NULL, cpt_hat = NULL))
-  }
-  BS_tree_trimmed_new = BS_tree_trimmed
-  BS_tree_trimmed_new[[1]] = BS_tree_trimmed[[1]][,3:4]
-  BS_tree_trimmed_new[[1]]$location = paste0("N",BS_tree_trimmed_new[[1]]$location)
-  if(length(BS_tree_trimmed) == 1){
-    return(list(BS_tree = BS_tree_node, BS_tree_trimmed = BS_tree_trimmed[[1]], cpt_hat = change_points))
-  }
-  for(j in 2:sum(points_at_level != 0)){
-    BS_tree_trimmed_new[[j]]$parent = sapply(BS_tree_trimmed_new[[j]]$parent, function(x){BS_tree_trimmed_new[[j-1]]$location[rownames(BS_tree_trimmed_new[[j-1]]) == x]})
-    BS_tree_trimmed_new[[j]]$location = paste0(BS_tree_trimmed_new[[j]]$parent, "$N", BS_tree_trimmed_new[[j]]$location)
-    BS_tree_trimmed_new[[j]] = BS_tree_trimmed_new[[j]][,3:4]
-  }
-  binary_tree_trimmed = list()
-  binary_tree_trimmed$name = paste0("Binary Segmentation Tree Trimmed with tau = ", tau)
-  for(j in 1:sum(points_at_level != 0)){
-    for(k in 1:nrow(BS_tree_trimmed_new[[j]])){
-      eval(parse(text=paste0("binary_tree_trimmed$",BS_tree_trimmed_new[[j]]$location[k],"$value","<-",BS_tree_trimmed_new[[j]]$value[k])))
-    }
-  }
-  BS_tree_trimmed_node = data.tree::as.Node(binary_tree_trimmed)
-  return(list(BS_tree = BS_tree_node, BS_tree_trimmed = BS_tree_trimmed_node, cpt_hat = change_points))
+  return(list(BS_tree = BS_tree, BS_tree_trimmed = BS_tree_trimmed, cpt_hat = change_points))
 }
 
 

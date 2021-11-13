@@ -18,11 +18,13 @@ Imports:
     penalized,
     ks,
     MASS,
+    data.tree,
     Rcpp, 
     RcppArmadillo
 Suggests:
     knitr,
     abind,
+    DiagrammeR,
     rmarkdown
 LinkingTo: Rcpp, RcppArmadillo
 License: MIT | LICENSE
