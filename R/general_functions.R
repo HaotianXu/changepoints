@@ -9,7 +9,7 @@
 #' y = c(rep(0, 100), rep(1, 100))
 #' part2local(DP.univar(y, 1, 4)$partition)
 #' @seealso \code{DP.univar()}, \code{DP.poly()}, \code{DP.regression()}, \code{DP.SEPP()}, \code{DP.VAR1()}
-part2local = function(parti_vec){
+part2local = function(parti_vec, ...){
   N = length(parti_vec)
   localization = c()
   r = N

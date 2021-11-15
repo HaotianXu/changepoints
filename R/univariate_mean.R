@@ -154,6 +154,8 @@ local.refine.univar = function(cpt_init, y, ...){
 #'        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
 #' BS_result = threshold.BS(temp, tau = 4)
 #' BS_result
+#' print(BS_result$BS_tree, "value")
+#' plot(BS_result$BS_tree)
 #' print(BS_result$BS_tree_trimmed, "value")
 #' plot(BS_result$BS_tree_trimmed)
 #' cpt_hat = sort(BS_result$cpt_hat[,1]) # the threshold tau is specified to be 4
@@ -216,7 +218,12 @@ BS.univar = function(y, s, e, delta = 2, level = 0, ...){
 #' plot.ts(y)
 #' points(x = tail(temp$S[order(temp$Dval)],4),
 #'        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-#' cpt_hat = sort(threshold.BS(temp, tau = 4)$cpt_hat[,1]) # the threshold tau is specified to be 4
+#' WBS_result = threshold.BS(temp, tau = 4)
+#' print(WBS_result$BS_tree, "value")
+#' plot(WBS_result$BS_tree)
+#' print(WBS_result$BS_tree_trimmed, "value")
+#' plot(WBS_result$BS_tree_trimmed)
+#' cpt_hat = sort(WBS_result$cpt_hat[,1]) # the threshold tau is specified to be 4
 #' Hausdorff.dist(cpt_hat, cpt_true)
 #' cpt_LR = local.refine.univar(cpt_hat, y)
 #' Hausdorff.dist(cpt_LR, cpt_true)
@@ -325,8 +332,6 @@ WBS.univar.CPD = function(y, Alpha, Beta, delta){
 #' @title Univariate mean change point detection based on standard binary segmentation with tuning parameter selected by sSIC.
 #' @description Perform Univariate mean change point detection based on standard binary segmentation. The threshold parameter tau for BS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
 #' @param y         A \code{numeric} vector of observations.
-#' @param Alpha     A \code{integer} vector of starting indices of random intervals.
-#' @param Beta      A \code{integer} vector of ending indices of random intervals.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param ...      Additional arguments.
 #' @return  A \code{list} with the following structure:
@@ -347,7 +352,7 @@ WBS.univar.CPD = function(y, Alpha, Beta, delta){
 #' Hausdorff.dist(cpt_hat, cpt_true)
 #' cpt_LR = local.refine.univar(cpt_hat, y)
 #' Hausdorff.dist(cpt_LR, cpt_true)
-BS.univar.CPD = function(y, delta){
+BS.univar.CPD = function(y, delta, ...){
   obs_num = length(y)
   temp1 = BS.univar(y, s = 1, e = obs_num, delta)
   Dval = temp1$Dval

@@ -39,6 +39,8 @@ points(x = tail(temp$S[order(temp$Dval)],4),
        y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
 BS_result = threshold.BS(temp, tau = 4)
 BS_result
+print(BS_result$BS_tree, "value")
+plot(BS_result$BS_tree)
 print(BS_result$BS_tree_trimmed, "value")
 plot(BS_result$BS_tree_trimmed)
 cpt_hat = sort(BS_result$cpt_hat[,1]) # the threshold tau is specified to be 4

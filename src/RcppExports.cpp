@@ -209,6 +209,71 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_soft_threshold
+Rcpp::List rcpp_soft_threshold(arma::mat& x_mat, double lambda);
+RcppExport SEXP _changepoints_rcpp_soft_threshold(SEXP x_matSEXP, SEXP lambdaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat& >::type x_mat(x_matSEXP);
+    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_soft_threshold(x_mat, lambda));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_soft_impute
+Rcpp::List rcpp_soft_impute(const Rcpp::List& data_incomplete_list, const Rcpp::List& eta_list, double lambda, double rho, int it_max);
+RcppExport SEXP _changepoints_rcpp_soft_impute(SEXP data_incomplete_listSEXP, SEXP eta_listSEXP, SEXP lambdaSEXP, SEXP rhoSEXP, SEXP it_maxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type data_incomplete_list(data_incomplete_listSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type eta_list(eta_listSEXP);
+    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< double >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< int >::type it_max(it_maxSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_soft_impute(data_incomplete_list, eta_list, lambda, rho, it_max));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_lambda
+double rcpp_lambda(int s, int e, int t, double alpha, double rho, double m, double d, double C_lambda);
+RcppExport SEXP _changepoints_rcpp_lambda(SEXP sSEXP, SEXP eSEXP, SEXP tSEXP, SEXP alphaSEXP, SEXP rhoSEXP, SEXP mSEXP, SEXP dSEXP, SEXP C_lambdaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type s(sSEXP);
+    Rcpp::traits::input_parameter< int >::type e(eSEXP);
+    Rcpp::traits::input_parameter< int >::type t(tSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< double >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< double >::type m(mSEXP);
+    Rcpp::traits::input_parameter< double >::type d(dSEXP);
+    Rcpp::traits::input_parameter< double >::type C_lambda(C_lambdaSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_lambda(s, e, t, alpha, rho, m, d, C_lambda));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_CUSUM
+double rcpp_CUSUM(const Rcpp::List& data_incomplete_list, const Rcpp::List& eta_list, int s, int e, int t, double alpha, double rho, double m, double C_lambda, int delta);
+RcppExport SEXP _changepoints_rcpp_CUSUM(SEXP data_incomplete_listSEXP, SEXP eta_listSEXP, SEXP sSEXP, SEXP eSEXP, SEXP tSEXP, SEXP alphaSEXP, SEXP rhoSEXP, SEXP mSEXP, SEXP C_lambdaSEXP, SEXP deltaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type data_incomplete_list(data_incomplete_listSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type eta_list(eta_listSEXP);
+    Rcpp::traits::input_parameter< int >::type s(sSEXP);
+    Rcpp::traits::input_parameter< int >::type e(eSEXP);
+    Rcpp::traits::input_parameter< int >::type t(tSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< double >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< double >::type m(mSEXP);
+    Rcpp::traits::input_parameter< double >::type C_lambda(C_lambdaSEXP);
+    Rcpp::traits::input_parameter< int >::type delta(deltaSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_CUSUM(data_incomplete_list, eta_list, s, e, t, alpha, rho, m, C_lambda, delta));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_changepoints_rcpp_error_pred_seg_VAR1", (DL_FUNC) &_changepoints_rcpp_error_pred_seg_VAR1, 7},
@@ -225,6 +290,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_changepoints_rcpp_standardizeXY", (DL_FUNC) &_changepoints_rcpp_standardizeXY, 2},
     {"_changepoints_rcpp_lasso_seq", (DL_FUNC) &_changepoints_rcpp_lasso_seq, 4},
     {"_changepoints_rcpp_hello_world", (DL_FUNC) &_changepoints_rcpp_hello_world, 0},
+    {"_changepoints_rcpp_soft_threshold", (DL_FUNC) &_changepoints_rcpp_soft_threshold, 2},
+    {"_changepoints_rcpp_soft_impute", (DL_FUNC) &_changepoints_rcpp_soft_impute, 5},
+    {"_changepoints_rcpp_lambda", (DL_FUNC) &_changepoints_rcpp_lambda, 8},
+    {"_changepoints_rcpp_CUSUM", (DL_FUNC) &_changepoints_rcpp_CUSUM, 10},
     {NULL, NULL, 0}
 };
 

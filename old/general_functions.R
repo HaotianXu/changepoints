@@ -1,7 +1,6 @@
 #' @title Partition to localization for dynamic programming.
 #' @description     Find change point locations from the best partition produced by dynamic programming altorithm.
 #' @param parti_vec    A \code{integer} vector of best partition produced by dynamic programming algorithm.
-#' @param ...          Additional arguments.
 #' @return  A vector of change point locations.
 #' @export
 #' @author Haotian Xu

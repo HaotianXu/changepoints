@@ -4,7 +4,7 @@
 \alias{part2local}
 \title{Partition to localization for dynamic programming.}
 \usage{
-part2local(parti_vec)
+part2local(parti_vec, ...)
 }
 \arguments{
 \item{parti_vec}{A \code{integer} vector of best partition produced by dynamic programming algorithm.}

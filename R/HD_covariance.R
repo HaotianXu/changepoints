@@ -37,7 +37,7 @@ CUSUM.cov = function(X, s, e, t){
 #' A1 = gen.cov.mat(p, 1, "equal")
 #' A2 = gen.cov.mat(p, 2, "diagonal")
 #' A3 = gen.cov.mat(p, 3, "power")
-#' X = cbind(t(mvrnorm(100, mu = rep(0, p), A1)), t(mvrnorm(150, mu = rep(0, p), A2)), t(mvrnorm(200, mu = rep(0, p), A3)))
+#' X = cbind(t(MASS::mvrnorm(100, mu = rep(0, p), A1)), t(MASS::mvrnorm(150, mu = rep(0, p), A2)), t(MASS::mvrnorm(200, mu = rep(0, p), A3)))
 #' temp = BS.cov(X, 1, 450)
 #' threshold.BS(temp, 10)
 BS.cov = function(X, s, e, level = 0, ...){

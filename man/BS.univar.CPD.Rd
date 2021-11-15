@@ -4,16 +4,12 @@
 \alias{BS.univar.CPD}
 \title{Univariate mean change point detection based on standard binary segmentation with tuning parameter selected by sSIC.}
 \usage{
-BS.univar.CPD(y, delta)
+BS.univar.CPD(y, delta, ...)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of observations.}
 
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
-
-\item{Alpha}{A \code{integer} vector of starting indices of random intervals.}
-
-\item{Beta}{A \code{integer} vector of ending indices of random intervals.}
 
 \item{...}{Additional arguments.}
 }

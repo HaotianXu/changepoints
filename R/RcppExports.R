@@ -57,3 +57,19 @@ rcpp_hello_world <- function() {
     .Call('_changepoints_rcpp_hello_world', PACKAGE = 'changepoints')
 }
 
+rcpp_soft_threshold <- function(x_mat, lambda) {
+    .Call('_changepoints_rcpp_soft_threshold', PACKAGE = 'changepoints', x_mat, lambda)
+}
+
+rcpp_soft_impute <- function(data_incomplete_list, eta_list, lambda, rho, it_max = 10000L) {
+    .Call('_changepoints_rcpp_soft_impute', PACKAGE = 'changepoints', data_incomplete_list, eta_list, lambda, rho, it_max)
+}
+
+rcpp_lambda <- function(s, e, t, alpha, rho, m, d, C_lambda) {
+    .Call('_changepoints_rcpp_lambda', PACKAGE = 'changepoints', s, e, t, alpha, rho, m, d, C_lambda)
+}
+
+rcpp_CUSUM <- function(data_incomplete_list, eta_list, s, e, t, alpha, rho, m, C_lambda, delta) {
+    .Call('_changepoints_rcpp_CUSUM', PACKAGE = 'changepoints', data_incomplete_list, eta_list, s, e, t, alpha, rho, m, C_lambda, delta)
+}
+
