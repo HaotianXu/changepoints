@@ -31,7 +31,7 @@ part2local = function(parti_vec, ...){
 #' @param ...       Additional arguments.
 #' @return  An integer scalar of bidirectional Hausdorff distance.
 #' @export
-#' @author
+#' @author  Daren Wang
 #' @examples
 #' vec1 = sample.int(1000, size = 50)
 #' vec2 = sample.int(2000, size = 100)

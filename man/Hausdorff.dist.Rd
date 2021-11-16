@@ -25,5 +25,5 @@ vec2 = sample.int(2000, size = 100)
 Hausdorff.dist(vec1, vec2)
 }
 \author{
-
+Daren Wang
 }

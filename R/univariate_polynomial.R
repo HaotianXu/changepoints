@@ -137,7 +137,7 @@ CV.DP.poly = function(y, r, gamma, delta, ...){
 #' local.refine.poly(cpt_init, y, r = 2, delta_lr = 5)
 CV.search.DP.poly = function(y, r, gamma_set, delta, ...){
   output = sapply(1:length(gamma_set), function(j) CV.DP.poly(y, r, gamma_set[j], delta))
-  print(output)
+  #print(output)
   cpt_hat = output[1,]## estimated change points
   K_hat = output[2,]## number of estimated change points
   test_error = output[3,]## validation loss
