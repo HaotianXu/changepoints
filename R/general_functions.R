@@ -267,6 +267,32 @@ gen.cov.mat = function(p, sigma2, type){
 }
 
 
+#' @title Function to generate a matrix with values 0 or 1, where 0 indicating the entry is missing
+#' @param pi_mat   A \code{numeric} pxp matrix, for each entry, the value representing the probability of missing.
+#' @param symm     A \code{logic} scalar indicating if the output matrix needs to be symmetric.
+#' @return   A \code{numeric} p x p matrix.
+#' @export
+#' @author    Haotian Xu
+#' @examples
+#' p = 5
+#' pi_mat = matrix(0.9, p, p)
+#' eta_mat = gen.missing(pi_mat, symm = TRUE)
+gen.missing = function(pi_mat, symm = TRUE){
+  if(ncol(pi_mat) != nrow(pi_mat)){
+    stop("pi_mat should be a square matrix.")
+  }
+  if((symm == TRUE) & (isSymmetric(pi_mat) == FALSE)){
+    stop("If symm is TRUE, pi_mat should be a symmetric matrix.")
+  }
+  p = ncol(pi_mat)
+  temp_mat = matrix(rbinom(matrix(1,p,p), matrix(1,p,p), pi_mat), p, p)
+  if(symm == TRUE){
+    temp_mat[upper.tri(temp_mat)] = t(temp_mat)[upper.tri(temp_mat)]
+  }
+  return(temp_mat)
+}
+
+
 
 #' @export
 lasso_standardized_seq <- function(Xtilde, Ytilde, lambda_seq, eps = 0.0001, ...){

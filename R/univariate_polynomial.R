@@ -3,8 +3,11 @@
 #' @param s          An \code{integer} scalar of starting index.
 #' @param e          An \code{integer} scalar of ending index.
 #' @param r          An \code{integer} scalar representing the order of polynomials.
-#' @return  A (e-s+1)-by-(r+1) \code{numeric} basis matrix.
-#' @noRd
+#' @return  A (e-s+1)-by-(r+1) \code{numeric} basis matrix with (i,j)-th entry being \eqn{[(s+i-1)/n]^j}.
+#' @export
+#' @author  Haotian Xu
+#' @examples 
+#' poly_mat = basis.poly(100, 1, 50, 2)
 basis.poly <- function(n, s, e, r) {
   .Call('_changepoints_rcpp_basis_poly', PACKAGE = 'changepoints', n, s, e, r)
 }
@@ -165,7 +168,7 @@ CV.search.DP.poly = function(y, r, gamma_set, delta, ...){
 #' cpt_init = unlist(DP_result$cpt_hat[min_idx])
 #' local.refine.poly(cpt_init, y, r = 2, delta_lr = 5)
 local.refine.poly = function(cpt_init, y, r, delta_lr, ...){
-  w = 0.9
+  w = 0.7
   n = length(y)
   cpt_init_ext = c(0, cpt_init, n)
   cpt_init_numb = length(cpt_init)

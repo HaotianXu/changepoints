@@ -2,7 +2,7 @@
 % Please edit documentation in R/network.R
 \name{online.network}
 \alias{online.network}
-\title{Online change point detection for network data by controlling the false alarm rate at level alpha.}
+\title{Online change point detection for network data.}
 \usage{
 online.network(
   data_mat1,
@@ -20,6 +20,8 @@ online.network(
 \item{data_mat1}{A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.}
 
 \item{data_mat2}{A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).}
+
+\item{self}{A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.}
 
 \item{b_vec}{A \code{numeric} vector of thresholds b_t with t >= 2.}
 

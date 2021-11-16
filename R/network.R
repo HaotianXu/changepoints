@@ -342,10 +342,11 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, rho, a
 
 
 
-#' @title Online change point detection for network data by controlling the false alarm rate at level alpha.
+#' @title Online change point detection for network data.
 #' @description  Perform online change point detection for network data by controlling the false alarm rate at level alpha or controlling the average run length gamma. The default choice of the tuning parameters tau1, tau2 and tau3 are used (see Section 4.1 of the reference). 
 #' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.
 #' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).
+#' @param self       A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.
 #' @param b_vec      A \code{numeric} vector of thresholds b_t with t >= 2.
 #' @param train_mat  A \code{numeric} matrix of training data from a pre-change distribution(no change point), which is only needed to when b_vec is NULL in order to calibrate b_t.
 #' @param alpha      A \code{numeric} scalar in (0,1) representing the level.
