@@ -7,7 +7,7 @@ Authors@R: c(
     person("Haotian", "Xu", email="haotian.xu@warwick.ac.uk", role=c("aut","cre")),
     person("Oscar", "Padilla", email="oscar.madrid@stat.ucla.edu", role="aut"),
     person("Daren", "Wang", email="dwang24@nd.edu", role="aut"),
-    person("Meng", "Chu", email="Mengchu.Li@warwick.ac.uk", role="aut"),
+    person("Mengchu", "Li", email="Mengchu.Li@warwick.ac.uk", role="aut"),
     person("Qin", "Wen", role="ctb")
     )
 Maintainer: Haotian Xu <haotian.xu@warwick.ac.uk>
