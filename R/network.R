@@ -53,7 +53,7 @@ simu.SBM = function(connec_mat, can_vec, n, symm = FALSE, self = TRUE, ...){
 }
 
 
-#' @title Internal Function: Compute value of CUSUM statistic (multivariate).
+#' @title Internal Function: Compute the value of CUSUM statistic (multivariate).
 #' @param data_mat  A \code{numeric} matrix of observations with with horizontal axis being time.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
@@ -74,7 +74,7 @@ CUSUM.vec = function(data_mat, s, e, t){
 }
 
 
-#' @title Internal Function: Compute inner product of two CUSUM vectors based on two independent samples.
+#' @title Internal Function: Compute the inner product of two CUSUM vectors based on two independent samples.
 #' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.
 #' @param data_mat2  An independent copy of data_mat1.
 #' @param s          A \code{integer} scalar of starting index.

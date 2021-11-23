@@ -1,41 +1,73 @@
+#' @title Internal function: Estimate graphon matrix by soft-impute for independent adjacency matrices with missing values
+#' @param data_incomplete_list  A \code{list} of adjacency matrices (with entries being 0 or 1) with missing values being coercing to 0.
+#' @param eta_list              A \code{list} of matrices associated with data_incomplete_list, each matrix indicates the missing entries in corresponding adjacency matrix.
+#' @param lambda                A \code{numeric} scalar of thresholding parameter for leading singular value in the soft-impute algorithm.
+#' @param a                     A \code{numeric} scalar of truncation parameter in the soft-impute algorithm.
+#' @param it_max                An \code{integer} scalar of maximum iteration for the soft-impute algorithm.
+#' @return  Estimated graphon matrix
 #' @export
-softImpute.network.missing <- function(data_incomplete_list, eta_list, lambda, rho_star, it_max = 10000) {
-  .Call('_changepoints_rcpp_soft_impute', PACKAGE = 'changepoints', data_incomplete_list, eta_list, lambda, rho, it_max)
+#' @author  Haotian Xu
+#' @references Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
+softImpute.network.missing <- function(data_incomplete_list, eta_list, lambda, a, it_max = 10000) {
+  .Call('_changepoints_rcpp_soft_impute', PACKAGE = 'changepoints', data_incomplete_list, eta_list, lambda, a, it_max)
 }
 
+
+#' @title Function to compute the thresholding parameter for leading singular value in the soft-impute algorithm (see Theorem 2 in the reference)
+#' @param s          An \code{integer} scalar of the starting index.
+#' @param e          An \code{integer} scalar of the ending index.
+#' @param t          An \code{integer} scalar of the splitting index.
+#' @param alpha      A \code{numeric} scalar in (0,1) representing the desired false alarm rate.
+#' @param rho        A \code{numeric} scalar of the sparsity parameter.
+#' @param pi_ub      A \code{numeric} scalar of the upper bound of the missing probability.
+#' @param p          An \code{integer} scalar of the dimensionality of the graphon matrix.
+#' @param C_lambda   A \code{numeric} scalar of an absolute constant, which is set to be 2/3 by default.
 #' @export
-lambda.network.missing <- function(s, e, t, alpha, rho, m, p, C_lambda) {
-  .Call('_changepoints_rcpp_lambda', PACKAGE = 'changepoints', s, e, t, alpha, rho, m, p, C_lambda)
+#' @return  The default thresholding parameter for leading singular value in the soft-impute algorithm
+#' @references Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
+lambda.network.missing <- function(s, e, t, alpha, rho, pi_ub, p, C_lambda) {
+  .Call('_changepoints_rcpp_lambda', PACKAGE = 'changepoints', s, e, t, alpha, rho, pi_ub, p, C_lambda)
 }
 
-#' @export
+#' @title Internal function: CUSUM statistic based on soft-imput estimators
+#' @noRd
+#' @references Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
 CUSUM.network.missing <- function(data_incomplete_list, eta_list, s, e, t, alpha, rho, m, C_lambda, delta) {
   .Call('_changepoints_rcpp_CUSUM', PACKAGE = 'changepoints', data_incomplete_list, eta_list, s, e, t, alpha, rho, m, C_lambda, delta)
 }
 
-#' @export
+#' @title Internal function: Function to compute the threshold for online change point detection (see Theorem 2 in the reference)
+#' @noRd
+#' @references Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
 threshold.network.missing = function(s, t, rank, pi_lb, p, rho, pi_ub, alpha){
   return(sqrt(rank*rho*p*pi_ub*log(s/alpha)/(pi_lb^2*s)) + sqrt(rank*rho*p*pi_ub*log(t/alpha)/(pi_lb^2*(t-s))))
 }
 
 
-#' @title Online change point detection for network data with missing values.
-#' @description  Perform online change point detection for network data by controlling the false alarm rate at level alpha or controlling the average run length gamma. The default choice of the tuning parameters tau1, tau2 and tau3 are used (see Section 4.1 of the reference).
-#' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.
-#' @param data_mat2  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix (data_mat1 and data_mat2 are independent and have the same dimensions ).
-#' @param b_vec      A \code{numeric} vector of thresholds b_t with t >= 2.
-#' @param train_mat  A \code{numeric} matrix of training data from a pre-change distribution(no change point), which is only needed to when b_vec is NULL in order to calibrate b_t.
-#' @param alpha      A \code{numeric} scalar in (0,1) representing the level.
-#' @param gamma      An \code{integer} scalar of desired average run length.
-#' @param permu_num  An \code{integer} scalar of number of random permutation for calibration.
+#' @title Calibrate step for online change point detection for network data with missing values.
+#' @description  Calibrate step for online change point detection for network data by controlling the false alarm rate at level alpha.
+#' @param train_miss_list  A \code{list} of adjacency matrices (with entries being 0 or 1) with missing values being coercing to 0.
+#' @param train_eta_list   A \code{list} of matrices associated with data_incomplete_list, each matrix indicates the missing entries in corresponding adjacency matrix.
+#' @param threshold_len    An \code{integer} scalar of the length of tuned thresholds.
+#' @param alpha_grid       A \code{numeric} vector in (0,1) representing the desired false alarm rate.
+#' @param permu_num        An \code{integer} scalar of number of random permutation for calibration.
+#' @param pi_lb_hat        A \code{numeric} scalar of the lower bound of the missing probability.
+#' @param pi_ub_hat        A \code{numeric} scalar of the upper bound of the missing probability.
+#' @param rho_hat          A \code{numeric} scalar of the sparsity parameter.
+#' @param rank_hat         An \code{integer} scalar of the rank of the underlying graphon matrix.
+#' @param C_lambda         A \code{numeric} scalar of an absolute constant, which is set to be 2/3 by default.
+#' @param delta            An \code{integer} scalar of minimum spacing.
 #' @param ...        Additional arguments.
 #' @return  A \code{list} with the following structure:
-#'  \item{cpt}{Estimated change point}
-#'  \item{score}{A \code{numeric} vector of computed cumsum statistics}
-#'  \item{b_vec}{A \code{numeric} vector of thresholds b_t with t >= 2}
+#'  \item{C_lambda}{The absolute constant}
+#'  \item{rho_hat}{the (estimated) sparsity parameter}
+#'  \item{rank_hat}{the (estimated) rank of underlying graphon matrix}
+#'  \item{pi_lb_hat}{the (estimated) lower bound of the missing probability}
+#'  \item{pi_ub_hat}{the (estimated) upper bound of the missing probability}
+#'  \item{thresholds_array}{A \code{numeric} array of calibrated threshold}
 #' @export
 #' @author  Haotian Xu
-#' @references Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
+#' @references Dubey, P., Xu, H., & Yu, Y. (2021). Online network change point detection with missing values. arXiv preprint arXiv:2110.06450.
 #' @examples
 #' p = 12 # number of nodes
 #' rho = 0.5 # sparsity parameter
@@ -53,15 +85,18 @@ threshold.network.missing = function(s, t, rank, pi_lb, p, rho, pi_ub, alpha){
 #' pi_lb_hat = quantile(Reduce("+", train_eta_list)/train_obs_num, 0.05) # estimator of pi_lb
 #' pi_ub_hat = quantile(Reduce("+", train_eta_list)/train_obs_num, 0.95) # estimator of pi_ub
 #' C_lambda = 2/3
-#' graphon_miss_impute = softImpute.network.missing(train_miss_list, train_eta_list, lambda.network.missing(1, length(train_miss_list), length(train_miss_list), 0.05, rho = 0.509, m = pi_ub_hat, p, C_lambda), 1)
+#' graphon_miss_impute = softImpute.network.missing(train_miss_list, train_eta_list, 
+#'    lambda.network.missing(1, length(train_miss_list), length(train_miss_list), 0.05, rho = 0.509, pi_ub = pi_ub_hat, p, C_lambda), 1)
 #' graphon_miss_hat = graphon_miss_impute$u %*% diag(as.numeric(graphon_miss_impute$d)) %*% t(graphon_miss_impute$v)
 #' rho_hat = quantile(graphon_miss_hat, 0.95)
 #' rank_hat = sum(graphon_miss_impute$d != 0)
 #' alpha_grid = c(0.05, 0.01)
 #' permu_num = 100
 #' threshold_len = 300
-#' temp = calibrate.network.missing(train_miss_list, train_eta_list, threshold_len, alpha_grid, permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda, delta = 5)
-calibrate.network.missing = function(train_miss_list, train_eta_list, threshold_len, alpha_grid, permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda, delta = 5, ...){
+#' temp = calibrate.online.network.missing(train_miss_list, 
+#'    train_eta_list, threshold_len, alpha_grid, permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda, delta = 5)
+#' @seealso online.network.missing
+calibrate.online.network.missing = function(train_miss_list, train_eta_list, threshold_len, alpha_grid, permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda = 2/3, delta = 5, ...){
   burnin_idx = ceiling(log2(2*delta))
   train_obs_num = length(train_miss_list)
   p = ncol(train_miss_list[[1]])
@@ -129,7 +164,7 @@ calibrate.network.missing = function(train_miss_list, train_eta_list, threshold_
   for(ind_alpha in 1:length(alpha_grid)){
     C_vec[ind_alpha] = quantile(C_mat[ind_alpha,], 1-alpha_grid[ind_alpha])
   }
-  thresholds_si_array = array(1, c(threshold_len, floor(log2(threshold_len))-burnin_idx+2, length(alpha_grid)))
+  thresholds_array = array(1, c(threshold_len, floor(log2(threshold_len))-burnin_idx+2, length(alpha_grid)))
   for(t in 2:threshold_len){
     if(t >= 4*delta+1){
       m = floor(log2(t)) - 1
@@ -143,9 +178,52 @@ calibrate.network.missing = function(train_miss_list, train_eta_list, threshold_
       }
       for(ind_alpha in 1:length(alpha_grid)){
         alpha = alpha_grid[ind_alpha]
-        thresholds_si_array[t,1:length(N_grid),ind_alpha] = C_vec[ind_alpha] * sapply(N_grid, function(s) threshold.network.missing(s, t, rank_hat, pi_lb_hat, p, rho_hat, pi_ub_hat, alpha))
+        thresholds_array[t,1:length(N_grid),ind_alpha] = C_vec[ind_alpha] * sapply(N_grid, function(s) threshold.network.missing(s, t, rank_hat, pi_lb_hat, p, rho_hat, pi_ub_hat, alpha))
       }
     }
   }
-  return(list(C_lambda = C_lambda, rho_hat = rho_hat, rank_hat = rank_hat, pi_lb_hat = pi_lb_hat, pi_ub_hat = pi_ub_hat, thresholds_si_array = thresholds_si_array))
+  return(list(C_lambda = C_lambda, rho_hat = rho_hat, rank_hat = rank_hat, pi_lb_hat = pi_lb_hat, pi_ub_hat = pi_ub_hat, thresholds_array = thresholds_array))
+}
+
+
+#' @title Online change point detection for network data with missing values.
+#' @description  Perform online change point detection for network with missing values by controlling the false alarm rate at level alpha.
+#' @param data_incomplete_list  A \code{list} of adjacency matrices (with entries being 0 or 1) with missing values being coercing to 0.
+#' @param eta_list              A \code{list} of matrices associated with data_incomplete_list, each matrix indicates the missing entries in corresponding adjacency matrix.
+#' @param alpha_grid            A \code{numeric} vector in (0,1) representing the desired false alarm rate.
+#' @param thresholds_array      A \code{numeric} array of calibrated threshold.
+#' @param pi_ub_hat             A \code{numeric} scalar of the upper bound of the missing probability.
+#' @param rho_hat               A \code{numeric} scalar of the sparsity parameter.
+#' @param C_lambda              A \code{numeric} scalar of an absolute constant, which is set to be 2/3 by default.
+#' @param delta                 An \code{integer} scalar of minimum spacing.
+#' @export
+#' @seealso calibrate.online.network.missing
+online.network.missing = function(data_incomplete_list, eta_list, alpha_grid, thresholds_array, rho_hat, pi_ub_hat, C_lambda = 2/3, delta = 5){
+  burnin_idx = ceiling(log2(2*delta))
+  cpt_hat = rep(NA, length(alpha_grid))
+  for(ind_alpha in 1:length(alpha_grid)){
+    alpha = alpha_grid[ind_alpha]
+    t = 4*delta
+    FLAG = 0
+    while(t < length(data_incomplete_list) & FLAG == 0){
+      t = t + 1
+      print(t)
+      m = floor(log2(t)) - 1
+      if(t - 2^(m+1) >= 2*delta){
+        m = m + 1
+      }
+      if(m < burnin_idx){
+        N_grid = c(2*delta+1)
+      }else{
+        N_grid = c(2*delta+1, 2^(burnin_idx:m))
+      }
+      j = 1
+      while(j <= length(N_grid) & FLAG == 0){
+        FLAG = rcpp_CUSUM(data_incomplete_list, eta_list, 1, t, N_grid[j], alpha, rho_hat, pi_ub_hat, C_lambda, delta) > thresholds_array[t,j,ind_alpha]
+        j = j + 1
+      }
+    }
+    cpt_hat[ind_alpha] = t
+  }
+  return(cpt_hat)
 }

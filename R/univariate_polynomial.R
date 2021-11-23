@@ -135,39 +135,7 @@ basis.poly <- function(n, s, e, r) {
 DP.poly <- function(y, r, gamma, delta, ...) {
   .Call('_changepoints_rcpp_DP_poly', PACKAGE = 'changepoints', y, r, gamma, delta)
 }
-# DP.poly = function(y, r, gamma, delta, ...){
-#   n = length(y)
-#   bestvalue = rep(0,n+1)
-#   partition = rep(0,n)
-#   yhat = rep(NA, n)
-#   bestvalue[1] = -gamma
-#   for(i in 1:n){
-#     bestvalue[i+1] = Inf
-#     for(l in 1:i){
-#       if(i - l > delta){
-#         u_mat = basis.poly(n, l, i, r)
-#         proj_mat = u_mat %*% solve(t(u_mat)%*%u_mat) %*% t(u_mat)
-#         b = bestvalue[l] + gamma + (norm((diag(1, i-l+1) - proj_mat) %*% y[l:i], type = "2"))^2
-#       }else{
-#         b = Inf
-#       }
-#       if(b < bestvalue[i+1]){
-#         bestvalue[i+1] = b
-#         partition[i] = l-1
-#       }
-#     }
-#   }
-#   i = n
-#   l = partition[i]
-#   while(i > 0){
-#     u_mat = basis.poly(n, l+1, i, r)
-#     proj_mat = u_mat %*% solve(t(u_mat)%*%u_mat) %*% t(u_mat)
-#     yhat[(l+1):i] = proj_mat %*% y[(l+1):i]
-#     i = l
-#     l = partition[i]
-#   }
-#   return(list(partition = partition, yhat = yhat))
-# }
+
 
 
 #' @title Internal function: Cross-Validation of Dynamic Programming algorithm for univariate polynomials change points detection.
@@ -268,7 +236,7 @@ CV.search.DP.poly = function(y, r, gamma_set, delta, ...){
 #' cpt_init = unlist(DP_result$cpt_hat[min_idx])
 #' local.refine.poly(cpt_init, y, r = 2, delta_lr = 5)
 local.refine.poly = function(cpt_init, y, r, delta_lr, ...){
-  w = 0.7
+  w = 0.9
   n = length(y)
   cpt_init_ext = c(0, cpt_init, n)
   cpt_init_numb = length(cpt_init)

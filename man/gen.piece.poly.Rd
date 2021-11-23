@@ -2,16 +2,16 @@
 % Please edit documentation in R/univariate_polynomial.R
 \name{gen.piece.poly}
 \alias{gen.piece.poly}
-\title{Generate univariate data from piecewise polynomials}
+\title{Generate univariate data from piecewise polynomials of degree at most r}
 \usage{
 gen.piece.poly(init_coef_vec, cpt_vec, kappa_mat, n, sigma)
 }
 \arguments{
-\item{init_coef_vec}{A \code{numeric} vector of coefficients for the first segment.}
+\item{init_coef_vec}{A (r+1)-dim \code{numeric} vector of coefficients for the first segment.}
 
-\item{cpt_vec}{An \code{integer} vector of change points.}
+\item{cpt_vec}{A K-dim \code{integer} vector of change points.}
 
-\item{kappa_mat}{A \code{numeric} matrix where the i-th column represents the jump sizes for coefficients associated with the i-th change point.}
+\item{kappa_mat}{A (r+1)xK \code{numeric} matrix where the i-th column represents the jump sizes for coefficients associated with the i-th change point.}
 
 \item{n}{An \code{integer} scalar of sample size.}
 
@@ -24,7 +24,13 @@ A vector of data generated from piecewise polynomials.
 Generate univariate data from piecewise polynomials (currently, only the linear, quadratic functions and cubic functions are considered).
 }
 \examples{
-TO DO
+r = 2
+init_coef_vec = c(-2, 2, 9)
+cpt_true = c(100, 200)
+n = 300
+sigma = 1
+kappa_mat = cbind(c(3, 9, -27), c(-3, 9, -27))
+plot.ts(gen.piece.poly(init_coef_vec, cpt_true, kappa_mat, n, sigma), ylab = "y")
 }
 \references{
 Yu, Y., & Chatterjee, S. (2020). Localising change points in piecewise polynomials of general degrees. arXiv preprint arXiv:2007.09910.
