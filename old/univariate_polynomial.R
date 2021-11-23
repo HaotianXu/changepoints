@@ -1,13 +1,15 @@
-#' @title Internal function: Coefficients reparametrization for polynomials with different bases
+#' @title Coefficients reparametrization for polynomials with different bases
 #' @description Compute the transformed coefficients for polynomials with different bases (currently, only the linear, quadratic and cubic functions are considered). 
 #' @param coef_vec  A \code{numeric} vector of coefficients for polynomials associated with cpt1.
 #' @param cpt1      An \code{integer} scalar of the first change point.
 #' @param cpt2      An \code{integer} scalar of the second change point.
 #' @param n         An \code{integer} scalar of sample size.
 #' @return A vector of transformed coefficients for polynomials associated with cpt2.
-#' @noRd
+#' @export
 #' @references Yu, Y., & Chatterjee, S. (2020). Localising change points in piecewise polynomials of general degrees. arXiv preprint arXiv:2007.09910.
 #' @author  Haotian Xu
+#' @examples
+#' TO DO
 coef.repara = function(coef_vec, cpt1, cpt2, n){
   if(length(coef_vec) == 2){
     A = matrix(c(1, (cpt2-cpt1)/n, 0, 1), nrow = 2, byrow = TRUE)
@@ -23,11 +25,11 @@ coef.repara = function(coef_vec, cpt1, cpt2, n){
 
 
 
-#' @title Generate univariate data from piecewise polynomials of degree at most r
+#' @title Generate univariate data from piecewise polynomials
 #' @description Generate univariate data from piecewise polynomials (currently, only the linear, quadratic functions and cubic functions are considered). 
-#' @param init_coef_vec  A (r+1)-dim \code{numeric} vector of coefficients for the first segment.
-#' @param cpt_vec        A K-dim \code{integer} vector of change points.
-#' @param kappa_mat      A (r+1)xK \code{numeric} matrix where the i-th column represents the jump sizes for coefficients associated with the i-th change point.
+#' @param init_coef_vec  A \code{numeric} vector of coefficients for the first segment.
+#' @param cpt_vec        An \code{integer} vector of change points.
+#' @param kappa_mat      A \code{numeric} matrix where the i-th column represents the jump sizes for coefficients associated with the i-th change point.
 #' @param n              An \code{integer} scalar of sample size.
 #' @param sigma          A \code{numeric} scalar of standard deviation of error terms.
 #' @return A vector of data generated from piecewise polynomials.
@@ -35,13 +37,7 @@ coef.repara = function(coef_vec, cpt1, cpt2, n){
 #' @references Yu, Y., & Chatterjee, S. (2020). Localising change points in piecewise polynomials of general degrees. arXiv preprint arXiv:2007.09910.
 #' @author  Haotian Xu
 #' @examples
-#' r = 2
-#' init_coef_vec = c(-2, 2, 9)
-#' cpt_true = c(100, 200)
-#' n = 300
-#' sigma = 1
-#' kappa_mat = cbind(c(3, 9, -27), c(-3, 9, -27))
-#' plot.ts(gen.piece.poly(init_coef_vec, cpt_true, kappa_mat, n, sigma), ylab = "y")
+#' TO DO
 gen.piece.poly = function(init_coef_vec, cpt_vec, kappa_mat, n, sigma){
   r = length(init_coef_vec) - 1
   cpt_ext = c(cpt_vec, n)
@@ -72,12 +68,7 @@ gen.piece.poly = function(init_coef_vec, cpt_vec, kappa_mat, n, sigma){
 #' @references Yu, Y., & Chatterjee, S. (2020). Localising change points in piecewise polynomials of general degrees. arXiv preprint arXiv:2007.09910.
 #' @author  Haotian Xu
 #' @examples
-#' r = 2
-#' init_coef_vec = c(-2, 2, 9)
-#' cpt_true = c(100, 200)
-#' n = 300
-#' kappa_mat = cbind(c(3, 9, -27), c(-3, 9, -27))
-#' plot.ts(gen.piece.poly.noiseless(init_coef_vec, cpt_true, kappa_mat, n), ylab = "Values of piecewise polynomials")
+#' TO DO
 gen.piece.poly.noiseless = function(init_coef_vec, cpt_vec, kappa_mat, n){
   r = length(init_coef_vec) - 1
   cpt_ext = c(cpt_vec, n)

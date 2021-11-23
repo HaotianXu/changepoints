@@ -93,6 +93,16 @@ sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 100) 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 200) <= 3)}))
 
 
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
+mean(error_init)/n
+mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
+
 
 save(r, init_coef_vec, cpt_true, effect_size, n, sigma, kappa_mat, cpt_est_init, error_init, len_est_init, cpt_est_lr, error_lr, len_est_lr, scaled_Hdist_init, scaled_Hdist_lr, file = "C:/Users/haotian/Documents/GitHub/changepoints/examples/poly_r2_n300_equalspace_111.RData")
 
@@ -164,6 +174,16 @@ scaled_Hdist_lr = mean(error_lr)/n
 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 100) <= 3)}))
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 200) <= 3)}))
+
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
+mean(error_init)/n
+mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
 
 
 save(r, init_coef_vec, cpt_true, effect_size, n, sigma, kappa_mat, cpt_est_init, error_init, len_est_init, cpt_est_lr, error_lr, len_est_lr, scaled_Hdist_init, scaled_Hdist_lr, file = "C:/Users/haotian/Documents/GitHub/changepoints/examples/poly_r2_n300_equalspace_110.RData")
@@ -237,6 +257,16 @@ sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 100) 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 200) <= 3)}))
 
 
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
+mean(error_init)/n
+mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
+
 save(r, init_coef_vec, cpt_true, effect_size, n, sigma, kappa_mat, cpt_est_init, error_init, len_est_init, cpt_est_lr, error_lr, len_est_lr, scaled_Hdist_init, scaled_Hdist_lr, file = "C:/Users/haotian/Documents/GitHub/changepoints/examples/poly_r2_n300_equalspace_101.RData")
 
 
@@ -307,6 +337,16 @@ scaled_Hdist_lr = mean(error_lr)/n
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 100) <= 3)}))
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 200) <= 3)}))
 
+
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
+mean(error_init)/n
+mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
 
 save(r, init_coef_vec, cpt_true, effect_size, n, sigma, kappa_mat, cpt_est_init, error_init, len_est_init, cpt_est_lr, error_lr, len_est_lr, scaled_Hdist_init, scaled_Hdist_lr, file = "C:/Users/haotian/Documents/GitHub/changepoints/examples/poly_r2_n300_equalspace_100.RData")
 
@@ -382,6 +422,16 @@ sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 100) 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 200) <= 3)}))
 
 
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
+mean(error_init)/n
+mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
+
 save(r, init_coef_vec, cpt_true, effect_size, n, sigma, kappa_mat, cpt_est_init, error_init, len_est_init, cpt_est_lr, error_lr, len_est_lr, scaled_Hdist_init, scaled_Hdist_lr, file = "C:/Users/haotian/Documents/GitHub/changepoints/examples/poly_r2_n300_equalspace_011.RData")
 
 
@@ -454,6 +504,16 @@ scaled_Hdist_lr = mean(error_lr)/n
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 100) <= 3)}))
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 200) <= 3)}))
 
+
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
+mean(error_init)/n
+mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
 
 save(r, init_coef_vec, cpt_true, effect_size, n, sigma, kappa_mat, cpt_est_init, error_init, len_est_init, cpt_est_lr, error_lr, len_est_lr, scaled_Hdist_init, scaled_Hdist_lr, file = "C:/Users/haotian/Documents/GitHub/changepoints/examples/poly_r2_n300_equalspace_010.RData")
 
@@ -529,6 +589,16 @@ sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 100) 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 200) <= 3)}))
 
 
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
+mean(error_init)/n
+mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
+
 save(r, init_coef_vec, cpt_true, effect_size, n, sigma, kappa_mat, cpt_est_init, error_init, len_est_init, cpt_est_lr, error_lr, len_est_lr, scaled_Hdist_init, scaled_Hdist_lr, file = "C:/Users/haotian/Documents/GitHub/changepoints/examples/poly_r2_n300_equalspace_001.RData")
 
 
@@ -595,8 +665,15 @@ for (time in 1:RR){
   setTxtProgressBar(pb, counter)
 }
 #local.refine.poly(cpt_init, y, r = 2, delta_lr = 5)
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
 mean(error_init)/n
 mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 50) <= 3)}))
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 100) <= 3)}))
@@ -662,8 +739,15 @@ for (time in 1:RR){
   setTxtProgressBar(pb, counter)
 }
 #local.refine.poly(cpt_init, y, r = 2, delta_lr = 5)
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
 mean(error_init)/n
 mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 50) <= 3)}))
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 100) <= 3)}))
@@ -731,8 +815,15 @@ for (time in 1:RR){
   setTxtProgressBar(pb, counter)
 }
 #local.refine.poly(cpt_init, y, r = 2, delta_lr = 5)
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
 mean(error_init)/n
 mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 50) <= 3)}))
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 100) <= 3)}))
@@ -797,8 +888,15 @@ for (time in 1:RR){
   setTxtProgressBar(pb, counter)
 }
 #local.refine.poly(cpt_init, y, r = 2, delta_lr = 5)
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
 mean(error_init)/n
 mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 50) <= 3)}))
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 100) <= 3)}))
@@ -864,8 +962,15 @@ for (time in 1:RR){
   setTxtProgressBar(pb, counter)
 }
 #local.refine.poly(cpt_init, y, r = 2, delta_lr = 5)
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
 mean(error_init)/n
 mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
 
 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 50) <= 3)}))
@@ -931,8 +1036,15 @@ for (time in 1:RR){
   setTxtProgressBar(pb, counter)
 }
 #local.refine.poly(cpt_init, y, r = 2, delta_lr = 5)
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
 mean(error_init)/n
 mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 50) <= 3)}))
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 100) <= 3)}))
@@ -997,8 +1109,15 @@ for (time in 1:RR){
   setTxtProgressBar(pb, counter)
 }
 #local.refine.poly(cpt_init, y, r = 2, delta_lr = 5)
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
 mean(error_init)/n
 mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
 
 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 50) <= 3)}))
@@ -1076,6 +1195,16 @@ sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 150) 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 300) <= 3)}))
 
 
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
+mean(error_init)/n
+mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
+
 save(r, init_coef_vec, cpt_true, effect_size, n, sigma, kappa_mat, cpt_est_init, error_init, len_est_init, cpt_est_lr, error_lr, len_est_lr, scaled_Hdist_init, scaled_Hdist_lr, file = "C:/Users/haotian/Documents/GitHub/changepoints/examples/poly_r2_n450_equalspace_111.RData")
 
 
@@ -1147,6 +1276,16 @@ scaled_Hdist_lr = mean(error_lr)/n
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 150) <= 3)}))
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 300) <= 3)}))
 
+
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
+mean(error_init)/n
+mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
 
 save(r, init_coef_vec, cpt_true, effect_size, n, sigma, kappa_mat, cpt_est_init, error_init, len_est_init, cpt_est_lr, error_lr, len_est_lr, scaled_Hdist_init, scaled_Hdist_lr, file = "C:/Users/haotian/Documents/GitHub/changepoints/examples/poly_r2_n450_equalspace_110.RData")
 
@@ -1221,6 +1360,16 @@ sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 150) 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 300) <= 3)}))
 
 
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
+mean(error_init)/n
+mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
+
 save(r, init_coef_vec, cpt_true, effect_size, n, sigma, kappa_mat, cpt_est_init, error_init, len_est_init, cpt_est_lr, error_lr, len_est_lr, scaled_Hdist_init, scaled_Hdist_lr, file = "C:/Users/haotian/Documents/GitHub/changepoints/examples/poly_r2_n450_equalspace_101.RData")
 
 
@@ -1293,6 +1442,16 @@ sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 150) 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 300) <= 3)}))
 
 
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
+mean(error_init)/n
+mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
+
 
 save(r, init_coef_vec, cpt_true, effect_size, n, sigma, kappa_mat, cpt_est_init, error_init, len_est_init, cpt_est_lr, error_lr, len_est_lr, scaled_Hdist_init, scaled_Hdist_lr, file = "C:/Users/haotian/Documents/GitHub/changepoints/examples/poly_r2_n450_equalspace_011.RData")
 
@@ -1363,6 +1522,16 @@ scaled_Hdist_lr = mean(error_lr)/n
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 150) <= 3)}))
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 300) <= 3)}))
 
+
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
+mean(error_init)/n
+mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
 
 
 save(r, init_coef_vec, cpt_true, effect_size, n, sigma, kappa_mat, cpt_est_init, error_init, len_est_init, cpt_est_lr, error_lr, len_est_lr, scaled_Hdist_init, scaled_Hdist_lr, file = "C:/Users/haotian/Documents/GitHub/changepoints/examples/poly_r2_n450_equalspace_100.RData")
@@ -1437,6 +1606,16 @@ sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 150) 
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 300) <= 3)}))
 
 
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
+mean(error_init)/n
+mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
+
 save(r, init_coef_vec, cpt_true, effect_size, n, sigma, kappa_mat, cpt_est_init, error_init, len_est_init, cpt_est_lr, error_lr, len_est_lr, scaled_Hdist_init, scaled_Hdist_lr, file = "C:/Users/haotian/Documents/GitHub/changepoints/examples/poly_r2_n450_equalspace_010.RData")
 
 
@@ -1508,6 +1687,16 @@ scaled_Hdist_lr = mean(error_lr)/n
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 150) <= 3)}))
 sum(sapply(1:length(cpt_est_init), function(t){sum(abs(cpt_est_init[[t]] - 300) <= 3)}))
 
+
+sum(abs(len_est_init - 2))/RR
+sqrt(var(abs(len_est_init - 2))/RR)
+
+
+mean(error_init)/n
+mean(error_lr)/n
+
+sqrt(var(error_init/n)/RR)
+sqrt(var(error_lr/n)/RR)
 
 
 save(r, init_coef_vec, cpt_true, effect_size, n, sigma, kappa_mat, cpt_est_init, error_init, len_est_init, cpt_est_lr, error_lr, len_est_lr, scaled_Hdist_init, scaled_Hdist_lr, file = "C:/Users/haotian/Documents/GitHub/changepoints/examples/poly_r2_n450_equalspace_001.RData")
