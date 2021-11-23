@@ -104,7 +104,7 @@ gen.piece.poly.noiseless = function(init_coef_vec, cpt_vec, kappa_mat, n){
 #' @param e          An \code{integer} scalar of ending index.
 #' @param r          An \code{integer} scalar representing the order of polynomials.
 #' @return  A (e-s+1)-by-(r+1) \code{numeric} basis matrix with (i,j)-th entry being \eqn{[(s+i-1)/n]^j}.
-#' @export
+#' @noRd
 #' @author  Haotian Xu
 #' @examples 
 #' poly_mat = basis.poly(100, 1, 50, 2)
