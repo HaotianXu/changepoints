@@ -53,10 +53,6 @@ rcpp_lasso_seq <- function(X, Y, lambda_seq, eps) {
     .Call('_changepoints_rcpp_lasso_seq', PACKAGE = 'changepoints', X, Y, lambda_seq, eps)
 }
 
-rcpp_hello_world <- function() {
-    .Call('_changepoints_rcpp_hello_world', PACKAGE = 'changepoints')
-}
-
 rcpp_soft_threshold <- function(x_mat, lambda) {
     .Call('_changepoints_rcpp_soft_threshold', PACKAGE = 'changepoints', x_mat, lambda)
 }

@@ -199,16 +199,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_hello_world
-List rcpp_hello_world();
-RcppExport SEXP _changepoints_rcpp_hello_world() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpp_hello_world());
-    return rcpp_result_gen;
-END_RCPP
-}
 // rcpp_soft_threshold
 Rcpp::List rcpp_soft_threshold(arma::mat& x_mat, double lambda);
 RcppExport SEXP _changepoints_rcpp_soft_threshold(SEXP x_matSEXP, SEXP lambdaSEXP) {
@@ -289,7 +279,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_changepoints_rcpp_lasso_standardized_seq", (DL_FUNC) &_changepoints_rcpp_lasso_standardized_seq, 4},
     {"_changepoints_rcpp_standardizeXY", (DL_FUNC) &_changepoints_rcpp_standardizeXY, 2},
     {"_changepoints_rcpp_lasso_seq", (DL_FUNC) &_changepoints_rcpp_lasso_seq, 4},
-    {"_changepoints_rcpp_hello_world", (DL_FUNC) &_changepoints_rcpp_hello_world, 0},
     {"_changepoints_rcpp_soft_threshold", (DL_FUNC) &_changepoints_rcpp_soft_threshold, 2},
     {"_changepoints_rcpp_soft_impute", (DL_FUNC) &_changepoints_rcpp_soft_impute, 5},
     {"_changepoints_rcpp_lambda", (DL_FUNC) &_changepoints_rcpp_lambda, 8},
