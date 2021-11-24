@@ -21,7 +21,7 @@
 #' # connectivity matrix for the second segment
 #' conn2_mat = rho * matrix(c(0.6,0.5,0.6,0.5,0.6,1,0.6,1,0.6), nrow = 3) 
 #' set.seed(1)
-#' can_vec = sample(1:p, replace = F) # randomly assign nodes into groups
+#' can_vec = sample(1:p, replace = FALSE) # randomly assign nodes into groups
 #' sbm1 = simu.SBM(conn1_mat, can_vec, n, symm = TRUE, self = TRUE)
 #' sbm2 = simu.SBM(conn2_mat, can_vec, n, symm = TRUE, self = TRUE)
 #' data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
@@ -119,13 +119,13 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 #' # connectivity matrix for the second segment
 #' conn2_mat = rho * matrix(c(0.6,0.5,0.6,0.5,0.6,1,0.6,1,0.6), nrow = 3) 
 #' set.seed(1)
-#' can_vec = sample.int(1:p, replace = FALSE) # randomly assign nodes into groups
+#' can_vec = sample(1:p, replace = FALSE) # randomly assign nodes into groups
 #' sbm1 = simu.SBM(conn1_mat, can_vec, n, symm = TRUE, self = TRUE)
 #' sbm2 = simu.SBM(conn2_mat, can_vec, n, symm = TRUE, self = TRUE)
 #' data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
 #' data_mat1 = data_mat[,seq(1,ncol(data_mat),2)]
 #' data_mat2 = data_mat[,seq(2,ncol(data_mat),2)]
-#' M = 120
+#' M = 30
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(data_mat1))
 #' temp = WBS.network(data_mat1, data_mat2, 1, ncol(data_mat1), 
 #'                    intervals$Alpha, intervals$Beta, delta = 5)
@@ -207,7 +207,7 @@ WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0
 #' # connectivity matrix for the second segment
 #' conn2_mat = rho * matrix(c(0.6,0.5,0.6,0.5,0.6,1,0.6,1,0.6), nrow = 3) 
 #' set.seed(1)
-#' can_vec = sample(1:p, replace = F) # randomly assign nodes into groups
+#' can_vec = sample(1:p, replace = FALSE) # randomly assign nodes into groups
 #' sbm1 = simu.SBM(conn1_mat, can_vec, n, symm = TRUE, self = TRUE)
 #' sbm2 = simu.SBM(conn2_mat, can_vec, n, symm = TRUE, self = TRUE)
 #' data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
@@ -380,7 +380,7 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, rho, a
 #' # connectivity matrix for the second segment
 #' conn2_mat = rho * matrix(c(0.6,0.5,0.6,0.5,0.6,1,0.6,1,0.6), nrow = 3) 
 #' set.seed(1)
-#' can_vec = sample(1:p, replace = F) # randomly assign nodes into groups
+#' can_vec = sample(1:p, replace = FALSE) # randomly assign nodes into groups
 #' sbm1 = simu.SBM(conn1_mat, can_vec, n, symm = TRUE, self = TRUE)
 #' sbm2 = simu.SBM(conn2_mat, can_vec, n, symm = TRUE, self = TRUE)
 #' data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)

@@ -75,7 +75,7 @@ threshold.network.missing = function(s, t, rank, pi_lb, p, rho, pi_ub, alpha){
 #' train_obs_num = 200 # sample size for each segment
 #' conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) # connectivity matrix 
 #' set.seed(1)
-#' can_vec = sample(1:p, replace = F) # randomly assign nodes into groups
+#' can_vec = sample(1:p, replace = FALSE) # randomly assign nodes into groups
 #' sbm = simu.SBM(conn1_mat, can_vec, train_obs_num, symm = TRUE, self = TRUE)
 #' train_mat = sbm$obs_mat
 #' train_list = lapply(1:ncol(train_mat), function(t) lowertri2mat(train_mat[,t], p, diag = TRUE))
@@ -97,7 +97,7 @@ threshold.network.missing = function(s, t, rank, pi_lb, p, rho, pi_ub, alpha){
 #' threshold_len = 300
 #' temp = calibrate.online.network.missing(train_miss_list, train_eta_list, threshold_len, alpha_grid, 
 #'                    permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda, delta = 5)
-#' @seealso online.network.missing
+#' @seealso \code{online.network.missing} for detecting online change point
 calibrate.online.network.missing = function(train_miss_list, train_eta_list, threshold_len, alpha_grid, permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda = 2/3, delta = 5, ...){
   burnin_idx = ceiling(log2(2*delta))
   train_obs_num = length(train_miss_list)

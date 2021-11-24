@@ -63,7 +63,7 @@ block_num = 3 # number of groups for SBM
 train_obs_num = 200 # sample size for each segment
 conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) # connectivity matrix 
 set.seed(1)
-can_vec = sample(1:p, replace = F) # randomly assign nodes into groups
+can_vec = sample(1:p, replace = FALSE) # randomly assign nodes into groups
 sbm = simu.SBM(conn1_mat, can_vec, train_obs_num, symm = TRUE, self = TRUE)
 train_mat = sbm$obs_mat
 train_list = lapply(1:ncol(train_mat), function(t) lowertri2mat(train_mat[,t], p, diag = TRUE))
@@ -90,7 +90,7 @@ temp = calibrate.online.network.missing(train_miss_list, train_eta_list, thresho
 Dubey, P., Xu, H., & Yu, Y. (2021). Online network change point detection with missing values. arXiv preprint arXiv:2110.06450.
 }
 \seealso{
-online.network.missing
+\code{online.network.missing} for detecting online change point
 }
 \author{
 Haotian Xu

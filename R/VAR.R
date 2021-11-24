@@ -333,7 +333,7 @@ X.glasso.converter.VAR1 = function(X, eta, s_ceil){
 #' # find the indices of gamma.set and lambda.set which minimizes the test error
 #' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
-#' temp_zeta = local.refine.CV.VAR1(cpt_init, data, c(0.1, 0.5, 1, 2), delta_local = 10)
+#' temp_zeta = local.refine.CV.VAR1(cpt_init, data, c(0.1, 0.5, 1), delta_local = 10)
 #' temp_zeta$cpt_hat
 local.refine.CV.VAR1 = function(cpt_init, DATA, zeta_set, delta_local, ...){
   w = 0.9
@@ -375,7 +375,7 @@ glasso.error.test = function(s, e, Y.train, X.train, Y.test, X.test, delta.local
   for(ll in 1:len){
     estimate_temp[ll] = find.one.change.grouplasso.VAR1(s, e, Y.train, X.train, delta.local, zeta_group_set[ll])
     test_error_temp[ll] = sum(sapply(1:p, function(m)
-                              test.res.glasso(estimate_temp[ll] - s + 2 , Y.train[m,s:e], X.train[,s:e],
+                              test.res.glasso(p, estimate_temp[ll] - s + 2 , Y.train[m,s:e], X.train[,s:e],
                                               Y.test[m,s:e], X.test[,s:e], zeta_group_set[ll])))
   }
   return(zeta_group_set[which.min(test_error_temp)])
@@ -396,8 +396,7 @@ find.one.change.grouplasso.VAR1 = function(s, e, Y.train, X.train, delta.local, 
 }
 
 #' @noRd
-test.res.glasso = function(eta, y.train, X.train, y.test, X.test, zeta.group){
-  p = nrow(y.train)
+test.res.glasso = function(p, eta, y.train, X.train, y.test, X.test, zeta.group){
   group = rep(1:p, each=2)
   X.convert = X.glasso.converter.VAR1(X.train, eta, 1)
   X.test.convert = X.glasso.converter.VAR1(X.test, eta, 1)
