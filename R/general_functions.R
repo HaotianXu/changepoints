@@ -226,20 +226,6 @@ lowertri2mat = function(lowertri_vec, p, diag = FALSE){
 
 
 
-#' @title Generate coordinates of lower triangular matrix of dimension p.
-#' @param p   A \code{integer} scalar of dimensionality.
-#' @return    A \code{integer} (p*(p-1)/2)-dim vector representing the indices of the lower triangular entries (indices correspond to the vectorization by stacking columns).
-#' @export
-#' @author    Oscar Hernan Madrid Padilla
-#' @examples
-#' gen.lower.coordinate(5)
-#' @noRd
-gen.lower.coordinate=function(p){
-  mat=matrix(1:p^2, nrow = p)
-  return(mat[lower.tri(mat, diag = F)])  
-}
-
-
 
 #' @title Generate population covariance matrix with dimension p.
 #' @param p       A \code{integer} scalar of dimensionality.
@@ -294,46 +280,42 @@ gen.missing = function(pi_mat, symm = TRUE){
 
 
 
-#' @export
+#' @noRd
 lasso_standardized_seq <- function(Xtilde, Ytilde, lambda_seq, eps = 0.0001, ...){
   .Call('_changepoints_rcpp_lasso_standardized_seq', PACKAGE = 'changepoints', Xtilde, Ytilde, lambda_seq, eps)
 }
 
 
-#' @export
+#' @noRd
 lasso_standardized_obj <- function(Xtilde, Ytilde, beta, lambda){
   .Call('_changepoints_rcpp_lasso_standardized_obj', PACKAGE = 'changepoints', Xtilde, Ytilde, beta, lambda)
 }
   
 
-#' @export
+#' @noRd
 soft_threshold_scalar <- function(x, lambda){
   .Call('_changepoints_rcpp_soft_threshold_scalar', PACKAGE = 'changepoints', x, lambda)
 }
 
 
-#' @export
+#' @noRd
 lasso_seq <- function(X, Y, lambda_seq, eps = 0.0001, ...){
   .Call('_changepoints_rcpp_lasso_seq', PACKAGE = 'changepoints', X, Y, lambda_seq, eps)
 }
 
 
-#' @export
+#' @noRd
 lasso_standardized <- function(Xtilde, Ytilde, beta_start, lambda, eps = 0.0001){
   .Call('_changepoints_rcpp_lasso_standardized', PACKAGE = 'changepoints', Xtilde, Ytilde, beta_start, lambda, eps)
 }
 
-#' @export
+#' @noRd
 standardizeXY <- function(X, Y){
   .Call('_changepoints_rcpp_standardizeXY', PACKAGE = 'changepoints', X, Y)
 }
 
-#' @export
+#' @noRd
 rcpp_error_pred_seg_VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps = 0.0001){
   .Call('_changepoints_rcpp_error_pred_seg_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, s, e, lambda, delta, eps)
 }
 
-
-plot.BS <- function(BS_object){
-  
-}

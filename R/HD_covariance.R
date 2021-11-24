@@ -37,7 +37,9 @@ CUSUM.cov = function(X, s, e, t){
 #' A1 = gen.cov.mat(p, 1, "equal")
 #' A2 = gen.cov.mat(p, 2, "diagonal")
 #' A3 = gen.cov.mat(p, 3, "power")
-#' X = cbind(t(MASS::mvrnorm(100, mu = rep(0, p), A1)), t(MASS::mvrnorm(150, mu = rep(0, p), A2)), t(MASS::mvrnorm(200, mu = rep(0, p), A3)))
+#' X = cbind(t(MASS::mvrnorm(100, mu = rep(0, p), A1)), 
+#'           t(MASS::mvrnorm(150, mu = rep(0, p), A2)), 
+#'           t(MASS::mvrnorm(200, mu = rep(0, p), A3)))
 #' temp = BS.cov(X, 1, 450)
 #' threshold.BS(temp, 10)
 BS.cov = function(X, s, e, level = 0, ...){
@@ -108,7 +110,6 @@ PC.cov = function(X, Alpha, Beta){
 #' @param Beta      A \code{integer} vector of ending indices of random intervals.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param level     A parameter for tracking the level at which a change point is detected. Should be fixed as 0.
-#' @param ...      Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{S}{A vector of estimated change points (sorted in strictly increasing order)}
 #'  \item{Dval}{A vector of values of CUSUM statistic based on KS distance}
@@ -122,8 +123,12 @@ PC.cov = function(X, Alpha, Beta){
 #' A2 = gen.cov.mat(p, 3, "power")
 #' A3 = A1
 #' set.seed(1234)
-#' X = cbind(t(MASS::mvrnorm(50, mu = rep(0, p), A1)), t(MASS::mvrnorm(50, mu = rep(0, p), A2)), t(MASS::mvrnorm(50, mu = rep(0, p), A3)))
-#' X_prime = cbind(t(MASS::mvrnorm(50, mu = rep(0, p), A1)), t(MASS::mvrnorm(50, mu = rep(0, p), A2)), t(MASS::mvrnorm(50, mu = rep(0, p), A3)))
+#' X = cbind(t(MASS::mvrnorm(50, mu = rep(0, p), A1)), 
+#'           t(MASS::mvrnorm(50, mu = rep(0, p), A2)), 
+#'           t(MASS::mvrnorm(50, mu = rep(0, p), A3)))
+#' X_prime = cbind(t(MASS::mvrnorm(50, mu = rep(0, p), A1)), 
+#'                 t(MASS::mvrnorm(50, mu = rep(0, p), A2)), 
+#'                 t(MASS::mvrnorm(50, mu = rep(0, p), A3)))
 #' intervals = WBS.intervals(M = 120, lower = 1, upper = dim(X)[2])
 #' temp = WBSIP.cov(X, X_prime, 1, dim(X)[2], intervals$Alpha, intervals$Beta, delta = 5)
 #' tau = sqrt(p*log(ncol(X)))*1.5

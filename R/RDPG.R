@@ -5,7 +5,6 @@
 #' @param Alpha     A \code{integer} vector of starting indices of random intervals.
 #' @param Beta      A \code{integer} vector of ending indices of random intervals.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @param ...      Additional arguments.
 #' @return  A \code{numeric} vector of estimated change point locations.
 #' @export
 #' @author Oscar Hernan Madrid Padilla, Haotian Xu

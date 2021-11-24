@@ -15,6 +15,8 @@ CV.search.DP.VAR1(DATA, gamma_set, lambda_set, delta, eps = 0.001, ...)
 
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
 
+\item{eps}{A \code{numeric} scalar of precision level for convergence of lasso.}
+
 \item{...}{Additional arguments.}
 }
 \value{
@@ -46,7 +48,8 @@ gamma_set = c(0.1, 0.5, 1)
 lambda_set = c(0.1, 1, 3.2)
 temp = CV.search.DP.VAR1(data, gamma_set, lambda_set, delta = 5)
 temp$test_error # test error result
-min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
+# find the indices of gamma.set and lambda.set which minimizes the test error
+min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error)))
 cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 Hausdorff.dist(cpt_init, cpt_true)
 }

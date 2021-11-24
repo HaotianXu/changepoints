@@ -20,8 +20,6 @@ WBS.univar(y, s, e, Alpha, Beta, delta = 2, level = 0)
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
 
 \item{level}{Should be fixed as 0.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:

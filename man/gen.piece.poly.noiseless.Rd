@@ -27,7 +27,8 @@ init_coef_vec = c(-2, 2, 9)
 cpt_true = c(100, 200)
 n = 300
 kappa_mat = cbind(c(3, 9, -27), c(-3, 9, -27))
-plot.ts(gen.piece.poly.noiseless(init_coef_vec, cpt_true, kappa_mat, n), ylab = "Values of piecewise polynomials")
+plot.ts(gen.piece.poly.noiseless(init_coef_vec, cpt_true, kappa_mat, n), 
+        ylab = "Values of piecewise polynomials")
 }
 \references{
 Yu, Y., & Chatterjee, S. (2020). Localising change points in piecewise polynomials of general degrees. arXiv preprint arXiv:2007.09910.

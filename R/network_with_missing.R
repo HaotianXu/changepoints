@@ -85,16 +85,18 @@ threshold.network.missing = function(s, t, rank, pi_lb, p, rho, pi_ub, alpha){
 #' pi_lb_hat = quantile(Reduce("+", train_eta_list)/train_obs_num, 0.05) # estimator of pi_lb
 #' pi_ub_hat = quantile(Reduce("+", train_eta_list)/train_obs_num, 0.95) # estimator of pi_ub
 #' C_lambda = 2/3
-#' graphon_miss_impute = softImpute.network.missing(train_miss_list, train_eta_list, 
-#'    lambda.network.missing(1, length(train_miss_list), length(train_miss_list), 0.05, rho = 0.509, pi_ub = pi_ub_hat, p, C_lambda), 1)
-#' graphon_miss_hat = graphon_miss_impute$u %*% diag(as.numeric(graphon_miss_impute$d)) %*% t(graphon_miss_impute$v)
+#' lambda = lambda.network.missing(1, length(train_miss_list), length(train_miss_list), 0.05, 
+#'                                 rho = 0.509, pi_ub = pi_ub_hat, p, C_lambda)
+#' graphon_miss_impute = softImpute.network.missing(train_miss_list, train_eta_list, lambda, 1)
+#' graphon_miss_hat = graphon_miss_impute$u %*% diag(as.numeric(graphon_miss_impute$d)) %*% 
+#'                    t(graphon_miss_impute$v)
 #' rho_hat = quantile(graphon_miss_hat, 0.95)
 #' rank_hat = sum(graphon_miss_impute$d != 0)
 #' alpha_grid = c(0.05, 0.01)
 #' permu_num = 100
 #' threshold_len = 300
-#' temp = calibrate.online.network.missing(train_miss_list, 
-#'    train_eta_list, threshold_len, alpha_grid, permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda, delta = 5)
+#' temp = calibrate.online.network.missing(train_miss_list, train_eta_list, threshold_len, alpha_grid, 
+#'                    permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda, delta = 5)
 #' @seealso online.network.missing
 calibrate.online.network.missing = function(train_miss_list, train_eta_list, threshold_len, alpha_grid, permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda = 2/3, delta = 5, ...){
   burnin_idx = ceiling(log2(2*delta))

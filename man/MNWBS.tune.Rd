@@ -16,6 +16,8 @@ MNWBS.tune(Y, W, Alpha, Beta, h, delta)
 \item{Beta}{A \code{integer} vector of ending indices of random intervals.}
 
 \item{h}{A \code{numeric} scalar of bandwith parameter.}
+
+\item{delta}{A \code{integer} scalar of minimum spacing.}
 }
 \value{
 A vector of estimated change points

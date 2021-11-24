@@ -40,8 +40,10 @@ p = 100 # number of nodes
 rho = 0.5 # sparsity parameter
 block_num = 3 # number of groups for SBM
 n = 150 # sample size for each segment
-conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) # connectivity matrix for the first and the third segments
-conn2_mat = rho * matrix(c(0.6,0.5,0.6,0.5,0.6,1,0.6,1,0.6), nrow = 3) # connectivity matrix for the second segment
+# connectivity matrix for the first and the third segments
+conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) 
+# connectivity matrix for the second segment
+conn2_mat = rho * matrix(c(0.6,0.5,0.6,0.5,0.6,1,0.6,1,0.6), nrow = 3) 
 set.seed(1)
 can_vec = sample(1:p, replace = F) # randomly assign nodes into groups
 sbm1 = simu.SBM(conn1_mat, can_vec, n, symm = TRUE, self = TRUE)
@@ -51,11 +53,13 @@ data_mat1 = data_mat[,seq(1,ncol(data_mat),2)]
 data_mat2 = data_mat[,seq(2,ncol(data_mat),2)]
 M = 120
 intervals = WBS.intervals(M = M, lower = 1, upper = ncol(data_mat1))
-temp = WBS.network(data_mat1, data_mat2, 1, ncol(data_mat1), intervals$Alpha, intervals$Beta, delta = 5)
+temp = WBS.network(data_mat1, data_mat2, 1, ncol(data_mat1), intervals$Alpha, 
+                   intervals$Beta, delta = 5)
 rho_hat = quantile(rowMeans(data_mat), 0.95)
 tau = p*rho_hat*(log(n))^2/20 # default threshold given in the paper
 cpt_init = unlist(threshold.BS(temp, tau)$cpt_hat[,1])
-cpt_refined = local.refine.network(cpt_init, data_mat1, data_mat2, self = TRUE, tau2 = p*rho_hat/3, tau3 = Inf)
+cpt_refined = local.refine.network(cpt_init, data_mat1, data_mat2, self = TRUE, 
+                                   tau2 = p*rho_hat/3, tau3 = Inf)
 cpt_WBS = 2*cpt_init
 cpt_refined = 2*cpt_refined
 }

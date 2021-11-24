@@ -32,8 +32,10 @@ p = 100 # number of nodes
 rho = 0.5 # sparsity parameter
 block_num = 3 # number of groups for SBM
 n = 150 # sample size for each segment
-conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) # connectivity matrix for the first and the third segments
-conn2_mat = rho * matrix(c(0.6,0.5,0.6,0.5,0.6,1,0.6,1,0.6), nrow = 3) # connectivity matrix for the second segment
+# connectivity matrix for the first and the third segments
+conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) 
+# connectivity matrix for the second segment
+conn2_mat = rho * matrix(c(0.6,0.5,0.6,0.5,0.6,1,0.6,1,0.6), nrow = 3) 
 set.seed(1)
 can_vec = sample(1:p, replace = F) # randomly assign nodes into groups
 sbm1 = simu.SBM(conn1_mat, can_vec, n, symm = TRUE, self = TRUE)

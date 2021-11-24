@@ -1,7 +1,7 @@
 #' @title Simulate a sparse regression model with change points in coefficients.
 #' @description      Simulate a sparse regression model with change points in coefficients under the setting of Simulations 4.2 in Rinaldo et al. (2021).
 #' @param d0         A \code{numeric} scalar of number of nonzero coefficients.
-#' @param cpt_ture   An \code{integer} vector of true change points (sorted in strictly increasing order).
+#' @param cpt_true   An \code{integer} vector of true change points (sorted in strictly increasing order).
 #' @param p          An \code{integer} scalar of dimensionality.
 #' @param n          An \code{integer} scalar of sample size.
 #' @param sigma      A \code{numeric} scalar of error standard deviation.
@@ -89,10 +89,10 @@ DP.regression <- function(y, X, gamma, lambda, delta, eps = 0.001, ...) {
 
 
 #' @title Internal Function: Prediction error in squared \eqn{l_2} norm for the lasso.
-#' @param s         An \code{integer} scalar of starting index.
-#' @param e         An \code{integer} scalar of ending index.
 #' @param y         A \code{numeric} vector of response variable.
 #' @param X         A \code{numeric} matrix of covariates with horizontal axis being time.
+#' @param s         An \code{integer} scalar of starting index.
+#' @param e         An \code{integer} scalar of ending index.
 #' @param lambda    A \code{numeric} scalar of tuning parameter for lasso penalty.
 #' @param delta     A \code{integer} scalar of minimum spacing.
 #' @param eps       A \code{numeric} scalar of precision level for convergence of lasso.
@@ -100,7 +100,6 @@ DP.regression <- function(y, X, gamma, lambda, delta, eps = 0.001, ...) {
 #'  \item{MSE}{A \code{numeric} scalar of prediction error in \eqn{l_2} norm}
 #'  \item{beta_hat}{A p-dim vector of estimated coefficients}
 #' @noRd
-#' @export
 error.pred.seg.regression <- function(y, X, s, e, lambda, delta, eps = 0.001) {
   .Call('_changepoints_rcpp_error_pred_seg_regression', PACKAGE = 'changepoints', y, X, s, e, lambda, delta, eps)
 }
@@ -204,7 +203,8 @@ error.test.regression = function(y, X, lower, upper, beta.hat){
 #' lambda_set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5)
 #' temp = CV.search.DP.regression(y = data$y, X = data$X, gamma_set, lambda_set, delta = 2)
 #' temp$test_error # test error result
-#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma_set and lambda_set which minimizes the test error
+#' # find the indices of gamma_set and lambda_set which minimizes the test error
+#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
 #' gamma_set[min_idx[1]]
 #' lambda_set[min_idx[2]]
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
@@ -244,7 +244,8 @@ CV.search.DP.regression = function(y, X, gamma_set, lambda_set, delta, eps = 0.0
 #' lambda_set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5)
 #' temp = CV.search.DP.regression(y = data$y, X = data$X, gamma_set, lambda_set, delta = 2)
 #' temp$test_error # test error result
-#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma_set and lambda_set which minimizes the test error
+#' # find the indices of gamma_set and lambda_set which minimizes the test error
+#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error)))
 #' gamma_set[min_idx[1]]
 #' lambda_set[min_idx[2]]
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
@@ -425,12 +426,14 @@ CV.search.DP.LR.gl = function(y, X, gamma.set, lambda.set, zeta, delta, eps = 0.
 #' lambda_set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5)
 #' temp = CV.search.DP.regression(y = data$y, X = data$X, gamma_set, lambda_set, delta = 2)
 #' temp$test_error # test error result
-#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma_set and lambda_set which minimizes the test error
+#' # find the indices of gamma_set and lambda_set which minimizes the test error
+#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
 #' gamma_set[min_idx[1]]
 #' lambda_set[min_idx[2]]
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 #' zeta_set = c(0.01, 0.05, 0.1, 0.5, 1, 5)
-#' temp_zeta = CV.search.DP.LR.regression(data$y, data$X, gamma_set[min_idx[1]], lambda_set[min_idx[2]], zeta_set, delta = 2, eps = 0.001)
+#' temp_zeta = CV.search.DP.LR.regression(data$y, data$X, gamma_set[min_idx[1]],
+#'                   lambda_set[min_idx[2]], zeta_set, delta = 2, eps = 0.001)
 #' min_zeta_idx = which.min(unlist(temp_zeta$test_error))
 #' cpt_LR = local.refine.regression(cpt_init, data$y, X = data$X, zeta = zeta_set[min_zeta_idx])
 #' Hausdorff.dist(cpt_init, cpt_true)

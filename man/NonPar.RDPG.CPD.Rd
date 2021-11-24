@@ -16,8 +16,6 @@ NonPar.RDPG.CPD(data_mat, d, Alpha, Beta, delta)
 \item{Beta}{A \code{integer} vector of ending indices of random intervals.}
 
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{numeric} vector of estimated change point locations.

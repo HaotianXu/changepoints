@@ -201,7 +201,6 @@ BS.univar = function(y, s, e, delta = 2, level = 0, ...){
 #' @param Beta      A \code{integer} vector of ending indices of random intervals.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param level     Should be fixed as 0.
-#' @param ...      Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{S}{A vector of estimated change point locations (sorted in strictly increasing order)}
 #'  \item{Dval}{A vector of values of CUSUM statistic}
@@ -285,7 +284,6 @@ WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){
 #' @param Alpha     A \code{integer} vector of starting indices of random intervals.
 #' @param Beta      A \code{integer} vector of ending indices of random intervals.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @param ...      Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{cpt}{A vector of estimated change point locations (sorted in strictly increasing order)}
 #'  \item{tau}{A scalar of selected threshold tau based on sSIC}

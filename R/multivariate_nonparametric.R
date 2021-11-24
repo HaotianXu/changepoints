@@ -29,6 +29,7 @@ CUSUM.KS.multivariate = function(Y, W, s, e, t, h){
 #' @param Alpha     A \code{integer} vector of starting indices of random intervals.
 #' @param Beta      A \code{integer} vector of ending indices of random intervals.
 #' @param h         A \code{numeric} scalar of bandwidth parameter.
+#' @param delta     A \code{integer} scalar of minimum spacing.
 #' @param level     Should be fixed as 0.
 #' @param ...       Additional arguments.
 #' @return     A \code{list} with the following structure:
@@ -117,6 +118,7 @@ MNWBS = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...){
 #' @param Alpha     A \code{integer} vector of starting indices of random intervals.
 #' @param Beta      A \code{integer} vector of ending indices of random intervals.
 #' @param h         A \code{numeric} scalar of bandwith parameter.
+#' @param delta     A \code{integer} scalar of minimum spacing.
 #' @return A vector of estimated change points
 #' @author Oscar Hernan Madrid Padilla & Haotian Xu
 #' @export

@@ -21,6 +21,8 @@ MNWBS(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...)
 
 \item{h}{A \code{numeric} scalar of bandwidth parameter.}
 
+\item{delta}{A \code{integer} scalar of minimum spacing.}
+
 \item{level}{Should be fixed as 0.}
 
 \item{...}{Additional arguments.}

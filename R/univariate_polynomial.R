@@ -77,7 +77,8 @@ gen.piece.poly = function(init_coef_vec, cpt_vec, kappa_mat, n, sigma){
 #' cpt_true = c(100, 200)
 #' n = 300
 #' kappa_mat = cbind(c(3, 9, -27), c(-3, 9, -27))
-#' plot.ts(gen.piece.poly.noiseless(init_coef_vec, cpt_true, kappa_mat, n), ylab = "Values of piecewise polynomials")
+#' plot.ts(gen.piece.poly.noiseless(init_coef_vec, cpt_true, kappa_mat, n), 
+#'         ylab = "Values of piecewise polynomials")
 gen.piece.poly.noiseless = function(init_coef_vec, cpt_vec, kappa_mat, n){
   r = length(init_coef_vec) - 1
   cpt_ext = c(cpt_vec, n)

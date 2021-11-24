@@ -39,7 +39,8 @@ gamma_set = c(0.1, 0.5, 1)
 lambda_set = c(0.1, 1, 3.2)
 temp = CV.search.DP.VAR1(data, gamma_set, lambda_set, delta = 5)
 temp$test_error # test error result
-min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
+# find the indices of gamma.set and lambda.set which minimizes the test error
+min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
 cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 local.refine.VAR1(cpt_init, data, zeta = 0.5)
 }

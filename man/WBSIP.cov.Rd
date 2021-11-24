@@ -22,8 +22,6 @@ WBSIP.cov(X, X_prime, s, e, Alpha, Beta, delta, level = 0)
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
 
 \item{level}{A parameter for tracking the level at which a change point is detected. Should be fixed as 0.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -41,8 +39,12 @@ A1 = gen.cov.mat(p, 1, "equal")
 A2 = gen.cov.mat(p, 3, "power")
 A3 = A1
 set.seed(1234)
-X = cbind(t(MASS::mvrnorm(50, mu = rep(0, p), A1)), t(MASS::mvrnorm(50, mu = rep(0, p), A2)), t(MASS::mvrnorm(50, mu = rep(0, p), A3)))
-X_prime = cbind(t(MASS::mvrnorm(50, mu = rep(0, p), A1)), t(MASS::mvrnorm(50, mu = rep(0, p), A2)), t(MASS::mvrnorm(50, mu = rep(0, p), A3)))
+X = cbind(t(MASS::mvrnorm(50, mu = rep(0, p), A1)), 
+          t(MASS::mvrnorm(50, mu = rep(0, p), A2)), 
+          t(MASS::mvrnorm(50, mu = rep(0, p), A3)))
+X_prime = cbind(t(MASS::mvrnorm(50, mu = rep(0, p), A1)), 
+                t(MASS::mvrnorm(50, mu = rep(0, p), A2)), 
+                t(MASS::mvrnorm(50, mu = rep(0, p), A3)))
 intervals = WBS.intervals(M = 120, lower = 1, upper = dim(X)[2])
 temp = WBSIP.cov(X, X_prime, 1, dim(X)[2], intervals$Alpha, intervals$Beta, delta = 5)
 tau = sqrt(p*log(ncol(X)))*1.5

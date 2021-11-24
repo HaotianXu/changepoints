@@ -53,12 +53,14 @@ gamma_set = c(0.01, 0.05, 0.1, 0.5, 1)
 lambda_set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5)
 temp = CV.search.DP.regression(y = data$y, X = data$X, gamma_set, lambda_set, delta = 2)
 temp$test_error # test error result
-min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma_set and lambda_set which minimizes the test error
+# find the indices of gamma_set and lambda_set which minimizes the test error
+min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
 gamma_set[min_idx[1]]
 lambda_set[min_idx[2]]
 cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 zeta_set = c(0.01, 0.05, 0.1, 0.5, 1, 5)
-temp_zeta = CV.search.DP.LR.regression(data$y, data$X, gamma_set[min_idx[1]], lambda_set[min_idx[2]], zeta_set, delta = 2, eps = 0.001)
+temp_zeta = CV.search.DP.LR.regression(data$y, data$X, gamma_set[min_idx[1]],
+                  lambda_set[min_idx[2]], zeta_set, delta = 2, eps = 0.001)
 min_zeta_idx = which.min(unlist(temp_zeta$test_error))
 cpt_LR = local.refine.regression(cpt_init, data$y, X = data$X, zeta = zeta_set[min_zeta_idx])
 Hausdorff.dist(cpt_init, cpt_true)

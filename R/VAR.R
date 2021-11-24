@@ -152,6 +152,7 @@ error.test.VAR1 = function(X_futu, X_curr, lower, upper, tran_hat){
 #' @param gamma_set     A \code{numeric} vector of candidate tuning parameters associated with the \eqn{l_0} penalty.
 #' @param lambda_set    A \code{numeric} vector of candidate tuning parameters for lasso penalty.
 #' @param delta         A strictly \code{integer} scalar of minimum spacing.
+#' @param eps           A \code{numeric} scalar of precision level for convergence of lasso.
 #' @param ...           Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{cpt_hat}{A list of vector of estimated change points}
@@ -179,7 +180,8 @@ error.test.VAR1 = function(X_futu, X_curr, lower, upper, tran_hat){
 #' lambda_set = c(0.1, 1, 3.2)
 #' temp = CV.search.DP.VAR1(data, gamma_set, lambda_set, delta = 5)
 #' temp$test_error # test error result
-#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
+#' # find the indices of gamma.set and lambda.set which minimizes the test error
+#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error)))
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 #' Hausdorff.dist(cpt_init, cpt_true)
 CV.search.DP.VAR1 = function(DATA, gamma_set, lambda_set, delta, eps = 0.001, ...){
@@ -223,7 +225,8 @@ CV.search.DP.VAR1 = function(DATA, gamma_set, lambda_set, delta, eps = 0.001, ..
 #' lambda_set = c(0.1, 1, 3.2)
 #' temp = CV.search.DP.VAR1(data, gamma_set, lambda_set, delta = 5)
 #' temp$test_error # test error result
-#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
+#' # find the indices of gamma.set and lambda.set which minimizes the test error
+#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 #' local.refine.VAR1(cpt_init, data, zeta = 0.5)
 local.refine.VAR1 = function(cpt_init, DATA, zeta, ...){
@@ -327,7 +330,8 @@ X.glasso.converter.VAR1 = function(X, eta, s_ceil){
 #' lambda_set = c(0.1, 1, 3.2)
 #' temp = CV.search.DP.VAR1(data, gamma_set, lambda_set, delta = 5)
 #' temp$test_error # test error result
-#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) # find the indices of gamma.set and lambda.set which minimizes the test error
+#' # find the indices of gamma.set and lambda.set which minimizes the test error
+#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 #' temp_zeta = local.refine.CV.VAR1(cpt_init, data, c(0.1, 0.5, 1, 2), delta_local = 10)
 #' temp_zeta$cpt_hat
@@ -393,6 +397,7 @@ find.one.change.grouplasso.VAR1 = function(s, e, Y.train, X.train, delta.local, 
 
 #' @noRd
 test.res.glasso = function(eta, y.train, X.train, y.test, X.test, zeta.group){
+  p = nrow(y.train)
   group = rep(1:p, each=2)
   X.convert = X.glasso.converter.VAR1(X.train, eta, 1)
   X.test.convert = X.glasso.converter.VAR1(X.test, eta, 1)

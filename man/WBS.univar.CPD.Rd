@@ -14,8 +14,6 @@ WBS.univar.CPD(y, Alpha, Beta, delta)
 \item{Beta}{A \code{integer} vector of ending indices of random intervals.}
 
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:

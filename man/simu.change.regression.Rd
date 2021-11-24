@@ -9,6 +9,8 @@ simu.change.regression(d0, cpt_true, p, n, sigma, kappa, ...)
 \arguments{
 \item{d0}{A \code{numeric} scalar of number of nonzero coefficients.}
 
+\item{cpt_true}{An \code{integer} vector of true change points (sorted in strictly increasing order).}
+
 \item{p}{An \code{integer} scalar of dimensionality.}
 
 \item{n}{An \code{integer} scalar of sample size.}
@@ -18,8 +20,6 @@ simu.change.regression(d0, cpt_true, p, n, sigma, kappa, ...)
 \item{kappa}{A \code{numeric} scalar of minimum jump size of coefficient vector in terms of \eqn{l_2} norm.}
 
 \item{...}{Additional arguments.}
-
-\item{cpt_ture}{An \code{integer} vector of true change points (sorted in strictly increasing order).}
 }
 \value{
 A \code{list} with the following structure:
