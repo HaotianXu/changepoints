@@ -26,7 +26,7 @@ A p-by-n matrix.
 Simulate data of size n and dimension p from a VAR1 model (without change point) with Gaussian i.i.d. error terms.
 }
 \examples{
-p = 20
+p = 10
 sigma = 1
 n = 100
 A = matrix(rnorm(p*p), nrow = p)*0.1  # transition matrix

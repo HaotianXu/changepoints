@@ -45,10 +45,11 @@ A \code{list} with the following structure:
 Perform online change point detection for network data by controlling the false alarm rate at level alpha or controlling the average run length gamma. The default choice of the tuning parameters tau1, tau2 and tau3 are used (see Section 4.1 of the reference).
 }
 \examples{
-p = 100 # number of nodes
+set.seed(123)
+p = 15 # number of nodes
 rho = 0.5 # sparsity parameter
 block_num = 3 # number of groups for SBM
-n = 150 # sample size for each segment
+n = 100 # sample size for each segment
 # connectivity matrix for the first and the third segments
 conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) 
 # connectivity matrix for the second segment
@@ -60,13 +61,10 @@ sbm2 = simu.SBM(conn2_mat, can_vec, n, symm = TRUE, self = TRUE)
 data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
 data_mat1 = data_mat[,seq(1,ncol(data_mat),2)]
 data_mat2 = data_mat[,seq(2,ncol(data_mat),2)]
-train_mat = simu.SBM(conn1_mat, can_vec, n = 200, symm = TRUE, self = TRUE)$obs_mat
+train_mat = simu.SBM(conn1_mat, can_vec, n = 150, symm = TRUE, self = TRUE)$obs_mat
 temp = online.network(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat, alpha = 0.05, 
-                      gamma = NULL, permu_num = 100)
+                      gamma = NULL, permu_num = 50)
 cpt_hat = 2 * temp$cpt
-temp2 = online.network(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat, alpha = NULL, 
-                       gamma = 200, permu_num = 100)
-cpt_hat2 = 2 * temp2$cpt
 }
 \references{
 Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.

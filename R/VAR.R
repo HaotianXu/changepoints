@@ -10,7 +10,7 @@
 #' @export
 #' @author  Daren Wang
 #' @examples
-#' p = 20
+#' p = 10
 #' sigma = 1
 #' n = 100
 #' A = matrix(rnorm(p*p), nrow = p)*0.1  # transition matrix
@@ -62,7 +62,7 @@ error.pred.seg.VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps) {
 #' @export
 #' @author Daren Wang, Haotian Xu
 #' @examples
-#' p = 20
+#' p = 10
 #' sigma = 1
 #' n = 20
 #' v1 = 2*(seq(1,p,1)%%2) - 1
@@ -163,7 +163,7 @@ error.test.VAR1 = function(X_futu, X_curr, lower, upper, tran_hat){
 #' @author   Daren Wang & Haotian Xu
 #' @examples
 #' set.seed(123)
-#' p = 20
+#' p = 10
 #' sigma = 1
 #' n = 20
 #' v1 = 2*(seq(1,p,1)%%2) - 1
@@ -209,7 +209,7 @@ CV.search.DP.VAR1 = function(DATA, gamma_set, lambda_set, delta, eps = 0.001, ..
 #' @author  Daren Wang & Haotian Xu
 #' @examples
 #' set.seed(123)
-#' p = 20
+#' p = 10
 #' sigma = 1
 #' n = 20
 #' v1 = 2*(seq(1,p,1)%%2) - 1
@@ -314,7 +314,7 @@ X.glasso.converter.VAR1 = function(X, eta, s_ceil){
 #' @author  Daren Wang & Haotian Xu
 #' @examples
 #' set.seed(123)
-#' p = 20
+#' p = 10
 #' sigma = 1
 #' n = 20
 #' v1 = 2*(seq(1,p,1)%%2) - 1
@@ -333,7 +333,7 @@ X.glasso.converter.VAR1 = function(X, eta, s_ceil){
 #' # find the indices of gamma.set and lambda.set which minimizes the test error
 #' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
-#' temp_zeta = local.refine.CV.VAR1(cpt_init, data, c(0.1, 0.5, 1), delta_local = 10)
+#' temp_zeta = local.refine.CV.VAR1(cpt_init, data, c(0.1, 1), delta_local = 10)
 #' temp_zeta$cpt_hat
 local.refine.CV.VAR1 = function(cpt_init, DATA, zeta_set, delta_local, ...){
   w = 0.9

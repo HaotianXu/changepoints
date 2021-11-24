@@ -26,10 +26,10 @@ Perform Change point detection for dependent dynamic random dot product graph mo
 \examples{
 ### generate data 
 d = 10
-n = 100
-M = 120
+n = 30  # number of nodes
+M = 10
 delta = 5
-obs_num = 150
+obs_num = 100 # number of observations
 rho_a = 0.9
 v = c(floor(obs_num/3)+1, 2*floor(obs_num/3)+1)
 data_mat = matrix(0, n^2, obs_num)
@@ -85,7 +85,6 @@ for(t in 1:obs_num){
 }
 intervals = WBS.intervals(M = M, lower = 1, upper = obs_num)
 cpt_hat = NonPar.RDPG.CPD(data_mat, d, Alpha = intervals$Alpha, Beta = intervals$Beta, delta)
-
 }
 \references{
 Padilla, O. H. M., Yu, Y., & Priebe, C. E. (2019). Change point localization in dependent dynamic nonparametric random dot product graphs. arXiv preprint arXiv:1911.07494.

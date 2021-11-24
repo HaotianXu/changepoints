@@ -31,7 +31,7 @@ Perform grid search based on cross-validation of dynamic programming for VAR cha
 }
 \examples{
 set.seed(123)
-p = 20
+p = 10
 sigma = 1
 n = 20
 v1 = 2*(seq(1,p,1)\%\%2) - 1

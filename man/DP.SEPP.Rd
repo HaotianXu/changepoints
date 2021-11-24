@@ -30,9 +30,9 @@ A vector of the best partition.
 Perform dynamic programming for SEPP change points detection.
 }
 \examples{
-p = 20 # dimension
-n = 50
-s = 10 # s is sparsity
+p = 10 # dimension
+n = 20
+s = 5 # s is sparsity
 factor = 0.2 # large factor gives exact recovery
 threshold = 4 # thresholding makes the process stable
 intercept = 1/2 # intercept of the model. Assume to be known as in the existing literature

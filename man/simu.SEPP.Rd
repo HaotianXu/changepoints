@@ -26,9 +26,9 @@ A p-by-n matrix.
 Simulate a (stable) SEPP model (without change point).
 }
 \examples{
-p = 50 # dimension
+p = 10 # dimension
 n = 50
-s = 30 # s is sparsity
+s = 5 # sparsity
 factor = 0.12 # large factor gives exact recovery
 threshold = 4 # thresholding makes the process stable
 intercept = 1/2 # intercept of the model. Assume to be known as in the existing literature

@@ -26,9 +26,9 @@ A vector of estimated change points
 A function to compute change points based on the multivariate nonparametic method.
 }
 \examples{
-n = 200
+n = 100
 v = c(floor(n/3), 2*floor(n/3)) # location of change points
-p = 10
+p = 5
 Y = matrix(0, p, n) # matrix for data
 mu0 = rep(0, p) # mean of the data
 mu1 = rep(0, p)
@@ -44,7 +44,7 @@ for(t in 1:n){
      Y[,t] = MASS::mvrnorm(n = 1, mu1, Sigma1)
   }
 }## close for generate data
-M = 25
+M = 10
 intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y)) #Random intervals
 K_max = 30
 h = 5*(K_max*log(n)/n)^{1/p} # bandwith

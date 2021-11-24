@@ -38,7 +38,7 @@ Perform wild binary segmentation for univariate nonparametric change points dete
 \examples{
 Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))
 N = rep(1, 300)
-M = 120
+M = 20
 intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y))
 temp = NWBS(Y, 1, 300, intervals$Alpha, intervals$Beta, N, 5)
 plot.ts(t(Y))

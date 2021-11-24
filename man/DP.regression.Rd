@@ -29,9 +29,9 @@ Perform dynamic programming algorithm for regression change points detection.
 }
 \examples{
 d0 = 10
-p = 30
+p = 20
 n = 100
-cpt_true = c(10, 30, 40, 70, 90)
+cpt_true = c(30, 70)
 data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 temp = DP.regression(y = data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
 cpt_hat = part2local(temp$partition)

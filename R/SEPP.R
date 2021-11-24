@@ -11,9 +11,9 @@
 #' @author  Daren Wang & Haotian Xu
 #' @references Wang, D., Yu, Y., & Willett, R. (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. arXiv preprint arXiv:2006.03572.
 #' @examples
-#' p = 50 # dimension
+#' p = 10 # dimension
 #' n = 50
-#' s = 30 # s is sparsity
+#' s = 5 # sparsity
 #' factor = 0.12 # large factor gives exact recovery
 #' threshold = 4 # thresholding makes the process stable
 #' intercept = 1/2 # intercept of the model. Assume to be known as in the existing literature
@@ -75,9 +75,9 @@ simu.SEPP = function(intercept, n, A, threshold, vzero = NULL, ...){
 #' @author Daren Wang & Haotian Xu
 #' @references Wang, D., Yu, Y., & Willett, R. (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. arXiv preprint arXiv:2006.03572.
 #' @examples
-#' p = 20 # dimension
-#' n = 50
-#' s = 10 # s is sparsity
+#' p = 10 # dimension
+#' n = 20
+#' s = 5 # s is sparsity
 #' factor = 0.2 # large factor gives exact recovery
 #' threshold = 4 # thresholding makes the process stable
 #' intercept = 1/2 # intercept of the model. Assume to be known as in the existing literature

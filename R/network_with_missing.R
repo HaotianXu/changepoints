@@ -69,10 +69,10 @@ threshold.network.missing = function(s, t, rank, pi_lb, p, rho, pi_ub, alpha){
 #' @author  Haotian Xu
 #' @references Dubey, P., Xu, H., & Yu, Y. (2021). Online network change point detection with missing values. arXiv preprint arXiv:2110.06450.
 #' @examples
-#' p = 12 # number of nodes
+#' p = 6 # number of nodes
 #' rho = 0.5 # sparsity parameter
 #' block_num = 3 # number of groups for SBM
-#' train_obs_num = 200 # sample size for each segment
+#' train_obs_num = 150 # sample size for each segment
 #' conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) # connectivity matrix 
 #' set.seed(1)
 #' can_vec = sample(1:p, replace = FALSE) # randomly assign nodes into groups
@@ -93,8 +93,8 @@ threshold.network.missing = function(s, t, rank, pi_lb, p, rho, pi_ub, alpha){
 #' rho_hat = quantile(graphon_miss_hat, 0.95)
 #' rank_hat = sum(graphon_miss_impute$d != 0)
 #' alpha_grid = c(0.05, 0.01)
-#' permu_num = 100
-#' threshold_len = 300
+#' permu_num = 20
+#' threshold_len = 100
 #' temp = calibrate.online.network.missing(train_miss_list, train_eta_list, threshold_len, alpha_grid, 
 #'                    permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda, delta = 5)
 #' @seealso \code{online.network.missing} for detecting online change point
@@ -199,7 +199,7 @@ calibrate.online.network.missing = function(train_miss_list, train_eta_list, thr
 #' @param C_lambda              A \code{numeric} scalar of an absolute constant, which is set to be 2/3 by default.
 #' @param delta                 An \code{integer} scalar of minimum spacing.
 #' @export
-#' @seealso calibrate.online.network.missing
+#' @seealso \code{calibrate.online.network.missing}
 online.network.missing = function(data_incomplete_list, eta_list, alpha_grid, thresholds_array, rho_hat, pi_ub_hat, C_lambda = 2/3, delta = 5){
   burnin_idx = ceiling(log2(2*delta))
   cpt_hat = rep(NA, length(alpha_grid))

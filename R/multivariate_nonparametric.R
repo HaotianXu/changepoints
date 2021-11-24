@@ -40,9 +40,9 @@ CUSUM.KS.multivariate = function(Y, W, s, e, t, h){
 #' @export
 #' @author Oscar Hernan Madrid Padilla & Haotian Xu
 #' @examples
-#' n = 200
+#' n = 100
 #' v = c(floor(n/3), 2*floor(n/3)) # location of change points
-#' p = 10
+#' p = 5
 #' Y = matrix(0, p, n) # matrix for data
 #' mu0 = rep(0, p) # mean of the data
 #' mu1 = rep(0, p)
@@ -58,7 +58,7 @@ CUSUM.KS.multivariate = function(Y, W, s, e, t, h){
 #'      Y[,t] = MASS::mvrnorm(n = 1, mu1, Sigma1)
 #'   }
 #' }## close for generate data
-#' M = 25
+#' M = 10
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y)) #Random intervals
 #' K_max = 30
 #' h = 5*(K_max*log(n)/n)^{1/p} # bandwith
@@ -123,9 +123,9 @@ MNWBS = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...){
 #' @author Oscar Hernan Madrid Padilla & Haotian Xu
 #' @export
 #' @examples 
-#' n = 200
+#' n = 100
 #' v = c(floor(n/3), 2*floor(n/3)) # location of change points
-#' p = 10
+#' p = 5
 #' Y = matrix(0, p, n) # matrix for data
 #' mu0 = rep(0, p) # mean of the data
 #' mu1 = rep(0, p)
@@ -141,7 +141,7 @@ MNWBS = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...){
 #'      Y[,t] = MASS::mvrnorm(n = 1, mu1, Sigma1)
 #'   }
 #' }## close for generate data
-#' M = 25
+#' M = 10
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y)) #Random intervals
 #' K_max = 30
 #' h = 5*(K_max*log(n)/n)^{1/p} # bandwith

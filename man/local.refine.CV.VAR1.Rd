@@ -27,7 +27,7 @@ Perform local refinement for VAR1 change points detection.
 }
 \examples{
 set.seed(123)
-p = 20
+p = 10
 sigma = 1
 n = 20
 v1 = 2*(seq(1,p,1)\%\%2) - 1
@@ -46,7 +46,7 @@ temp$test_error # test error result
 # find the indices of gamma.set and lambda.set which minimizes the test error
 min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
 cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
-temp_zeta = local.refine.CV.VAR1(cpt_init, data, c(0.1, 0.5, 1), delta_local = 10)
+temp_zeta = local.refine.CV.VAR1(cpt_init, data, c(0.1, 1), delta_local = 10)
 temp_zeta$cpt_hat
 }
 \author{

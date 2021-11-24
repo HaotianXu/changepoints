@@ -57,10 +57,10 @@ A \code{list} with the following structure:
 Calibrate step for online change point detection for network data by controlling the false alarm rate at level alpha.
 }
 \examples{
-p = 12 # number of nodes
+p = 6 # number of nodes
 rho = 0.5 # sparsity parameter
 block_num = 3 # number of groups for SBM
-train_obs_num = 200 # sample size for each segment
+train_obs_num = 150 # sample size for each segment
 conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) # connectivity matrix 
 set.seed(1)
 can_vec = sample(1:p, replace = FALSE) # randomly assign nodes into groups
@@ -81,8 +81,8 @@ graphon_miss_hat = graphon_miss_impute$u \%*\% diag(as.numeric(graphon_miss_impu
 rho_hat = quantile(graphon_miss_hat, 0.95)
 rank_hat = sum(graphon_miss_impute$d != 0)
 alpha_grid = c(0.05, 0.01)
-permu_num = 100
-threshold_len = 300
+permu_num = 20
+threshold_len = 100
 temp = calibrate.online.network.missing(train_miss_list, train_eta_list, threshold_len, alpha_grid, 
                    permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda, delta = 5)
 }

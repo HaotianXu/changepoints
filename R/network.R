@@ -12,10 +12,10 @@
 #' @export
 #' @author Daren Wang & Haotian Xu
 #' @examples
-#' p = 100 # number of nodes
+#' p = 15 # number of nodes
 #' rho = 0.5 # sparsity parameter
 #' block_num = 3 # number of groups for SBM
-#' n = 150 # sample size for each segment
+#' n = 100 # sample size for each segment
 #' # connectivity matrix for the first and the third segments
 #' conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) 
 #' # connectivity matrix for the second segment
@@ -110,10 +110,10 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 #' @author  Daren Wang & Haotian Xu
 #' @references Wang D, Yu Y, Rinaldo A. Optimal change point detection and localization in sparse dynamic networks. The Annals of Statistics. 2021 Feb;49(1):203-32.
 #' @examples
-#' p = 100 # number of nodes
+#' p = 15 # number of nodes
 #' rho = 0.5 # sparsity parameter
 #' block_num = 3 # number of groups for SBM
-#' n = 150 # sample size for each segment
+#' n = 100 # sample size for each segment
 #' # connectivity matrix for the first and the third segments
 #' conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) 
 #' # connectivity matrix for the second segment
@@ -125,7 +125,7 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 #' data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
 #' data_mat1 = data_mat[,seq(1,ncol(data_mat),2)]
 #' data_mat2 = data_mat[,seq(2,ncol(data_mat),2)]
-#' M = 30
+#' M = 10
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(data_mat1))
 #' temp = WBS.network(data_mat1, data_mat2, 1, ncol(data_mat1), 
 #'                    intervals$Alpha, intervals$Beta, delta = 5)
@@ -198,10 +198,10 @@ WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0
 #' @author  Daren Wang & Haotian Xu
 #' @references Wang D, Yu Y, Rinaldo A. Optimal change point detection and localization in sparse dynamic networks. The Annals of Statistics. 2021 Feb;49(1):203-32.
 #' @examples
-#' p = 100 # number of nodes
+#' p = 15 # number of nodes
 #' rho = 0.5 # sparsity parameter
 #' block_num = 3 # number of groups for SBM
-#' n = 150 # sample size for each segment
+#' n = 100 # sample size for each segment
 #' # connectivity matrix for the first and the third segments
 #' conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) 
 #' # connectivity matrix for the second segment
@@ -213,7 +213,7 @@ WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0
 #' data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
 #' data_mat1 = data_mat[,seq(1,ncol(data_mat),2)]
 #' data_mat2 = data_mat[,seq(2,ncol(data_mat),2)]
-#' M = 120
+#' M = 10
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(data_mat1))
 #' temp = WBS.network(data_mat1, data_mat2, 1, ncol(data_mat1), intervals$Alpha, 
 #'                    intervals$Beta, delta = 5)
@@ -371,10 +371,11 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, rho, a
 #' @author  Oscar Hernan Madrid Padilla & Haotian Xu
 #' @references Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
 #' @examples
-#' p = 100 # number of nodes
+#' set.seed(123)
+#' p = 15 # number of nodes
 #' rho = 0.5 # sparsity parameter
 #' block_num = 3 # number of groups for SBM
-#' n = 150 # sample size for each segment
+#' n = 100 # sample size for each segment
 #' # connectivity matrix for the first and the third segments
 #' conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) 
 #' # connectivity matrix for the second segment
@@ -386,13 +387,10 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, rho, a
 #' data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
 #' data_mat1 = data_mat[,seq(1,ncol(data_mat),2)]
 #' data_mat2 = data_mat[,seq(2,ncol(data_mat),2)]
-#' train_mat = simu.SBM(conn1_mat, can_vec, n = 200, symm = TRUE, self = TRUE)$obs_mat
+#' train_mat = simu.SBM(conn1_mat, can_vec, n = 150, symm = TRUE, self = TRUE)$obs_mat
 #' temp = online.network(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat, alpha = 0.05, 
-#'                       gamma = NULL, permu_num = 100)
+#'                       gamma = NULL, permu_num = 50)
 #' cpt_hat = 2 * temp$cpt
-#' temp2 = online.network(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat, alpha = NULL, 
-#'                        gamma = 200, permu_num = 100)
-#' cpt_hat2 = 2 * temp2$cpt
 online.network = function(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat = NULL, alpha = NULL, gamma = NULL, permu_num = NULL, ...){
   n = ncol(data_mat1)
   if(self == TRUE){

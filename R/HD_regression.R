@@ -73,9 +73,9 @@ simu.change.regression = function(d0, cpt_true, p, n, sigma, kappa, ...){
 #' @references Rinaldo, A., Wang, D., Wen, Q., Willett, R., & Yu, Y. (2021, March). Localizing changes in high-dimensional regression models. In International Conference on Artificial Intelligence and Statistics (pp. 2089-2097). PMLR.
 #' @examples
 #' d0 = 10
-#' p = 30
+#' p = 20
 #' n = 100
-#' cpt_true = c(10, 30, 40, 70, 90)
+#' cpt_true = c(30, 70)
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 #' temp = DP.regression(y = data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
 #' cpt_hat = part2local(temp$partition)
@@ -195,12 +195,12 @@ error.test.regression = function(y, X, lower, upper, beta.hat){
 #' @author Daren Wang
 #' @examples
 #' d0 = 10
-#' p = 30
+#' p = 20
 #' n = 100
-#' cpt_true = c(10, 30, 40, 70, 90)
+#' cpt_true = c(30, 70)
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-#' gamma_set = c(0.01, 0.05, 0.1, 0.5, 1)
-#' lambda_set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5)
+#' gamma_set = c(0.01, 0.1, 1)
+#' lambda_set = c(0.01, 0.1, 1, 3)
 #' temp = CV.search.DP.regression(y = data$y, X = data$X, gamma_set, lambda_set, delta = 2)
 #' temp$test_error # test error result
 #' # find the indices of gamma_set and lambda_set which minimizes the test error
@@ -236,12 +236,12 @@ CV.search.DP.regression = function(y, X, gamma_set, lambda_set, delta, eps = 0.0
 #' @references Rinaldo, A., Wang, D., Wen, Q., Willett, R., & Yu, Y. (2021, March). Localizing changes in high-dimensional regression models. In International Conference on Artificial Intelligence and Statistics (pp. 2089-2097). PMLR.
 #' @examples
 #' d0 = 10
-#' p = 30
+#' p = 20
 #' n = 100
-#' cpt_true = c(10, 30, 40, 70, 90)
+#' cpt_true = c(30, 70)
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-#' gamma_set = c(0.01, 0.05, 0.1, 0.5, 1)
-#' lambda_set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5)
+#' gamma_set = c(0.01, 0.1, 1)
+#' lambda_set = c(0.01, 0.1, 1, 3)
 #' temp = CV.search.DP.regression(y = data$y, X = data$X, gamma_set, lambda_set, delta = 2)
 #' temp$test_error # test error result
 #' # find the indices of gamma_set and lambda_set which minimizes the test error
@@ -418,12 +418,12 @@ CV.search.DP.LR.gl = function(y, X, gamma.set, lambda.set, zeta, delta, eps = 0.
 #' @examples
 #' set.seed(123)
 #' d0 = 10
-#' p = 30
+#' p = 20
 #' n = 100
-#' cpt_true = c(10, 30, 40, 70, 90)
+#' cpt_true = c(30, 70)
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-#' gamma_set = c(0.01, 0.05, 0.1, 0.5, 1)
-#' lambda_set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5)
+#' gamma_set = c(0.01, 0.1, 1)
+#' lambda_set = c(0.01, 0.1, 1, 3)
 #' temp = CV.search.DP.regression(y = data$y, X = data$X, gamma_set, lambda_set, delta = 2)
 #' temp$test_error # test error result
 #' # find the indices of gamma_set and lambda_set which minimizes the test error
@@ -431,7 +431,7 @@ CV.search.DP.LR.gl = function(y, X, gamma.set, lambda.set, zeta, delta, eps = 0.
 #' gamma_set[min_idx[1]]
 #' lambda_set[min_idx[2]]
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
-#' zeta_set = c(0.01, 0.05, 0.1, 0.5, 1, 5)
+#' zeta_set = c(0.01, 0.1, 1)
 #' temp_zeta = CV.search.DP.LR.regression(data$y, data$X, gamma_set[min_idx[1]],
 #'                   lambda_set[min_idx[2]], zeta_set, delta = 2, eps = 0.001)
 #' min_zeta_idx = which.min(unlist(temp_zeta$test_error))

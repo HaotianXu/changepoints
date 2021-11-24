@@ -36,5 +36,5 @@ online.network.missing(
 Perform online change point detection for network with missing values by controlling the false alarm rate at level alpha.
 }
 \seealso{
-calibrate.online.network.missing
+\code{calibrate.online.network.missing}
 }

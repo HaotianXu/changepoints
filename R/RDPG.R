@@ -13,10 +13,10 @@
 #' @examples
 #' ### generate data 
 #' d = 10
-#' n = 100
-#' M = 120
+#' n = 30  # number of nodes
+#' M = 10
 #' delta = 5
-#' obs_num = 150
+#' obs_num = 100 # number of observations
 #' rho_a = 0.9
 #' v = c(floor(obs_num/3)+1, 2*floor(obs_num/3)+1)
 #' data_mat = matrix(0, n^2, obs_num)
@@ -72,7 +72,6 @@
 #' }
 #' intervals = WBS.intervals(M = M, lower = 1, upper = obs_num)
 #' cpt_hat = NonPar.RDPG.CPD(data_mat, d, Alpha = intervals$Alpha, Beta = intervals$Beta, delta)
-#' 
 NonPar.RDPG.CPD = function(data_mat, d, Alpha, Beta, delta){
   obs_num = ncol(data_mat)
   n = sqrt(nrow(data_mat))

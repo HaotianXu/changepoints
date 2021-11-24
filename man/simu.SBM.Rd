@@ -28,10 +28,10 @@ A \code{list} with the following structure:
 Simulate a Stochastic Block Model (without change point). The generated data is a matrix with each column corresponding to the vectorized adjacency (sub)matrix at a time point. For example, if the network matrix is required to be symmetric and without self-loop, only the strictly lower diagonal entries are considered.
 }
 \examples{
-p = 100 # number of nodes
+p = 15 # number of nodes
 rho = 0.5 # sparsity parameter
 block_num = 3 # number of groups for SBM
-n = 150 # sample size for each segment
+n = 100 # sample size for each segment
 # connectivity matrix for the first and the third segments
 conn1_mat = rho * matrix(c(0.6,1,0.6,1,0.6,0.5,0.6,0.5,0.6), nrow = 3) 
 # connectivity matrix for the second segment

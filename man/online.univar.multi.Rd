@@ -92,14 +92,11 @@ online.univar.one3 = function(y_vec, tau_vec, ...){
 }
 }
 \examples{
-y_vec = rnorm(300) + c(rep(0, 100), rep(1, 100), rep(0, 100))
-train_vec = rnorm(200)
+y_vec = rnorm(200) + c(rep(0, 50), rep(1, 100), rep(0, 50))
+train_vec = rnorm(150)
 # control the false alarm rate
-temp1 = online.univar.multi(y_vec = y_vec, train_vec = train_vec, alpha = 0.05, permu_num = 100)
+temp1 = online.univar.multi(y_vec = y_vec, train_vec = train_vec, alpha = 0.05, permu_num = 30)
 temp1
-# control the average run length
-temp2 = online.univar.multi(y_vec = y_vec, train_vec = train_vec, gamma = 300, permu_num = 100)
-temp2
 }
 \author{
 Haotian Xu

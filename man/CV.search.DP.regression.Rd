@@ -33,12 +33,12 @@ Perform grid search to select tuning parameters gamma (for \eqn{l_0} penalty of 
 }
 \examples{
 d0 = 10
-p = 30
+p = 20
 n = 100
-cpt_true = c(10, 30, 40, 70, 90)
+cpt_true = c(30, 70)
 data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-gamma_set = c(0.01, 0.05, 0.1, 0.5, 1)
-lambda_set = c(0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5)
+gamma_set = c(0.01, 0.1, 1)
+lambda_set = c(0.01, 0.1, 1, 3)
 temp = CV.search.DP.regression(y = data$y, X = data$X, gamma_set, lambda_set, delta = 2)
 temp$test_error # test error result
 # find the indices of gamma_set and lambda_set which minimizes the test error
