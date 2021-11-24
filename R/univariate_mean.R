@@ -82,7 +82,7 @@ CV.DP.univar = function(y, gamma, delta, ...){
 #' Hausdorff.dist(cpt_hat, cpt_true)
 CV.search.DP.univar = function(y, gamma_set, delta, ...){
   output = sapply(1:length(gamma_set), function(j) CV.DP.univar(y, gamma_set[j], delta))
-  print(output)
+  #print(output)
   cpt_hat = output[1,]## estimated change points
   K_hat = output[2,]## number of estimated change points
   test_error = output[3,]## validation loss

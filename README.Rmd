@@ -13,55 +13,96 @@ knitr::opts_chunk$set(
 )
 ```
 
-# changepoints
+# A collections of change-point detection methods 
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/HaotianXu/changepoints/workflows/R-CMD-check/badge.svg)](https://github.com/HaotianXu/changepoints/actions)
+[![Last-changedate](https://img.shields.io/badge/last%20change-`r gsub('-', '--', Sys.Date())`-green.svg)](https://github.com/HaotianXu/changepoints)
+[![license](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 <!-- badges: end -->
 
-The goal of changepoints is to ...
+Performs a series of offline and/or online change-point detection algorithms for 
+
+1. univariate mean
+   + [Wang, Yu and Rinaldo (2020)]( https://doi.org/10.1214/20-EJS1710)
+   + [Yu, Padilla, Wang and Rinaldo (2020)](https://arxiv.org/abs/2006.03283)
+2. univariate polynomials
+   + [Yu and Chatterjee (2020)](https://arxiv.org/abs/2007.09910)
+3. univariate and multivariate nonparametric settings
+   + [Padilla, Yu, Wang and Rinaldo (2021)](https://doi.org/10.1214/21-EJS1809)
+   + [Padilla, Yu, Wang and Rinaldo (2019)](https://arxiv.org/abs/1910.13289)
+4. high-dimensional covariances
+   + [Wang, Yu and Rinaldo (2021)](https://doi.org/10.3150/20-BEJ1249)
+5. high-dimensional networks with and without missing values
+   + [Wang, Yu and Rinaldo (2018)](https://arxiv.org/abs/1809.09602)
+   + [Yu, Padilla, Wang and Rinaldo (2021)](https://arxiv.org/abs/2101.05477)
+   + [Dubey, Xu and Yu (2021)](https://arxiv.org/abs/2110.06450)
+6. high-dimensional linear regression models
+   + [Rinaldo, Wang, Wen, Willett and Yu (2020)](https://arxiv.org/abs/2010.10410)
+7. high-dimensional vector autoregressive models
+   + [Wang, Yu, Rinaldo and Willett (2019)](https://arxiv.org/abs/1909.06359)
+8. high-dimensional self exciting point processes
+   + [Wang, Yu and Willett (2020)](https://arxiv.org/abs/2006.03572)
+9. dependent dynamic nonparametric random dot product graphs
+   + [Padilla, Yu and Priebe (2019)](https://arxiv.org/abs/1911.07494)
+9. univariate mean against adversarial attacks
+   + [Li and Yu (2021)](https://arxiv.org/abs/2105.10417)
+
 
 ## Installation
 
-You can install the development version of changepoints from [GitHub](https://github.com/) with:
+Users must have a (C++) compiler installed on their machine that is compatible with R (e.g. Clang). The development version of `changepoints` from [GitHub](https://github.com/) can be installed with:
 
-``` r
-# install.packages("devtools")
+```{r, installation, eval = FALSE}
+## if not installed
+## Install dependencies
+install.packages(c("devtools","glmnet","gglasso","ks","data.tree"))
+
+## install.packages("devtools")
 devtools::install_github("HaotianXu/changepoints")
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is an example for offline univariate mean change point detection:
 
-```{r example}
+```{r, DP, eval = FALSE}
 library(changepoints)
-## basic example code
-delta = 5
-sigma2 = 1
-
+## simulate data with true change points being 50, 100 and 150
 set.seed(0)
-y = c(rep(0, 50), rep(2, 50), rep(0, 50), rep(-2, 50)) + rnorm(200, mean = 0, sd = sqrt(sigma2))
-n = length(y)
-gamma_set = c(0.01, 0.5, 1, 5, 10, 50)
+y = c(rep(0, 50), rep(2, 50), rep(0, 50), rep(-2, 50)) + rnorm(200, mean = 0, sd = 1)
+## estimate change points by l_0 penalization
+gamma_set = c(0.01, 0.5, 1, 5, 10, 50) # possible value of tuning parameter
+## perform cross-validation
 DP_result = CV.search.DP.univar(y, gamma_set, delta = 5)
+## estimate change points and perform local refinement
 min_idx = which.min(DP_result$test_error)
 cpt_DP_hat = unlist(DP_result$cpt_hat[[min_idx]])
 cpt_DP_LR = local.refine.univar(cpt_DP_hat, y)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+Alternatively, `wild binary segmentation` can also be performed:
 
-```{r cars}
-summary(cars)
+```{r, WBS, eval = FALSE}
+## generate random intervals for WBS
+intervals = WBS.intervals(M = 100, lower = 1, upper = 200)
+## perform WBS
+WBS_result = WBS.univar(y, 1, 200, intervals$Alpha, intervals$Beta, delta = 5)
+## trim binary tree with threshold being 3
+WBS_trimmed = threshold.BS(WBS_result, tau = 3)
+tree_WBS = WBS_trimmed$BS_tree_trimmed
+## print and plot binary tree
+print(WBS_trimmed$BS_tree, "value")
+plot(WBS_trimmed$BS_tree)
+## estimate change points and perform local refinement
+cpt_WBS_hat = sort(WBS_trimmed$cpt_hat[,1])
+cpt_BS_LR = local.refine.univar(cpt_WBS_hat, y)
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/v1/examples>.
+`wild binary segmentation` with tuning parameter selected by information criteria :
 
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
+```{r, WBS.tune, eval = FALSE}
+WBS_CPD_result = WBS.univar.CPD(y, intervals$Alpha, intervals$Beta, 5)
+WBS_CPD_LR = local.refine.univar(WBS_CPD_result$cpt, y)
 ```
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
