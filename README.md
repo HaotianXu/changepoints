@@ -4,6 +4,8 @@
 # changepoints
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/HaotianXu/changepoints/workflows/R-CMD-check/badge.svg)](https://github.com/HaotianXu/changepoints/actions)
 <!-- badges: end -->
 
 The goal of changepoints is to …
