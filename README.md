@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/HaotianXu/changepoints/workflows/R-CMD-check/badge.svg)](https://github.com/HaotianXu/changepoints/actions)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2021--11--24-green.svg)](https://github.com/HaotianXu/changepoints)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2021--11--29-green.svg)](https://github.com/HaotianXu/changepoints)
 [![license](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 <!-- badges: end -->
 
@@ -90,10 +90,10 @@ intervals = WBS.intervals(M = 100, lower = 1, upper = 200)
 WBS_result = WBS.univar(y, 1, 200, intervals$Alpha, intervals$Beta, delta = 5)
 ## trim binary tree with threshold being 3
 WBS_trimmed = threshold.BS(WBS_result, tau = 3)
-tree_WBS = WBS_trimmed$BS_tree_trimmed
-## print and plot binary tree
+## print the binary tree without trimming
 print(WBS_trimmed$BS_tree, "value")
-plot(WBS_trimmed$BS_tree)
+## print the trimmed binary tree
+print(WBS_trimmed$BS_tree_trimmed, "value")
 ## estimate change points and perform local refinement
 cpt_WBS_hat = sort(WBS_trimmed$cpt_hat[,1])
 cpt_BS_LR = local.refine.univar(cpt_WBS_hat, y)
