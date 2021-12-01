@@ -4,7 +4,7 @@
 \alias{WBS.uni.nonpar.CPD}
 \title{Wild binary segmentation for univariate nonparametric change points detection with tuning parameter selection.}
 \usage{
-WBS.uni.nonpar.CPD(Y, W, Alpha, Beta, N, delta, ...)
+WBS.uni.nonpar.CPD(Y, W, Alpha, Beta, N, delta)
 }
 \arguments{
 \item{Y}{A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being multiple observations on each time point.}
@@ -18,8 +18,6 @@ WBS.uni.nonpar.CPD(Y, W, Alpha, Beta, N, delta, ...)
 \item{N}{A \code{integer} vector representing number of multiple observations on each time point.}
 
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A vector of estimated change points (sorted in strictly increasing order).
@@ -33,6 +31,9 @@ N = rep(1, 300)
 M = 20
 intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y))
 temp = WBS.uni.nonpar.CPD(Y, Y, intervals$Alpha, intervals$Beta, N, 5)
+}
+\references{
+Padilla, Yu, Wang and Rinaldo (2021) <doi:10.1214/21-EJS1809>
 }
 \author{
 Oscar Hernan Madrid Padilla & Haotian Xu

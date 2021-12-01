@@ -4,14 +4,12 @@
 \alias{Hausdorff.dist}
 \title{Bidirectional Hausdorff distance.}
 \usage{
-Hausdorff.dist(vec1, vec2, ...)
+Hausdorff.dist(vec1, vec2)
 }
 \arguments{
 \item{vec1}{A \code{integer} vector forms a subset of {1, 2, ..., n}.}
 
 \item{vec2}{A \code{integer} vector forms a subset of {1, 2, ..., n}.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 An integer scalar of bidirectional Hausdorff distance.

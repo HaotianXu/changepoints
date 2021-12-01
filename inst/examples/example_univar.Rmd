@@ -9,7 +9,7 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This is a simple guide for offline changepoint detection on univariate mean.
+This is a simple guide for offline multiple change points detection on univariate mean.
 
 There are 3 methods implemented for univariate mean changepoint detection:
 

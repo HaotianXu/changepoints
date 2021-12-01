@@ -4,7 +4,7 @@
 \alias{CV.search.DP.regression}
 \title{Grid search based on cross-validation of dynamic programming for regression change points detection via \eqn{l_0} penalty}
 \usage{
-CV.search.DP.regression(y, X, gamma_set, lambda_set, delta, eps = 0.001, ...)
+CV.search.DP.regression(y, X, gamma_set, lambda_set, delta, eps = 0.001)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of response variable.}
@@ -18,8 +18,6 @@ CV.search.DP.regression(y, X, gamma_set, lambda_set, delta, eps = 0.001, ...)
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
 
 \item{eps}{A \code{numeric} scalar of precision level for convergence of lasso.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -46,6 +44,9 @@ min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error)))
 gamma_set[min_idx[1]]
 lambda_set[min_idx[2]]
 cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
+}
+\references{
+Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>
 }
 \author{
 Daren Wang

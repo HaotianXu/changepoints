@@ -4,7 +4,7 @@
 \alias{local.refine.CV.VAR1}
 \title{Local refinement for VAR1 change points detection.}
 \usage{
-local.refine.CV.VAR1(cpt_init, DATA, zeta_set, delta_local, ...)
+local.refine.CV.VAR1(cpt_init, DATA, zeta_set, delta_local)
 }
 \arguments{
 \item{cpt_init}{A \code{integer} vector of initial change points estimation (sorted in strictly increasing order).}
@@ -14,8 +14,6 @@ local.refine.CV.VAR1(cpt_init, DATA, zeta_set, delta_local, ...)
 \item{zeta_set}{A \code{numeric} vector of candidate tuning parameters for group lasso penalty.}
 
 \item{delta_local}{A strictly \code{integer} scalar of minimum spacing for group lasso.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -48,6 +46,9 @@ min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error)))
 cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 temp_zeta = local.refine.CV.VAR1(cpt_init, data, c(0.1, 1), delta_local = 10)
 temp_zeta$cpt_hat
+}
+\references{
+Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>
 }
 \author{
 Daren Wang & Haotian Xu

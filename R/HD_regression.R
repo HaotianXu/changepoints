@@ -6,7 +6,6 @@
 #' @param n          An \code{integer} scalar of sample size.
 #' @param sigma      A \code{numeric} scalar of error standard deviation.
 #' @param kappa      A \code{numeric} scalar of minimum jump size of coefficient vector in terms of \eqn{l_2} norm.
-#' @param ...        Additional arguments.
 #' @return A \code{list} with the following structure:
 #'  \item{cpt_true}{A vector of true changepoints (sorted in strictly increasing order)}
 #'  \item{X}{A p-by-n design matrix}
@@ -14,14 +13,14 @@
 #'  \item{betafullmat}{A p-by-n matrix of coefficients}
 #' @export
 #' @author Daren Wang & Haotian Xu
-#' @references Rinaldo, A., Wang, D., Wen, Q., Willett, R., & Yu, Y. (2021, March). Localizing changes in high-dimensional regression models. In International Conference on Artificial Intelligence and Statistics (pp. 2089-2097). PMLR.
+#' @references Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>
 #' @examples
 #' d0 = 10
 #' p = 30
 #' n = 100
 #' cpt_true = c(10, 30, 40, 70, 90)
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-simu.change.regression = function(d0, cpt_true, p, n, sigma, kappa, ...){
+simu.change.regression = function(d0, cpt_true, p, n, sigma, kappa){
   if(d0 >= p){
     stop("d0 should be strictly smaller than p")
   }
@@ -66,11 +65,10 @@ simu.change.regression = function(d0, cpt_true, p, n, sigma, kappa, ...){
 #' @param lambda    A positive \code{numeric} scalar of tuning parameter for lasso penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param eps       A \code{numeric} scalar of precision level for convergence of lasso.
-#' @param ...       Additional arguments.
 #' @return          A vector of the best partition of the dynamic programming algorithm.
 #' @export
 #' @author Daren Wang & Haotian Xu
-#' @references Rinaldo, A., Wang, D., Wen, Q., Willett, R., & Yu, Y. (2021, March). Localizing changes in high-dimensional regression models. In International Conference on Artificial Intelligence and Statistics (pp. 2089-2097). PMLR.
+#' @references Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>
 #' @examples
 #' d0 = 10
 #' p = 20
@@ -79,9 +77,9 @@ simu.change.regression = function(d0, cpt_true, p, n, sigma, kappa, ...){
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 #' temp = DP.regression(y = data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
 #' cpt_hat = part2local(temp$partition)
-#' @seealso \code{part2local} for obtaining change points estimation.
+#' @seealso \code{\link{part2local}} for obtaining change points estimation.
 #' @export
-DP.regression <- function(y, X, gamma, lambda, delta, eps = 0.001, ...) {
+DP.regression <- function(y, X, gamma, lambda, delta, eps = 0.001) {
   .Call('_changepoints_rcpp_DP_regression', PACKAGE = 'changepoints', y, X, gamma, lambda, delta, eps)
 }
 
@@ -114,14 +112,13 @@ error.pred.seg.regression <- function(y, X, s, e, lambda, delta, eps = 0.001) {
 #' @param lambda    A \code{numeric} scalar of tuning parameter for the lasso penalty.
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
 #' @param eps       A \code{numeric} scalar of precision level for convergence of lasso.
-#' @param ...       Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{cpt_hat}{A vector of estimated change points locations (sorted in strictly increasing order)}
 #'  \item{K_hat}{A scalar of number of estimated change points}
 #'  \item{test_error}{A list of vector of testing errors in squared \eqn{l_2} norm}
 #'  \item{train_error}{A list of vector of training errors in squared \eqn{l_2} norm}
 #' @noRd
-CV.DP.regression = function(y, X, gamma, lambda, delta, eps = 0.001, ...){
+CV.DP.regression = function(y, X, gamma, lambda, delta, eps = 0.001){
   N = ncol(X)
   even_indexes = seq(2, N, 2)
   odd_indexes = seq(1, N, 2)
@@ -185,7 +182,6 @@ error.test.regression = function(y, X, lower, upper, beta.hat){
 #' @param lambda_set    A \code{numeric} vector of candidate tuning parameters for lasso penalty.
 #' @param delta         A strictly \code{integer} scalar of minimum spacing.
 #' @param eps           A \code{numeric} scalar of precision level for convergence of lasso.
-#' @param ...           Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{cpt_hat}{A list of vector of estimated change points}
 #'  \item{K_hat}{A list of scalar of number of estimated change points}
@@ -208,7 +204,8 @@ error.test.regression = function(y, X, lower, upper, beta.hat){
 #' gamma_set[min_idx[1]]
 #' lambda_set[min_idx[2]]
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
-CV.search.DP.regression = function(y, X, gamma_set, lambda_set, delta, eps = 0.001, ...){
+#' @references Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>
+CV.search.DP.regression = function(y, X, gamma_set, lambda_set, delta, eps = 0.001){
   output = sapply(1:length(lambda_set), function(i) sapply(1:length(gamma_set), 
                                                            function(j) CV.DP.regression(y, X, gamma_set[j], lambda_set[i], delta)))
   cpt_hat = output[seq(1,4*length(gamma_set),4),]## estimated change points
@@ -229,7 +226,6 @@ CV.search.DP.regression = function(y, X, gamma_set, lambda_set, delta, eps = 0.0
 #' @param y         A \code{numeric} vector of response variable.
 #' @param X         A \code{numeric} matrix of covariates with horizontal axis being time..
 #' @param zeta      A \code{numeric} scalar of tuning parameter for the group lasso.
-#' @param ...       Additional arguments.
 #' @return  A vector of locally refined change points estimation.
 #' @export
 #' @author Daren Wang & Haotian Xu
@@ -250,7 +246,8 @@ CV.search.DP.regression = function(y, X, gamma_set, lambda_set, delta, eps = 0.0
 #' lambda_set[min_idx[2]]
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 #' local.refine.regression(cpt_init, data$y, X = data$X, zeta = 0.5)
-local.refine.regression = function(cpt_init, y, X, zeta, ...){
+#' @references Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>
+local.refine.regression = function(cpt_init, y, X, zeta){
   w = 0.9
   n = ncol(X)
   cpt_init_ext = c(0, cpt_init, n)
@@ -407,7 +404,6 @@ CV.search.DP.LR.gl = function(y, X, gamma.set, lambda.set, zeta, delta, eps = 0.
 #' @param zeta_set      A \code{numeric} vector of candidate tuning parameter for the group lasso.
 #' @param delta         A strictly \code{integer} scalar of minimum spacing.
 #' @param eps           A \code{numeric} scalar of precision level for convergence of lasso.
-#' @param ...           Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{cpt_hat}{A list of vector of estimated changepoints (sorted in strictly increasing order)}
 #'  \item{K_hat}{A list of scalar of number of estimated changepoints}
@@ -438,7 +434,8 @@ CV.search.DP.LR.gl = function(y, X, gamma.set, lambda.set, zeta, delta, eps = 0.
 #' cpt_LR = local.refine.regression(cpt_init, data$y, X = data$X, zeta = zeta_set[min_zeta_idx])
 #' Hausdorff.dist(cpt_init, cpt_true)
 #' Hausdorff.dist(cpt_LR, cpt_true)
-CV.search.DP.LR.regression = function(y, X, gamma_set, lambda_set, zeta_set, delta, eps = 0.001, ...){
+#' @references Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>
+CV.search.DP.LR.regression = function(y, X, gamma_set, lambda_set, zeta_set, delta, eps = 0.001){
   cpt_hat = vector("list", length(zeta_set))
   K_hat = vector("list", length(zeta_set))
   test_error = vector("list", length(zeta_set))

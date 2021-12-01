@@ -4,7 +4,7 @@
 \alias{WBS.network}
 \title{Wild binary segmentation for network change points detection.}
 \usage{
-WBS.network(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0, ...)
+WBS.network(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0)
 }
 \arguments{
 \item{data_mat1}{A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.}
@@ -22,8 +22,6 @@ WBS.network(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0, ...)
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
 
 \item{level}{Should be fixed as 0.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -64,7 +62,7 @@ cpt_WBS = 2*cpt_init
 cpt_refined = 2*cpt_refined
 }
 \references{
-Wang D, Yu Y, Rinaldo A. Optimal change point detection and localization in sparse dynamic networks. The Annals of Statistics. 2021 Feb;49(1):203-32.
+Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>
 }
 \author{
 Daren Wang & Haotian Xu

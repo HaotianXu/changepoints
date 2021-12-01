@@ -1,15 +1,14 @@
 #' @title Partition to localization for dynamic programming.
 #' @description     Find change point locations from the best partition produced by dynamic programming altorithm.
 #' @param parti_vec    A \code{integer} vector of best partition produced by dynamic programming algorithm.
-#' @param ...          Additional arguments.
 #' @return  A vector of change point locations.
 #' @export
 #' @author Haotian Xu
 #' @examples
 #' y = c(rep(0, 100), rep(1, 100))
 #' part2local(DP.univar(y, 1, 4)$partition)
-#' @seealso \code{DP.univar()}, \code{DP.poly()}, \code{DP.regression()}, \code{DP.SEPP()}, \code{DP.VAR1()}
-part2local = function(parti_vec, ...){
+#' @seealso \code{\link{DP.univar}}, \code{\link{DP.poly}}, \code{\link{DP.regression}}, \code{\link{DP.SEPP}}, \code{\link{DP.VAR1}}
+part2local = function(parti_vec){
   N = length(parti_vec)
   localization = c()
   r = N
@@ -28,7 +27,6 @@ part2local = function(parti_vec, ...){
 #' @description     Compute the bidirectional Hausdorff distance between two sets.
 #' @param vec1      A \code{integer} vector forms a subset of {1, 2, ..., n}.
 #' @param vec2      A \code{integer} vector forms a subset of {1, 2, ..., n}.
-#' @param ...       Additional arguments.
 #' @return  An integer scalar of bidirectional Hausdorff distance.
 #' @export
 #' @author  Daren Wang
@@ -36,7 +34,7 @@ part2local = function(parti_vec, ...){
 #' vec1 = sample.int(1000, size = 50)
 #' vec2 = sample.int(2000, size = 100)
 #' Hausdorff.dist(vec1, vec2)
-Hausdorff.dist = function(vec1, vec2, ...){
+Hausdorff.dist = function(vec1, vec2){
   vec = c(vec1, vec2)
   if(!all(c(vec == floor(vec)), vec >= 0)){
     stop("vec1 and vec2 should be subsets of {0, 1, ...}")
@@ -56,9 +54,7 @@ Hausdorff.dist = function(vec1, vec2, ...){
 #' @description         Given a BS object, perform thresholding to find the change point locations.
 #' @param BS_object     A \code{BS} object.
 #' @param tau           A positive \code{numeric} scalar of thresholding value.
-#' @param ...           Additional arguments.
 #' @return  A \code{list} with the following structure:
-#'  \item{BS_tree}{A list of data.frame containing "current" indices, "parent" indices, "location" indices and "value" of CUSUM at all steps}
 #'  \item{BS_tree_trimmed}{BS_tree with change points which do not satisfy the thresholding criteria removed}
 #'  \item{cpt_hat}{A matrix contains change point locations, values of corresponding statistic, and levels at which each change point is detected}
 #' @export
@@ -69,8 +65,8 @@ Hausdorff.dist = function(vec1, vec2, ...){
 #' plot.ts(y)
 #' points(x = tail(temp$S[order(temp$Dval)],4), y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
 #' threshold.BS(temp, 20)
-#' @seealso \code{BS.univar}, \code{BS.cov}, \code{WBS.univar}, \code{WBS.network}
-threshold.BS = function(BS_object, tau, ...){
+#' @seealso \code{\link{BS.univar}}, \code{\link{BS.uni.nonpar}}, \code{\link{BS.cov}}, \code{\link{WBS.univar}}, \code{\link{WBS.uni.nonpar}}, \code{\link{WBS.multi.nonpar}}, \code{\link{WBS.network}}, \code{\link{WBSIP.cov}}
+threshold.BS = function(BS_object, tau){
   if(tau <= 0){
     stop("The threshold tau should be a positive value.")
   }
@@ -148,7 +144,7 @@ threshold.BS = function(BS_object, tau, ...){
     }
   }
   BS_tree_trimmed_node = data.tree::as.Node(binary_tree_trimmed)
-  return(list(BS_tree = BS_tree_node, BS_tree_trimmed = BS_tree_trimmed_node, cpt_hat = change_points))
+  return(list(BS_tree_trimmed = BS_tree_trimmed_node, cpt_hat = change_points))
 }
 
 
@@ -180,7 +176,6 @@ one.step.trim = function(idx_remove_parent, data_children){
 #' @param M        A positive \code{integer} scalar of number of random intervals.
 #' @param lower    A positive \code{integer} scalar of lower bound of random intervals.
 #' @param upper    A positive \code{integer} scalar of upper bound of random intervals.
-#' @param ...      Additional arguments.
 #' @return         A \code{list} with the following structure:
 #'  \item{Alpha}{A M-dim vector representing the starting indices of random intervals}
 #'  \item{Beta}{A M-dim vector representing the ending indices of random intervals}
@@ -188,7 +183,7 @@ one.step.trim = function(idx_remove_parent, data_children){
 #' @author    Oscar Hernan Madrid Padilla
 #' @examples
 #' WBS.intervals(120, lower = 1, upper = 300)
-WBS.intervals = function(M, lower = 1, upper, ...){
+WBS.intervals = function(M, lower = 1, upper){
   if(lower >= upper){
     stop("Integer 'lower' should be strictly smaller than integer 'upper'.")
   }
@@ -324,11 +319,13 @@ rcpp_error_pred_seg_VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps = 
 }
 
 
-#' @title Function to print a BS object
+#' @title A method for printing a \code{BS} object
+#' @description Print a \code{BS} object as a binary tree with the associated values
 #' @param x   A \code{BS} object.
 #' @param ...         Additional arguments.
 #' @export
 #' @author    Haotian Xu
+#' @seealso \code{\link{BS.univar}}, \code{\link{BS.uni.nonpar}}, \code{\link{BS.cov}}, \code{\link{WBS.univar}}, \code{\link{WBS.uni.nonpar}}, \code{\link{WBS.multi.nonpar}}, \code{\link{WBS.network}}, \code{\link{WBSIP.cov}}
 print.BS = function(x, ...){
   level_unique = unique(x$Level[order(x$Level)])
   level_length = length(level_unique)

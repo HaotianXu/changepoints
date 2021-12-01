@@ -31,7 +31,7 @@ plot.ts(gen.piece.poly.noiseless(init_coef_vec, cpt_true, kappa_mat, n),
         ylab = "Values of piecewise polynomials")
 }
 \references{
-Yu, Y., & Chatterjee, S. (2020). Localising change points in piecewise polynomials of general degrees. arXiv preprint arXiv:2007.09910.
+Yu and Chatterjee (2020) <arXiv:2007.09910>
 }
 \author{
 Haotian Xu

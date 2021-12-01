@@ -22,7 +22,7 @@ online.network.missing(
 
 \item{alpha_grid}{A \code{numeric} vector in (0,1) representing the desired false alarm rate.}
 
-\item{thresholds_array}{A \code{numeric} array of calibrated threshold.}
+\item{thresholds_array}{A \code{numeric} array of calibrated thresholds.}
 
 \item{rho_hat}{A \code{numeric} scalar of the sparsity parameter.}
 
@@ -32,9 +32,18 @@ online.network.missing(
 
 \item{delta}{An \code{integer} scalar of minimum spacing.}
 }
+\value{
+Online change point estimator.
+}
 \description{
 Perform online change point detection for network with missing values by controlling the false alarm rate at level alpha.
 }
+\references{
+Dubey, Xu and Yu (2021) <arxiv:2110.06450>
+}
 \seealso{
-\code{calibrate.online.network.missing}
+\code{\link{calibrate.online.network.missing}} for calibrating thresholds.
+}
+\author{
+Haotian Xu
 }

@@ -4,7 +4,7 @@
 \alias{DP.VAR1}
 \title{Dynamic programming for VAR1 change points detection through \eqn{l_0} penalty.}
 \usage{
-DP.VAR1(X_futu, X_curr, gamma, lambda, delta, eps = 0.001, ...)
+DP.VAR1(X_futu, X_curr, gamma, lambda, delta, eps = 0.001)
 }
 \arguments{
 \item{X_futu}{A \code{numeric} matrix of time series at one step ahead, with horizontal axis being time.}
@@ -18,8 +18,6 @@ DP.VAR1(X_futu, X_curr, gamma, lambda, delta, eps = 0.001, ...)
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
 
 \item{eps}{A \code{numeric} scalar of precision level for convergence of lasso.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 partition: A vector of the best partition.
@@ -45,6 +43,9 @@ X_curr = data[,1:(N-1)]
 X_futu = data[,2:N]
 parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
 part2local(parti)
+}
+\references{
+Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>
 }
 \seealso{
 \code{part2local} for obtaining change points estimation.

@@ -4,7 +4,7 @@
 \alias{DP.poly}
 \title{Dynamic programming algorithm for univariate polynomials change points detection.}
 \usage{
-DP.poly(y, r, gamma, delta, ...)
+DP.poly(y, r, gamma, delta)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of observations.}
@@ -14,8 +14,6 @@ DP.poly(y, r, gamma, delta, ...)
 \item{gamma}{A \code{numeric} scalar of the tuning parameter associated with the \eqn{l_0} penalty.}
 
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -32,6 +30,9 @@ y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
 plot.ts(y)
 temp = DP.poly(y, r = 2, gamma = 15, delta = 5)
 part2local(temp$partition)
+}
+\references{
+Yu and Chatterjee (2020) <arXiv:2007.09910>
 }
 \seealso{
 \code{part2local} for obtaining change points estimation.

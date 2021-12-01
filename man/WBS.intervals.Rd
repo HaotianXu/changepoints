@@ -4,7 +4,7 @@
 \alias{WBS.intervals}
 \title{Generate random intervals for WBS.}
 \usage{
-WBS.intervals(M, lower = 1, upper, ...)
+WBS.intervals(M, lower = 1, upper)
 }
 \arguments{
 \item{M}{A positive \code{integer} scalar of number of random intervals.}
@@ -12,8 +12,6 @@ WBS.intervals(M, lower = 1, upper, ...)
 \item{lower}{A positive \code{integer} scalar of lower bound of random intervals.}
 
 \item{upper}{A positive \code{integer} scalar of upper bound of random intervals.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:

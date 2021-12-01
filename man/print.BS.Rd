@@ -2,7 +2,7 @@
 % Please edit documentation in R/general_functions.R
 \name{print.BS}
 \alias{print.BS}
-\title{Function to print a BS object}
+\title{A method for printing a \code{BS} object}
 \usage{
 \method{print}{BS}(x, ...)
 }
@@ -12,7 +12,10 @@
 \item{...}{Additional arguments.}
 }
 \description{
-Function to print a BS object
+Print a \code{BS} object as a binary tree with the associated values
+}
+\seealso{
+\code{\link{BS.univar}}, \code{\link{BS.uni.nonpar}}, \code{\link{BS.cov}}, \code{\link{WBS.univar}}, \code{\link{WBS.uni.nonpar}}, \code{\link{WBS.multi.nonpar}}, \code{\link{WBS.network}}, \code{\link{WBSIP.cov}}
 }
 \author{
 Haotian Xu

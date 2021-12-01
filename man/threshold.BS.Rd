@@ -4,18 +4,15 @@
 \alias{threshold.BS}
 \title{Thresholding a BS object with threshold value tau.}
 \usage{
-threshold.BS(BS_object, tau, ...)
+threshold.BS(BS_object, tau)
 }
 \arguments{
 \item{BS_object}{A \code{BS} object.}
 
 \item{tau}{A positive \code{numeric} scalar of thresholding value.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
- \item{BS_tree}{A list of data.frame containing "current" indices, "parent" indices, "location" indices and "value" of CUSUM at all steps}
  \item{BS_tree_trimmed}{BS_tree with change points which do not satisfy the thresholding criteria removed}
  \item{cpt_hat}{A matrix contains change point locations, values of corresponding statistic, and levels at which each change point is detected}
 }
@@ -30,7 +27,7 @@ points(x = tail(temp$S[order(temp$Dval)],4), y = y[tail(temp$S[order(temp$Dval)]
 threshold.BS(temp, 20)
 }
 \seealso{
-\code{BS.univar}, \code{BS.cov}, \code{WBS.univar}, \code{WBS.network}
+\code{\link{BS.univar}}, \code{\link{BS.uni.nonpar}}, \code{\link{BS.cov}}, \code{\link{WBS.univar}}, \code{\link{WBS.uni.nonpar}}, \code{\link{WBS.multi.nonpar}}, \code{\link{WBS.network}}, \code{\link{WBSIP.cov}}
 }
 \author{
 Haotian Xu

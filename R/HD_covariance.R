@@ -22,7 +22,6 @@ CUSUM.cov = function(X, s, e, t){
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
 #' @param level     A parameter for tracking the level at which a change point is detected. Should be fixed as 0.
-#' @param ...      Additional arguments.
 #' @return  A \code{list} with the structure:
 #' \itemize{
 #'  \item S:           A vector of estimated changepoints (sorted in strictly increasing order).
@@ -42,7 +41,8 @@ CUSUM.cov = function(X, s, e, t){
 #'           t(MASS::mvrnorm(200, mu = rep(0, p), A3)))
 #' temp = BS.cov(X, 1, 450)
 #' threshold.BS(temp, 10)
-BS.cov = function(X, s, e, level = 0, ...){
+#' @seealso \code{\link{threshold.BS}} for obtain change points estimation.
+BS.cov = function(X, s, e, level = 0){
   p = dim(X)[1]
   n = dim(X)[2]
   delta = 2*p*log(n) + 1
@@ -133,6 +133,7 @@ PC.cov = function(X, Alpha, Beta){
 #' temp = WBSIP.cov(X, X_prime, 1, dim(X)[2], intervals$Alpha, intervals$Beta, delta = 5)
 #' tau = sqrt(p*log(ncol(X)))*1.5
 #' sort(threshold.BS(temp, tau)$cpt_hat[,1])
+#' @seealso \code{\link{threshold.BS}} for obtain change points estimation.
 WBSIP.cov = function(X, X_prime, s, e, Alpha, Beta, delta, level = 0){
   S = NULL
   Dval = NULL

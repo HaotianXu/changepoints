@@ -15,8 +15,7 @@ calibrate.online.network.missing(
   rho_hat,
   rank_hat,
   C_lambda = 2/3,
-  delta = 5,
-  ...
+  delta = 5
 )
 }
 \arguments{
@@ -41,8 +40,6 @@ calibrate.online.network.missing(
 \item{C_lambda}{A \code{numeric} scalar of an absolute constant, which is set to be 2/3 by default.}
 
 \item{delta}{An \code{integer} scalar of minimum spacing.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -87,10 +84,10 @@ temp = calibrate.online.network.missing(train_miss_list, train_eta_list, thresho
                    permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda, delta = 5)
 }
 \references{
-Dubey, P., Xu, H., & Yu, Y. (2021). Online network change point detection with missing values. arXiv preprint arXiv:2110.06450.
+Dubey, Xu and Yu (2021) <arxiv:2110.06450>
 }
 \seealso{
-\code{online.network.missing} for detecting online change point
+\code{\link{online.network.missing}} for detecting online change point.
 }
 \author{
 Haotian Xu

@@ -7,7 +7,7 @@
 #' @return  Estimated graphon matrix
 #' @export
 #' @author  Haotian Xu
-#' @references Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
+#' @references Dubey, Xu and Yu (2021) <arxiv:2110.06450>
 softImpute.network.missing <- function(data_incomplete_list, eta_list, lambda, a, it_max = 10000) {
   .Call('_changepoints_rcpp_soft_impute', PACKAGE = 'changepoints', data_incomplete_list, eta_list, lambda, a, it_max)
 }
@@ -24,21 +24,21 @@ softImpute.network.missing <- function(data_incomplete_list, eta_list, lambda, a
 #' @param C_lambda   A \code{numeric} scalar of an absolute constant, which is set to be 2/3 by default.
 #' @export
 #' @return  The default thresholding parameter for leading singular value in the soft-impute algorithm
-#' @references Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
+#' @references Dubey, Xu and Yu (2021) <arxiv:2110.06450>
 lambda.network.missing <- function(s, e, t, alpha, rho, pi_ub, p, C_lambda) {
   .Call('_changepoints_rcpp_lambda', PACKAGE = 'changepoints', s, e, t, alpha, rho, pi_ub, p, C_lambda)
 }
 
 #' @title Internal function: CUSUM statistic based on soft-imput estimators
 #' @noRd
-#' @references Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
+#' @references Dubey, Xu and Yu (2021) <arxiv:2110.06450>
 CUSUM.network.missing <- function(data_incomplete_list, eta_list, s, e, t, alpha, rho, m, C_lambda, delta) {
   .Call('_changepoints_rcpp_CUSUM', PACKAGE = 'changepoints', data_incomplete_list, eta_list, s, e, t, alpha, rho, m, C_lambda, delta)
 }
 
 #' @title Internal function: Function to compute the threshold for online change point detection (see Theorem 2 in the reference)
 #' @noRd
-#' @references Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
+#' @references Dubey, Xu and Yu (2021) <arxiv:2110.06450>
 threshold.network.missing = function(s, t, rank, pi_lb, p, rho, pi_ub, alpha){
   return(sqrt(rank*rho*p*pi_ub*log(s/alpha)/(pi_lb^2*s)) + sqrt(rank*rho*p*pi_ub*log(t/alpha)/(pi_lb^2*(t-s))))
 }
@@ -57,7 +57,6 @@ threshold.network.missing = function(s, t, rank, pi_lb, p, rho, pi_ub, alpha){
 #' @param rank_hat         An \code{integer} scalar of the rank of the underlying graphon matrix.
 #' @param C_lambda         A \code{numeric} scalar of an absolute constant, which is set to be 2/3 by default.
 #' @param delta            An \code{integer} scalar of minimum spacing.
-#' @param ...        Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{C_lambda}{The absolute constant}
 #'  \item{rho_hat}{the (estimated) sparsity parameter}
@@ -67,7 +66,7 @@ threshold.network.missing = function(s, t, rank, pi_lb, p, rho, pi_ub, alpha){
 #'  \item{thresholds_array}{A \code{numeric} array of calibrated threshold}
 #' @export
 #' @author  Haotian Xu
-#' @references Dubey, P., Xu, H., & Yu, Y. (2021). Online network change point detection with missing values. arXiv preprint arXiv:2110.06450.
+#' @references Dubey, Xu and Yu (2021) <arxiv:2110.06450>
 #' @examples
 #' p = 6 # number of nodes
 #' rho = 0.5 # sparsity parameter
@@ -97,8 +96,8 @@ threshold.network.missing = function(s, t, rank, pi_lb, p, rho, pi_ub, alpha){
 #' threshold_len = 100
 #' temp = calibrate.online.network.missing(train_miss_list, train_eta_list, threshold_len, alpha_grid, 
 #'                    permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda, delta = 5)
-#' @seealso \code{online.network.missing} for detecting online change point
-calibrate.online.network.missing = function(train_miss_list, train_eta_list, threshold_len, alpha_grid, permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda = 2/3, delta = 5, ...){
+#' @seealso \code{\link{online.network.missing}} for detecting online change point.
+calibrate.online.network.missing = function(train_miss_list, train_eta_list, threshold_len, alpha_grid, permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda = 2/3, delta = 5){
   burnin_idx = ceiling(log2(2*delta))
   train_obs_num = length(train_miss_list)
   p = ncol(train_miss_list[[1]])
@@ -193,13 +192,16 @@ calibrate.online.network.missing = function(train_miss_list, train_eta_list, thr
 #' @param data_incomplete_list  A \code{list} of adjacency matrices (with entries being 0 or 1) with missing values being coercing to 0.
 #' @param eta_list              A \code{list} of matrices associated with data_incomplete_list, each matrix indicates the missing entries in corresponding adjacency matrix.
 #' @param alpha_grid            A \code{numeric} vector in (0,1) representing the desired false alarm rate.
-#' @param thresholds_array      A \code{numeric} array of calibrated threshold.
+#' @param thresholds_array      A \code{numeric} array of calibrated thresholds.
 #' @param pi_ub_hat             A \code{numeric} scalar of the upper bound of the missing probability.
 #' @param rho_hat               A \code{numeric} scalar of the sparsity parameter.
 #' @param C_lambda              A \code{numeric} scalar of an absolute constant, which is set to be 2/3 by default.
 #' @param delta                 An \code{integer} scalar of minimum spacing.
+#' @return  Online change point estimator.
 #' @export
-#' @seealso \code{calibrate.online.network.missing}
+#' @author  Haotian Xu
+#' @references Dubey, Xu and Yu (2021) <arxiv:2110.06450>
+#' @seealso \code{\link{calibrate.online.network.missing}} for calibrating thresholds.
 online.network.missing = function(data_incomplete_list, eta_list, alpha_grid, thresholds_array, rho_hat, pi_ub_hat, C_lambda = 2/3, delta = 5){
   burnin_idx = ceiling(log2(2*delta))
   cpt_hat = rep(NA, length(alpha_grid))

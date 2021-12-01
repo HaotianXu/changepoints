@@ -4,7 +4,7 @@
 \alias{BS.univar}
 \title{Standard binary segmentation for univariate mean change points detection.}
 \usage{
-BS.univar(y, s, e, delta = 2, level = 0, ...)
+BS.univar(y, s, e, delta = 2, level = 0)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of observations.}
@@ -16,8 +16,6 @@ BS.univar(y, s, e, delta = 2, level = 0, ...)
 \item{delta}{A positive \code{numeric} scalar of minimum spacing.}
 
 \item{level}{Should be fixed as 0.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -48,8 +46,11 @@ Hausdorff.dist(cpt_hat, cpt_true)
 cpt_LR = local.refine.univar(cpt_hat, y)
 Hausdorff.dist(cpt_LR, cpt_true)
 }
+\references{
+Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>
+}
 \seealso{
-\code{threshold.BS()} for obtain change points estimation.
+\code{\link{threshold.BS}} for obtain change points estimation, \code{\link{BS.univar.CPD}} for tuning free change points estimation.
 }
 \author{
 Haotian Xu

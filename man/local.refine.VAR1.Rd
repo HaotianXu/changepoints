@@ -4,7 +4,7 @@
 \alias{local.refine.VAR1}
 \title{Local refinement for VAR1 change points detection.}
 \usage{
-local.refine.VAR1(cpt_init, DATA, zeta, ...)
+local.refine.VAR1(cpt_init, DATA, zeta)
 }
 \arguments{
 \item{cpt_init}{A \code{integer} vector of initial change points estimation (sorted in strictly increasing order).}
@@ -12,8 +12,6 @@ local.refine.VAR1(cpt_init, DATA, zeta, ...)
 \item{DATA}{A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.}
 
 \item{zeta}{A \code{numeric} scalar of lasso penalty.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 An \code{integer} vector of locally refined change points estimation.
@@ -43,6 +41,9 @@ temp$test_error # test error result
 min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
 cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 local.refine.VAR1(cpt_init, data, zeta = 0.5)
+}
+\references{
+Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>
 }
 \author{
 Daren Wang & Haotian Xu

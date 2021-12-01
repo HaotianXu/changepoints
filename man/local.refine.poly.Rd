@@ -4,7 +4,7 @@
 \alias{local.refine.poly}
 \title{Local refinement for univariate polynomials change point detection.}
 \usage{
-local.refine.poly(cpt_init, y, r, delta_lr, ...)
+local.refine.poly(cpt_init, y, r, delta_lr)
 }
 \arguments{
 \item{cpt_init}{An \code{integer} vector of initial change points estimation (sorted in strictly increasing order).}
@@ -14,8 +14,6 @@ local.refine.poly(cpt_init, y, r, delta_lr, ...)
 \item{r}{An \code{integer} scalar order of polynomials.}
 
 \item{delta_lr}{A positive \code{integer} scalar of minimum spacing for local refinement.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 An \code{integer} vector of locally refined change point estimation.
@@ -33,6 +31,9 @@ DP_result = CV.search.DP.poly(y, r = 2, gamma_set, delta = 5)
 min_idx = which.min(DP_result$test_error)
 cpt_init = unlist(DP_result$cpt_hat[min_idx])
 local.refine.poly(cpt_init, y, r = 2, delta_lr = 5)
+}
+\references{
+Yu and Chatterjee (2020) <arXiv:2007.09910>
 }
 \author{
 Haotian Xu

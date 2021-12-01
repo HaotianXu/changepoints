@@ -4,7 +4,7 @@
 \alias{BS.uni.nonpar.CPD}
 \title{Standard binary segmentation for univariate nonparametric change points detection with tuning parameter selection.}
 \usage{
-BS.uni.nonpar.CPD(Y, W, N, delta, ...)
+BS.uni.nonpar.CPD(Y, W, N, delta)
 }
 \arguments{
 \item{Y}{A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being multiple observations on each time point.}
@@ -14,8 +14,6 @@ BS.uni.nonpar.CPD(Y, W, N, delta, ...)
 \item{N}{A \code{integer} vector representing number of multiple observations on each time point.}
 
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A vector of estimated change points (sorted in strictly increasing order).
@@ -27,6 +25,9 @@ Perform standard binary segmentation with tuning parameter selection based on sa
 Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))
 N = rep(1, 300)
 temp = BS.uni.nonpar.CPD(Y, Y, N, 5)
+}
+\references{
+Padilla, Yu, Wang and Rinaldo (2021) <doi:10.1214/21-EJS1809>
 }
 \author{
 Oscar Hernan Madrid Padilla & Haotian Xu

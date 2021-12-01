@@ -2,7 +2,7 @@
 % Please edit documentation in R/RDPG.R
 \name{NonPar.RDPG.CPD}
 \alias{NonPar.RDPG.CPD}
-\title{Change point detection for dependent dynamic random dot product graph models.}
+\title{Change points detection for dependent dynamic random dot product graph models.}
 \usage{
 NonPar.RDPG.CPD(data_mat, d, Alpha, Beta, delta)
 }
@@ -18,10 +18,10 @@ NonPar.RDPG.CPD(data_mat, d, Alpha, Beta, delta)
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
 }
 \value{
-A \code{numeric} vector of estimated change point locations.
+A \code{numeric} vector of estimated change points.
 }
 \description{
-Perform Change point detection for dependent dynamic random dot product graph models. The tuning parameter tau for WBS is automatically selected based on the BIC-type scores defined in Equation (2.4) in Zou et al. (2014).
+Perform Change points detection for dependent dynamic random dot product graph models. The tuning parameter tau for WBS is automatically selected based on the BIC-type scores defined in Equation (2.4) in Zou et al. (2014).
 }
 \examples{
 ### generate data 
@@ -87,7 +87,7 @@ intervals = WBS.intervals(M = M, lower = 1, upper = obs_num)
 cpt_hat = NonPar.RDPG.CPD(data_mat, d, Alpha = intervals$Alpha, Beta = intervals$Beta, delta)
 }
 \references{
-Padilla, O. H. M., Yu, Y., & Priebe, C. E. (2019). Change point localization in dependent dynamic nonparametric random dot product graphs. arXiv preprint arXiv:1911.07494.
+Padilla, Yu and Priebe (2019) <arxiv:1911.07494>
 }
 \author{
 Oscar Hernan Madrid Padilla, Haotian Xu

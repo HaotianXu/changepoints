@@ -4,7 +4,7 @@
 \alias{CV.search.DP.VAR1}
 \title{Grid search based on cross-validation of dynamic programming for VAR change points detection via \eqn{l_0} penalty.}
 \usage{
-CV.search.DP.VAR1(DATA, gamma_set, lambda_set, delta, eps = 0.001, ...)
+CV.search.DP.VAR1(DATA, gamma_set, lambda_set, delta, eps = 0.001)
 }
 \arguments{
 \item{DATA}{A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being dimensions.}
@@ -16,8 +16,6 @@ CV.search.DP.VAR1(DATA, gamma_set, lambda_set, delta, eps = 0.001, ...)
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
 
 \item{eps}{A \code{numeric} scalar of precision level for convergence of lasso.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -52,6 +50,9 @@ temp$test_error # test error result
 min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error)))
 cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 Hausdorff.dist(cpt_init, cpt_true)
+}
+\references{
+Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>
 }
 \author{
 Daren Wang & Haotian Xu

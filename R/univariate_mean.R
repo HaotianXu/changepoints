@@ -3,7 +3,6 @@
 #' @param y         A \code{numeric} vector of observations.
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with \eqn{l_0} penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @param ...       Additional arguments.
 #' @return A \code{list} with the following structure:
 #'  \item{partition}{A vector of the best partition}
 #'  \item{yhat}{A vector of mean estimation for corresponding to the best partition}
@@ -15,25 +14,25 @@
 #' y = rnorm(300) + c(rep(0,20),rep(1,30),rep(0,120),rep(1,130))
 #' cpt_hat = part2local(DP.univar(y, gamma = 5, delta = 5)$partition)
 #' Hausdorff.dist(cpt_hat, cpt_true)
-#' @seealso \code{part2local} for obtaining change points estimation.
-DP.univar <- function(y, gamma, delta, ...) {
+#' @references Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>
+#' @seealso \code{\link{part2local}} for obtaining change points estimation.
+DP.univar <- function(y, gamma, delta) {
   .Call('_changepoints_rcpp_DP_univar', PACKAGE = 'changepoints', y, gamma, delta)
 }
 
 
 #' @title Internal function: Cross-Validation of Dynamic Programming algorithm for univariate mean change points detection.
-#' @description     Perform cross-validation by sample splitting. Using the sample with odd indices as training data to estimate the changepoints, then computing sample mean for each segment within two consecutive changepoints, and computing the validation error based on the sample with even indices.
+#' @description     Perform cross-validation by sample splitting. Using the sample with odd indices as training data to estimate the changepoints, then computing sample mean for each segment within two consecutive change points, and computing the validation error based on the sample with even indices.
 #' @param y         A \code{numeric} vector of observations.
-#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the l0 penalty.
+#' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the \eqn{l_0} penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @param ...       Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{cpt_hat}{A vector of estimated change points locations (sorted in strictly increasing order)}
 #'  \item{K_hat}{A scalar of number of estimated change points}
 #'  \item{test_error}{A vector of testing errors}
 #'  \item{train_error}{A vector of training errors}
 #' @noRd
-CV.DP.univar = function(y, gamma, delta, ...){
+CV.DP.univar = function(y, gamma, delta){
   N = length(y)
   even_indexes = seq(2, N, 2)
   odd_indexes = seq(1, N, 2)
@@ -61,10 +60,9 @@ CV.DP.univar = function(y, gamma, delta, ...){
 
 #' @title Grid search for dynamic programming to select the tuning parameter through Cross-Validation.
 #' @description Perform grid search for dynamic programming to select the tuning parameter through Cross-Validation.
-#' @param gamma_set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
+#' @param gamma_set     A \code{numeric} vector of candidate tuning parameter associated with the \eqn{l_0} penalty.
 #' @param y             A \code{numeric} vector of observations.
 #' @param delta         A positive \code{integer} scalar of minimum spacing.
-#' @param ...           Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{cpt_hat}{A list of vector of estimated change points (sorted in strictly increasing order)}
 #'  \item{K_hat}{A list of scalar of number of estimated change points}
@@ -81,7 +79,8 @@ CV.DP.univar = function(y, gamma, delta, ...){
 #' min_idx = which.min(DP_result$test_error)
 #' cpt_hat = unlist(DP_result$cpt_hat[min_idx])
 #' Hausdorff.dist(cpt_hat, cpt_true)
-CV.search.DP.univar = function(y, gamma_set, delta, ...){
+#' @references Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>
+CV.search.DP.univar = function(y, gamma_set, delta){
   output = sapply(1:length(gamma_set), function(j) CV.DP.univar(y, gamma_set[j], delta))
   #print(output)
   cpt_hat = output[1,]## estimated change points
@@ -93,11 +92,10 @@ CV.search.DP.univar = function(y, gamma_set, delta, ...){
 }
 
 
-#' @title Local refinement for univariate mean change point detection.
-#' @description     Perform local refinement for univariate mean change point detection.
+#' @title Local refinement for univariate mean change points detection.
+#' @description     Perform local refinement for univariate mean change points detection.
 #' @param cpt_init  An \code{integer} vector of initial change points estimation (sorted in strictly increasing order).
 #' @param y         A \code{numeric} vector of univariate time series.
-#' @param ...       Additional arguments.
 #' @return  An \code{integer} vector of locally refined change point estimation.
 #' @export
 #' @author Haotian Xu
@@ -112,7 +110,8 @@ CV.search.DP.univar = function(y, gamma_set, delta, ...){
 #' Hausdorff.dist(cpt_hat, cpt_true)
 #' cpt_LR = local.refine.univar(cpt_hat, y)
 #' Hausdorff.dist(cpt_LR, cpt_true)
-local.refine.univar = function(cpt_init, y, ...){
+#' @references Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>
+local.refine.univar = function(cpt_init, y){
   w = 0.9
   n = length(y)
   cpt_init_ext = c(0, cpt_init, n)
@@ -137,7 +136,6 @@ local.refine.univar = function(cpt_init, y, ...){
 #' @param e         A \code{integer} scalar of ending index.
 #' @param delta     A positive \code{numeric} scalar of minimum spacing.
 #' @param level     Should be fixed as 0.
-#' @param ...       Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{S}{A vector of estimated change point locations (sorted in strictly increasing order)}
 #'  \item{Dval}{A vector of values of CUSUM statistic}
@@ -163,8 +161,9 @@ local.refine.univar = function(cpt_init, y, ...){
 #' Hausdorff.dist(cpt_hat, cpt_true)
 #' cpt_LR = local.refine.univar(cpt_hat, y)
 #' Hausdorff.dist(cpt_LR, cpt_true)
-#' @seealso \code{threshold.BS()} for obtain change points estimation.
-BS.univar = function(y, s, e, delta = 2, level = 0, ...){
+#' @references Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>
+#' @seealso \code{\link{threshold.BS}} for obtain change points estimation, \code{\link{BS.univar.CPD}} for tuning free change points estimation.
+BS.univar = function(y, s, e, delta = 2, level = 0){
   S = NULL
   Dval = NULL
   Level = NULL
@@ -193,8 +192,8 @@ BS.univar = function(y, s, e, delta = 2, level = 0, ...){
 }
 
 
-#' @title Wild binary segmentation for univariate mean changepoint detection.
-#' @description     Perform wild binary segmentation for univariate mean changepoint detection.
+#' @title Wild binary segmentation for univariate mean change points detection.
+#' @description     Perform wild binary segmentation for univariate mean change points detection.
 #' @param y         A \code{numeric} vector of observations.
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
@@ -227,7 +226,8 @@ BS.univar = function(y, s, e, delta = 2, level = 0, ...){
 #' Hausdorff.dist(cpt_hat, cpt_true)
 #' cpt_LR = local.refine.univar(cpt_hat, y)
 #' Hausdorff.dist(cpt_LR, cpt_true)
-#' @seealso \code{threshold.BS()} for obtain change points estimation, \code{WBS.univar.CPD()} for tuning free change point detection based on WBS.
+#' @references Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>
+#' @seealso \code{\link{threshold.BS}} for obtain change points estimation, \code{\link{WBS.univar.CPD}} for tuning free change points estimation.
 WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){ 
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
@@ -279,7 +279,7 @@ WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){
 }
 
 
-#' @title Univariate mean change point detection based on wild binary segmentation with tuning parameter selected by sSIC.
+#' @title Univariate mean change points detection based on wild binary segmentation with tuning parameter selected by sSIC.
 #' @description Perform Univariate mean change point detection based on wild binary segmentation. The threshold parameter tau for WBS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
 #' @param y         A \code{numeric} vector of observations.
 #' @param Alpha     A \code{integer} vector of starting indices of random intervals.
@@ -290,7 +290,8 @@ WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){
 #'  \item{tau}{A scalar of selected threshold tau based on sSIC}
 #' @export
 #' @author Daren Wang & Haotian Xu
-#' @references Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection,  Ann. Statist. 42(6): 2243-2281 (December 2014). DOI: 10.1214/14-AOS1245
+#' @references Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>;
+#'             Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection, <DOI: 10.1214/14-AOS1245>
 #' @examples
 #' set.seed(0)
 #' cpt_true = c(20, 50, 170)
@@ -332,13 +333,13 @@ WBS.univar.CPD = function(y, Alpha, Beta, delta){
 #' @description Perform Univariate mean change point detection based on standard binary segmentation. The threshold parameter tau for BS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
 #' @param y         A \code{numeric} vector of observations.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @param ...      Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{cpt}{A vector of estimated change point locations (sorted in strictly increasing order)}
 #'  \item{tau}{A scalar of selected threshold tau based on sSIC}
 #' @export
 #' @author Daren Wang & Haotian Xu
-#' @references Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection,  Ann. Statist. 42(6): 2243-2281 (December 2014). DOI: 10.1214/14-AOS1245
+#' @references Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>;
+#'             Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection, <DOI: 10.1214/14-AOS1245>
 #' @examples
 #' set.seed(0)
 #' cpt_true = c(20, 50, 170)
@@ -351,7 +352,7 @@ WBS.univar.CPD = function(y, Alpha, Beta, delta){
 #' Hausdorff.dist(cpt_hat, cpt_true)
 #' cpt_LR = local.refine.univar(cpt_hat, y)
 #' Hausdorff.dist(cpt_LR, cpt_true)
-BS.univar.CPD = function(y, delta, ...){
+BS.univar.CPD = function(y, delta){
   obs_num = length(y)
   temp1 = BS.univar(y, s = 1, e = obs_num, delta)
   Dval = temp1$Dval
@@ -378,7 +379,7 @@ BS.univar.CPD = function(y, delta, ...){
 
 
 #' @title Strengthened Schwarz information criterion (sSIC)
-#' @references Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection,  Ann. Statist. 42(6): 2243-2281 (December 2014). DOI: 10.1214/14-AOS1245
+#' @references Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection, <DOI: 10.1214/14-AOS1245>
 #' @noRd
 sSIC.obj = function(y, S){
   K = length(S)

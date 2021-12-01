@@ -11,8 +11,7 @@ CV.search.DP.LR.regression(
   lambda_set,
   zeta_set,
   delta,
-  eps = 0.001,
-  ...
+  eps = 0.001
 )
 }
 \arguments{
@@ -29,8 +28,6 @@ CV.search.DP.LR.regression(
 \item{delta}{A strictly \code{integer} scalar of minimum spacing.}
 
 \item{eps}{A \code{numeric} scalar of precision level for convergence of lasso.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -65,6 +62,9 @@ min_zeta_idx = which.min(unlist(temp_zeta$test_error))
 cpt_LR = local.refine.regression(cpt_init, data$y, X = data$X, zeta = zeta_set[min_zeta_idx])
 Hausdorff.dist(cpt_init, cpt_true)
 Hausdorff.dist(cpt_LR, cpt_true)
+}
+\references{
+Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>
 }
 \author{
 Daren Wang & Haotian Xu

@@ -6,7 +6,6 @@
 #' @param alpha       A \code{numeric} scalar of desired false alarm rate.
 #' @param gamma       An \code{integer} scalar of desired average run length.
 #' @param permu_num   An \code{integer} scalar of number of random permutation for calibration.
-#' @param ...         Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{cpt_hat}{An \code{integer} scalar of estimated change point location}
 #'  \item{b_vec}{A \code{numeric} vector of thresholds b_t with t >= 2}
@@ -19,7 +18,8 @@
 #' temp1 = online.univar(y_vec = y_vec, train_vec = train_vec, alpha = 0.05, permu_num = 30)
 #' temp1$cpt_hat
 #' temp1$b_vec # calibrated threshold
-online.univar = function(y_vec, b_vec = NULL, train_vec = NULL, alpha = NULL, gamma = NULL, permu_num = NULL, ...){
+#' @references Yu, Padilla, Wang and Rinaldo (2020) <arxiv:2006.03283>
+online.univar = function(y_vec, b_vec = NULL, train_vec = NULL, alpha = NULL, gamma = NULL, permu_num = NULL){
   if(!is.null(b_vec)){
     if(length(y_vec) - length(b_vec) != 1){
       stop("b_vec should be the vector of thresholds b_t with t >= 2.")
@@ -154,7 +154,6 @@ online.univar = function(y_vec, b_vec = NULL, train_vec = NULL, alpha = NULL, ga
 #' @param alpha       A \code{numeric} scalar of desired false alarm rate.
 #' @param gamma       An \code{integer} scalar of desired average run length.
 #' @param permu_num   An \code{integer} scalar of number of random permutation for calibration.
-#' @param ...         Additional arguments.
 #' @return  An \code{integer} vector of estimated change points.
 #' @export
 #' @author Haotian Xu
@@ -164,7 +163,8 @@ online.univar = function(y_vec, b_vec = NULL, train_vec = NULL, alpha = NULL, ga
 #' # control the false alarm rate
 #' temp1 = online.univar.multi(y_vec = y_vec, train_vec = train_vec, alpha = 0.05, permu_num = 30)
 #' temp1
-online.univar.multi = function(y_vec, b_vec = NULL, train_vec = NULL, alpha = NULL, gamma = NULL, permu_num = NULL, ...){
+#' @references Yu, Padilla, Wang and Rinaldo (2020) <arxiv:2006.03283>
+online.univar.multi = function(y_vec, b_vec = NULL, train_vec = NULL, alpha = NULL, gamma = NULL, permu_num = NULL){
   if(!is.null(b_vec)){
     if(length(y_vec) - length(b_vec) != 1){
       stop("b_vec should be the vector of thresholds b_t with t >= 2.")

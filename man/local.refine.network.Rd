@@ -10,8 +10,7 @@ local.refine.network(
   data_mat2,
   self = FALSE,
   tau2,
-  tau3 = Inf,
-  ...
+  tau3 = Inf
 )
 }
 \arguments{
@@ -26,8 +25,6 @@ local.refine.network(
 \item{tau2}{A positive \code{numeric} scalar for USVT corresponding to the threshold for singular values of input matrix.}
 
 \item{tau3}{A positive \code{numeric} scalar for USVT corresponding to the threshold for entries of output matrix.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{numeric} vector of locally refined change point locations.
@@ -64,7 +61,7 @@ cpt_WBS = 2*cpt_init
 cpt_refined = 2*cpt_refined
 }
 \references{
-Wang D, Yu Y, Rinaldo A. Optimal change point detection and localization in sparse dynamic networks. The Annals of Statistics. 2021 Feb;49(1):203-32.
+Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>
 }
 \author{
 Daren Wang & Haotian Xu

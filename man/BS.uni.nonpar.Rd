@@ -4,7 +4,7 @@
 \alias{BS.uni.nonpar}
 \title{Standard binary segmentation for univariate nonparametric change points detection.}
 \usage{
-BS.uni.nonpar(Y, s, e, N, delta, level = 0, ...)
+BS.uni.nonpar(Y, s, e, N, delta, level = 0)
 }
 \arguments{
 \item{Y}{A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being multiple observations on each time point.}
@@ -18,8 +18,6 @@ BS.uni.nonpar(Y, s, e, N, delta, level = 0, ...)
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
 
 \item{level}{Should be fixed as 0.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -37,6 +35,9 @@ N = rep(1, 300)
 temp = BS.uni.nonpar(Y, 1, 300, N, 5)
 plot.ts(t(Y))
 points(x = tail(temp$S[order(temp$Dval)],4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
+}
+\references{
+Padilla, Yu, Wang and Rinaldo (2021) <doi:10.1214/21-EJS1809>
 }
 \author{
 Oscar Hernan Madrid Padilla & Haotian Xu

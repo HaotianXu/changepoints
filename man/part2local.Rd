@@ -4,12 +4,10 @@
 \alias{part2local}
 \title{Partition to localization for dynamic programming.}
 \usage{
-part2local(parti_vec, ...)
+part2local(parti_vec)
 }
 \arguments{
 \item{parti_vec}{A \code{integer} vector of best partition produced by dynamic programming algorithm.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A vector of change point locations.
@@ -22,7 +20,7 @@ y = c(rep(0, 100), rep(1, 100))
 part2local(DP.univar(y, 1, 4)$partition)
 }
 \seealso{
-\code{DP.univar()}, \code{DP.poly()}, \code{DP.regression()}, \code{DP.SEPP()}, \code{DP.VAR1()}
+\code{\link{DP.univar}}, \code{\link{DP.poly}}, \code{\link{DP.regression}}, \code{\link{DP.SEPP}}, \code{\link{DP.VAR1}}
 }
 \author{
 Haotian Xu

@@ -50,6 +50,9 @@ temp = WBSIP.cov(X, X_prime, 1, dim(X)[2], intervals$Alpha, intervals$Beta, delt
 tau = sqrt(p*log(ncol(X)))*1.5
 sort(threshold.BS(temp, tau)$cpt_hat[,1])
 }
+\seealso{
+\code{\link{threshold.BS}} for obtain change points estimation.
+}
 \author{
 Haotian Xu
 }

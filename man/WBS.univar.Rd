@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean.R
 \name{WBS.univar}
 \alias{WBS.univar}
-\title{Wild binary segmentation for univariate mean changepoint detection.}
+\title{Wild binary segmentation for univariate mean change points detection.}
 \usage{
 WBS.univar(y, s, e, Alpha, Beta, delta = 2, level = 0)
 }
@@ -29,7 +29,7 @@ A \code{list} with the following structure:
  \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row}
 }
 \description{
-Perform wild binary segmentation for univariate mean changepoint detection.
+Perform wild binary segmentation for univariate mean change points detection.
 }
 \examples{
 set.seed(0)
@@ -50,8 +50,11 @@ Hausdorff.dist(cpt_hat, cpt_true)
 cpt_LR = local.refine.univar(cpt_hat, y)
 Hausdorff.dist(cpt_LR, cpt_true)
 }
+\references{
+Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>
+}
 \seealso{
-\code{threshold.BS()} for obtain change points estimation, \code{WBS.univar.CPD()} for tuning free change point detection based on WBS.
+\code{\link{threshold.BS}} for obtain change points estimation, \code{\link{WBS.univar.CPD}} for tuning free change points estimation.
 }
 \author{
 Haotian Xu

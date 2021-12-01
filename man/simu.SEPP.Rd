@@ -4,7 +4,7 @@
 \alias{simu.SEPP}
 \title{Simulate a (stable) SEPP model (without change point).}
 \usage{
-simu.SEPP(intercept, n, A, threshold, vzero = NULL, ...)
+simu.SEPP(intercept, n, A, threshold, vzero = NULL)
 }
 \arguments{
 \item{intercept}{A \code{numeric} scalar representing the intercept of the model.}
@@ -16,8 +16,6 @@ simu.SEPP(intercept, n, A, threshold, vzero = NULL, ...)
 \item{threshold}{A \code{numeric} scalar representing the upper bound for each coordinate of X_t (for stability).}
 
 \item{vzero}{A \code{numeric} vector representing the observation at time 0. If \code{vzero = NULL}, each coordinate is generated from a Poisson distribution with mean \code{lambda}.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A p-by-n matrix.

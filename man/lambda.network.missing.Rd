@@ -30,5 +30,5 @@ The default thresholding parameter for leading singular value in the soft-impute
 Function to compute the thresholding parameter for leading singular value in the soft-impute algorithm (see Theorem 2 in the reference)
 }
 \references{
-Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
+Dubey, Xu and Yu (2021) <arxiv:2110.06450>
 }

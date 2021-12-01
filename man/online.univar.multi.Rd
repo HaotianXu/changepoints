@@ -10,8 +10,7 @@ online.univar.multi(
   train_vec = NULL,
   alpha = NULL,
   gamma = NULL,
-  permu_num = NULL,
-  ...
+  permu_num = NULL
 )
 }
 \arguments{
@@ -26,8 +25,6 @@ online.univar.multi(
 \item{gamma}{An \code{integer} scalar of desired average run length.}
 
 \item{permu_num}{An \code{integer} scalar of number of random permutation for calibration.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 An \code{integer} vector of estimated change points.
@@ -97,6 +94,9 @@ train_vec = rnorm(150)
 # control the false alarm rate
 temp1 = online.univar.multi(y_vec = y_vec, train_vec = train_vec, alpha = 0.05, permu_num = 30)
 temp1
+}
+\references{
+Yu, Padilla, Wang and Rinaldo (2020) <arxiv:2006.03283>
 }
 \author{
 Haotian Xu

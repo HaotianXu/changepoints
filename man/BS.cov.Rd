@@ -4,7 +4,7 @@
 \alias{BS.cov}
 \title{Binary Segmentation for covariance change points detection through Operator Norm.}
 \usage{
-BS.cov(X, s, e, level = 0, ...)
+BS.cov(X, s, e, level = 0)
 }
 \arguments{
 \item{X}{A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.}
@@ -14,8 +14,6 @@ BS.cov(X, s, e, level = 0, ...)
 \item{e}{A \code{integer} scalar of ending index.}
 
 \item{level}{A parameter for tracking the level at which a change point is detected. Should be fixed as 0.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the structure:
@@ -39,6 +37,9 @@ X = cbind(t(MASS::mvrnorm(100, mu = rep(0, p), A1)),
           t(MASS::mvrnorm(200, mu = rep(0, p), A3)))
 temp = BS.cov(X, 1, 450)
 threshold.BS(temp, 10)
+}
+\seealso{
+\code{\link{threshold.BS}} for obtain change points estimation.
 }
 \author{
 Haotian Xu

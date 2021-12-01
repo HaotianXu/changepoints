@@ -5,7 +5,6 @@
 #' @param A          A \code{numeric} pXp matrix representing the coefficient matrix.
 #' @param threshold  A \code{numeric} scalar representing the upper bound for each coordinate of X_t (for stability).
 #' @param vzero      A \code{numeric} vector representing the observation at time 0. If \code{vzero = NULL}, each coordinate is generated from a Poisson distribution with mean \code{lambda}.
-#' @param ...        Additional arguments.
 #' @return   A p-by-n matrix.
 #' @export
 #' @author  Daren Wang & Haotian Xu
@@ -38,7 +37,7 @@
 #' data3 = simu.SEPP(intercept, n, A3, threshold, vzero = data2[,n])
 #' data = cbind(data1, data2, data3)
 #' dim(data)
-simu.SEPP = function(intercept, n, A, threshold, vzero = NULL, ...){
+simu.SEPP = function(intercept, n, A, threshold, vzero = NULL){
   if(ncol(A) != nrow(A)){
     stop("A should be a square matrix.")
   }
@@ -69,7 +68,6 @@ simu.SEPP = function(intercept, n, A, threshold, vzero = NULL, ...){
 #' @param delta2    An \code{integer} scalar representing the maximal of the change point spacing (for reducing computation cost).
 #' @param intercept A \code{numeric} scalar representing the intercept of the model, which is assumed to be known.
 #' @param threshold A \code{numeric} scalar representing the upper bound for each coordinate of X_t (for stability).
-#' @param ...      Additional arguments.
 #' @return A vector of the best partition.
 #' @export
 #' @author Daren Wang & Haotian Xu
@@ -108,8 +106,8 @@ simu.SEPP = function(intercept, n, A, threshold, vzero = NULL, ...){
 #' threshold = 6
 #' parti = DP.SEPP(data, gamma = gamma, lambda = 0.03, delta, delta2, intercept, threshold)$partition
 #' cpt_hat = part2local(parti)
-#' @seealso \code{part2local} for obtaining change points estimation.
-DP.SEPP = function(DATA, gamma, lambda, delta, delta2, intercept, threshold, ...){
+#' @seealso \code{\link{part2local}} for obtaining change points estimation.
+DP.SEPP = function(DATA, gamma, lambda, delta, delta2, intercept, threshold){
   M = nrow(DATA)
   N = ncol(DATA)
   bestvalue = rep(0,N+1)

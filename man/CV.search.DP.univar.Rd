@@ -4,16 +4,14 @@
 \alias{CV.search.DP.univar}
 \title{Grid search for dynamic programming to select the tuning parameter through Cross-Validation.}
 \usage{
-CV.search.DP.univar(y, gamma_set, delta, ...)
+CV.search.DP.univar(y, gamma_set, delta)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of observations.}
 
-\item{gamma_set}{A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.}
+\item{gamma_set}{A \code{numeric} vector of candidate tuning parameter associated with the \eqn{l_0} penalty.}
 
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -34,6 +32,9 @@ DP_result = CV.search.DP.univar(y, gamma_set, delta = 5)
 min_idx = which.min(DP_result$test_error)
 cpt_hat = unlist(DP_result$cpt_hat[min_idx])
 Hausdorff.dist(cpt_hat, cpt_true)
+}
+\references{
+Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>
 }
 \author{
 Daren Wang & Haotian Xu

@@ -4,7 +4,7 @@
 \alias{CV.search.DP.poly}
 \title{Grid search for dynamic programming to select the tuning parameter through Cross-Validation.}
 \usage{
-CV.search.DP.poly(y, r, gamma_set, delta, ...)
+CV.search.DP.poly(y, r, gamma_set, delta)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of observations.}
@@ -14,8 +14,6 @@ CV.search.DP.poly(y, r, gamma_set, delta, ...)
 \item{gamma_set}{A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.}
 
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -37,6 +35,9 @@ DP_result = CV.search.DP.poly(y, r = 2, gamma_set, delta = 5)
 min_idx = which.min(DP_result$test_error)
 cpt_init = unlist(DP_result$cpt_hat[min_idx])
 local.refine.poly(cpt_init, y, r = 2, delta_lr = 5)
+}
+\references{
+Yu and Chatterjee (2020) <arXiv:2007.09910>
 }
 \author{
 Haotian Xu

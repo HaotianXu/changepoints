@@ -5,7 +5,6 @@
 #' @param n           A \code{integer} scalar representing the number of observations.
 #' @param symm        A \code{logic} scalar indicating if adjacency matrices are required to be symmetric.
 #' @param self        A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.
-#' @param ...        Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{obs_mat}{A matrix, with each column be the vectorized adjacency (sub)matrix. For example, if "symm = TRUE" and "self = FALSE", only the strictly lower triangular matrix is considered}
 #'  \item{graphon_mat}{Underlying graphon matrix}
@@ -25,7 +24,8 @@
 #' sbm1 = simu.SBM(conn1_mat, can_vec, n, symm = TRUE, self = TRUE)
 #' sbm2 = simu.SBM(conn2_mat, can_vec, n, symm = TRUE, self = TRUE)
 #' data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
-simu.SBM = function(connec_mat, can_vec, n, symm = FALSE, self = TRUE, ...){
+#' @references Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>
+simu.SBM = function(connec_mat, can_vec, n, symm = FALSE, self = TRUE){
   block_num = dim(connec_mat)[1]
   p = length(can_vec)
   SBM_mean_mat = matrix(0, nrow = p, ncol = p)
@@ -100,7 +100,6 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 #' @param Beta       A \code{integer} vector of ending indices of random intervals.
 #' @param delta      A positive \code{integer} scalar of minimum spacing.
 #' @param level      Should be fixed as 0.
-#' @param ...        Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{S}{A vector of estimated change points (sorted in strictly increasing order)}
 #'  \item{Dval}{A vector of values of CUSUM statistic based on KS distance}
@@ -108,7 +107,6 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 #'  \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row}
 #' @export
 #' @author  Daren Wang & Haotian Xu
-#' @references Wang D, Yu Y, Rinaldo A. Optimal change point detection and localization in sparse dynamic networks. The Annals of Statistics. 2021 Feb;49(1):203-32.
 #' @examples
 #' p = 15 # number of nodes
 #' rho = 0.5 # sparsity parameter
@@ -136,7 +134,8 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 #'                       self = TRUE, tau2 = p*rho_hat/3, tau3 = Inf)
 #' cpt_WBS = 2*cpt_init
 #' cpt_refined = 2*cpt_refined
-WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0, ...){
+#' @references Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>
+WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0){
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
   xi = 1/64 #using the shrunk constant given in the paper
@@ -192,11 +191,10 @@ WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0
 #' @param self       A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.
 #' @param tau2       A positive \code{numeric} scalar for USVT corresponding to the threshold for singular values of input matrix.
 #' @param tau3       A positive \code{numeric} scalar for USVT corresponding to the threshold for entries of output matrix.
-#' @param ...       Additional arguments.
 #' @return  A \code{numeric} vector of locally refined change point locations.
 #' @export
 #' @author  Daren Wang & Haotian Xu
-#' @references Wang D, Yu Y, Rinaldo A. Optimal change point detection and localization in sparse dynamic networks. The Annals of Statistics. 2021 Feb;49(1):203-32.
+#' @references Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>
 #' @examples
 #' p = 15 # number of nodes
 #' rho = 0.5 # sparsity parameter
@@ -224,7 +222,7 @@ WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0
 #'                                    tau2 = p*rho_hat/3, tau3 = Inf)
 #' cpt_WBS = 2*cpt_init
 #' cpt_refined = 2*cpt_refined
-local.refine.network = function(cpt_init, data_mat1, data_mat2, self = FALSE, tau2, tau3 = Inf, ...){
+local.refine.network = function(cpt_init, data_mat1, data_mat2, self = FALSE, tau2, tau3 = Inf){
   obs_num = ncol(data_mat1)
   cpt_init_ext = c(0, cpt_init, obs_num)
   K = length(cpt_init)
@@ -362,14 +360,13 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, rho, a
 #' @param alpha      A \code{numeric} scalar in (0,1) representing the level.
 #' @param gamma      An \code{integer} scalar of desired average run length.
 #' @param permu_num  An \code{integer} scalar of number of random permutation for calibration.
-#' @param ...        Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{cpt}{Estimated change point}
 #'  \item{score}{A \code{numeric} vector of computed cumsum statistics}
 #'  \item{b_vec}{A \code{numeric} vector of thresholds b_t with t >= 2}
 #' @export
 #' @author  Oscar Hernan Madrid Padilla & Haotian Xu
-#' @references Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
+#' @references Yu, Padilla, Wang and Rinaldo (2021) <arxiv:2101.05477>
 #' @examples
 #' set.seed(123)
 #' p = 15 # number of nodes
@@ -391,7 +388,7 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, rho, a
 #' temp = online.network(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat, alpha = 0.05, 
 #'                       gamma = NULL, permu_num = 50)
 #' cpt_hat = 2 * temp$cpt
-online.network = function(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat = NULL, alpha = NULL, gamma = NULL, permu_num = NULL, ...){
+online.network = function(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat = NULL, alpha = NULL, gamma = NULL, permu_num = NULL){
   n = ncol(data_mat1)
   if(self == TRUE){
     p = sqrt(2*nrow(data_mat1) + 1/4) - 1/2

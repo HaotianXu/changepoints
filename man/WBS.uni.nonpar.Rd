@@ -4,7 +4,7 @@
 \alias{WBS.uni.nonpar}
 \title{Wild binary segmentation for univariate nonparametric change points detection.}
 \usage{
-WBS.uni.nonpar(Y, s, e, Alpha, Beta, N, delta, level = 0, ...)
+WBS.uni.nonpar(Y, s, e, Alpha, Beta, N, delta, level = 0)
 }
 \arguments{
 \item{Y}{A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being multiple observations on each time point.}
@@ -22,8 +22,6 @@ WBS.uni.nonpar(Y, s, e, Alpha, Beta, N, delta, level = 0, ...)
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
 
 \item{level}{Should be fixed as 0.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -44,6 +42,9 @@ temp = WBS.uni.nonpar(Y, 1, 300, intervals$Alpha, intervals$Beta, N, 5)
 plot.ts(t(Y))
 points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
 threshold.BS(temp, 2)
+}
+\references{
+Padilla, Yu, Wang and Rinaldo (2021) <doi:10.1214/21-EJS1809>
 }
 \author{
 Oscar Hernan Madrid Padilla, Haotian Xu

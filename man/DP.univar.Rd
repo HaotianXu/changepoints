@@ -4,7 +4,7 @@
 \alias{DP.univar}
 \title{Dynamic programming for univariate mean change points detection through \eqn{l_0} penalty.}
 \usage{
-DP.univar(y, gamma, delta, ...)
+DP.univar(y, gamma, delta)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of observations.}
@@ -12,8 +12,6 @@ DP.univar(y, gamma, delta, ...)
 \item{gamma}{A \code{numeric} scalar of the tuning parameter associated with \eqn{l_0} penalty.}
 
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -30,8 +28,11 @@ y = rnorm(300) + c(rep(0,20),rep(1,30),rep(0,120),rep(1,130))
 cpt_hat = part2local(DP.univar(y, gamma = 5, delta = 5)$partition)
 Hausdorff.dist(cpt_hat, cpt_true)
 }
+\references{
+Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>
+}
 \seealso{
-\code{part2local} for obtaining change points estimation.
+\code{\link{part2local}} for obtaining change points estimation.
 }
 \author{
 Haotian Xu

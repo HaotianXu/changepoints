@@ -4,7 +4,7 @@
 \alias{DP.regression}
 \title{Dynamic programming algorithm for regression change points detection through \eqn{l_0} penalty.}
 \usage{
-DP.regression(y, X, gamma, lambda, delta, eps = 0.001, ...)
+DP.regression(y, X, gamma, lambda, delta, eps = 0.001)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of response variable.}
@@ -18,8 +18,6 @@ DP.regression(y, X, gamma, lambda, delta, eps = 0.001, ...)
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
 
 \item{eps}{A \code{numeric} scalar of precision level for convergence of lasso.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A vector of the best partition of the dynamic programming algorithm.
@@ -37,10 +35,10 @@ temp = DP.regression(y = data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
 cpt_hat = part2local(temp$partition)
 }
 \references{
-Rinaldo, A., Wang, D., Wen, Q., Willett, R., & Yu, Y. (2021, March). Localizing changes in high-dimensional regression models. In International Conference on Artificial Intelligence and Statistics (pp. 2089-2097). PMLR.
+Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>
 }
 \seealso{
-\code{part2local} for obtaining change points estimation.
+\code{\link{part2local}} for obtaining change points estimation.
 }
 \author{
 Daren Wang & Haotian Xu

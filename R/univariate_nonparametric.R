@@ -6,7 +6,6 @@
 #' @param N         A \code{integer} vector representing number of multiple observations on each time point.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param level     Should be fixed as 0.
-#' @param ...       Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{S}{A vector of estimated change points (sorted in strictly increasing order)}
 #'  \item{Dval}{A vector of values of CUSUM statistic based on KS distance}
@@ -20,7 +19,8 @@
 #' temp = BS.uni.nonpar(Y, 1, 300, N, 5)
 #' plot.ts(t(Y))
 #' points(x = tail(temp$S[order(temp$Dval)],4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
-BS.uni.nonpar = function(Y, s, e, N, delta, level = 0, ...){
+#' @references Padilla, Yu, Wang and Rinaldo (2021) <doi:10.1214/21-EJS1809>
+BS.uni.nonpar = function(Y, s, e, N, delta, level = 0){
   S = NULL
   Dval = NULL
   Level = NULL
@@ -54,7 +54,6 @@ BS.uni.nonpar = function(Y, s, e, N, delta, level = 0, ...){
 #' @param W         A copy of the matrix Y, it can be Y itself.
 #' @param N         A \code{integer} vector representing number of multiple observations on each time point.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @param ...       Additional arguments.
 #' @return  A vector of estimated change points (sorted in strictly increasing order).
 #' @export
 #' @author Oscar Hernan Madrid Padilla & Haotian Xu
@@ -62,7 +61,8 @@ BS.uni.nonpar = function(Y, s, e, N, delta, level = 0, ...){
 #' Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))
 #' N = rep(1, 300)
 #' temp = BS.uni.nonpar.CPD(Y, Y, N, 5)
-BS.uni.nonpar.CPD = function(Y, W, N, delta, ...){
+#' @references Padilla, Yu, Wang and Rinaldo (2021) <doi:10.1214/21-EJS1809>
+BS.uni.nonpar.CPD = function(Y, W, N, delta){
   obs_num = ncol(Y)
   temp1 = BS.uni.nonpar(W, 1, obs_num, N, delta, level = 0)  
   Dval = temp1$Dval
@@ -174,7 +174,6 @@ CUSUM.KS = function(Y, s, e, t, N, vector = FALSE){
 #' @param N         A \code{integer} vector representing number of multiple observations on each time point.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param level     Should be fixed as 0.
-#' @param ...      Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{S}{A vector of estimated change points (sorted in strictly increasing order)}
 #'  \item{Dval}{A vector of values of CUSUM statistic based on KS distance}
@@ -191,7 +190,8 @@ CUSUM.KS = function(Y, s, e, t, N, vector = FALSE){
 #' plot.ts(t(Y))
 #' points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
 #' threshold.BS(temp, 2)
-WBS.uni.nonpar = function(Y, s, e, Alpha, Beta, N, delta, level = 0, ...){ 
+#' @references Padilla, Yu, Wang and Rinaldo (2021) <doi:10.1214/21-EJS1809>
+WBS.uni.nonpar = function(Y, s, e, Alpha, Beta, N, delta, level = 0){ 
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
   idx = which(Beta_new - Alpha_new > 2*delta)
@@ -251,7 +251,6 @@ WBS.uni.nonpar = function(Y, s, e, Alpha, Beta, N, delta, level = 0, ...){
 #' @param Beta      A \code{integer} vector of ending indices of random intervals.
 #' @param N         A \code{integer} vector representing number of multiple observations on each time point.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @param ...       Additional arguments.
 #' @return  A vector of estimated change points (sorted in strictly increasing order).
 #' @export
 #' @author Oscar Hernan Madrid Padilla & Haotian Xu
@@ -261,7 +260,8 @@ WBS.uni.nonpar = function(Y, s, e, Alpha, Beta, N, delta, level = 0, ...){
 #' M = 20
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y))
 #' temp = WBS.uni.nonpar.CPD(Y, Y, intervals$Alpha, intervals$Beta, N, 5)
-WBS.uni.nonpar.CPD = function(Y, W, Alpha, Beta, N, delta, ...){
+#' @references Padilla, Yu, Wang and Rinaldo (2021) <doi:10.1214/21-EJS1809>
+WBS.uni.nonpar.CPD = function(Y, W, Alpha, Beta, N, delta){
   obs_num = ncol(Y)
   temp1 = WBS.uni.nonpar(W, 1, obs_num, Alpha, Beta, N, delta, level = 0)  
   Dval = temp1$Dval

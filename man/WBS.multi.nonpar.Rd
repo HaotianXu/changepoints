@@ -4,7 +4,7 @@
 \alias{WBS.multi.nonpar}
 \title{Wild binary segmentation for multivariate nonparametric change points detection.}
 \usage{
-WBS.multi.nonpar(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...)
+WBS.multi.nonpar(Y, W, s, e, Alpha, Beta, h, delta, level = 0)
 }
 \arguments{
 \item{Y}{A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.}
@@ -24,8 +24,6 @@ WBS.multi.nonpar(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...)
 \item{delta}{A \code{integer} scalar of minimum spacing.}
 
 \item{level}{Should be fixed as 0.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -64,6 +62,12 @@ temp = WBS.multi.nonpar(Y, Y, 1, ncol(Y), intervals$Alpha, intervals$Beta, h, de
 result = threshold.BS(temp, median(temp$Dval))
 print(result$BS_tree_trimmed)
 plot(result$BS_tree_trimmed)
+}
+\references{
+Padilla, Yu, Wang and Rinaldo (2019) <arxiv:1910.13289>
+}
+\seealso{
+\code{\link{threshold.BS}} for obtain change points estimation.
 }
 \author{
 Oscar Hernan Madrid Padilla & Haotian Xu

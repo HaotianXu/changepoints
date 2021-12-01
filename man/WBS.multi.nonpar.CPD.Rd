@@ -51,6 +51,9 @@ h = 5*(K_max*log(n)/n)^{1/p} # bandwith
 S = WBS.multi.nonpar.CPD(Y, Y, intervals$Alpha, intervals$Beta, h, delta = 10)
 S
 }
+\references{
+Padilla, Yu, Wang and Rinaldo (2019) <arxiv:1910.13289>
+}
 \author{
 Oscar Hernan Madrid Padilla & Haotian Xu
 }

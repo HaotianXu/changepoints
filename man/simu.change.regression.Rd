@@ -4,7 +4,7 @@
 \alias{simu.change.regression}
 \title{Simulate a sparse regression model with change points in coefficients.}
 \usage{
-simu.change.regression(d0, cpt_true, p, n, sigma, kappa, ...)
+simu.change.regression(d0, cpt_true, p, n, sigma, kappa)
 }
 \arguments{
 \item{d0}{A \code{numeric} scalar of number of nonzero coefficients.}
@@ -18,8 +18,6 @@ simu.change.regression(d0, cpt_true, p, n, sigma, kappa, ...)
 \item{sigma}{A \code{numeric} scalar of error standard deviation.}
 
 \item{kappa}{A \code{numeric} scalar of minimum jump size of coefficient vector in terms of \eqn{l_2} norm.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -39,7 +37,7 @@ cpt_true = c(10, 30, 40, 70, 90)
 data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 }
 \references{
-Rinaldo, A., Wang, D., Wen, Q., Willett, R., & Yu, Y. (2021, March). Localizing changes in high-dimensional regression models. In International Conference on Artificial Intelligence and Statistics (pp. 2089-2097). PMLR.
+Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>
 }
 \author{
 Daren Wang & Haotian Xu

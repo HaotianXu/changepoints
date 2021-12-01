@@ -4,7 +4,7 @@
 \alias{simu.SBM}
 \title{Simulate a Stochastic Block Model (without change point).}
 \usage{
-simu.SBM(connec_mat, can_vec, n, symm = FALSE, self = TRUE, ...)
+simu.SBM(connec_mat, can_vec, n, symm = FALSE, self = TRUE)
 }
 \arguments{
 \item{connec_mat}{A \code{numeric} symmetric matrix representing the connectivity matrix (each entry takes value in \eqn{[0,1]}).}
@@ -16,8 +16,6 @@ simu.SBM(connec_mat, can_vec, n, symm = FALSE, self = TRUE, ...)
 \item{symm}{A \code{logic} scalar indicating if adjacency matrices are required to be symmetric.}
 
 \item{self}{A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -41,6 +39,9 @@ can_vec = sample(1:p, replace = FALSE) # randomly assign nodes into groups
 sbm1 = simu.SBM(conn1_mat, can_vec, n, symm = TRUE, self = TRUE)
 sbm2 = simu.SBM(conn2_mat, can_vec, n, symm = TRUE, self = TRUE)
 data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
+}
+\references{
+Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>
 }
 \author{
 Daren Wang & Haotian Xu

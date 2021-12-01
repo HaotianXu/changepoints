@@ -30,7 +30,7 @@ Estimated graphon matrix
 Internal function: Estimate graphon matrix by soft-impute for independent adjacency matrices with missing values
 }
 \references{
-Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
+Dubey, Xu and Yu (2021) <arxiv:2110.06450>
 }
 \author{
 Haotian Xu

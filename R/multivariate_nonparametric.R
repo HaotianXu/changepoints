@@ -31,7 +31,6 @@ CUSUM.KS.multivariate = function(Y, W, s, e, t, h){
 #' @param h         A \code{numeric} scalar of bandwidth parameter.
 #' @param delta     A \code{integer} scalar of minimum spacing.
 #' @param level     Should be fixed as 0.
-#' @param ...       Additional arguments.
 #' @return     A \code{list} with the following structure:
 #'  \item{S}{A vector of estimated change points (sorted in strictly increasing order)}
 #'  \item{Dval}{A vector of values of CUSUM statistic based on KS distance}
@@ -66,7 +65,9 @@ CUSUM.KS.multivariate = function(Y, W, s, e, t, h){
 #' result = threshold.BS(temp, median(temp$Dval))
 #' print(result$BS_tree_trimmed)
 #' plot(result$BS_tree_trimmed)
-WBS.multi.nonpar = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...){
+#' @references Padilla, Yu, Wang and Rinaldo (2019) <arxiv:1910.13289>
+#' @seealso \code{\link{threshold.BS}} for obtain change points estimation.
+WBS.multi.nonpar = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0){
   print(paste0("WBS at level: ", level))
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
@@ -147,6 +148,7 @@ WBS.multi.nonpar = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...){
 #' h = 5*(K_max*log(n)/n)^{1/p} # bandwith
 #' S = WBS.multi.nonpar.CPD(Y, Y, intervals$Alpha, intervals$Beta, h, delta = 10)
 #' S
+#' @references Padilla, Yu, Wang and Rinaldo (2019) <arxiv:1910.13289>
 WBS.multi.nonpar.CPD = function(Y, W, Alpha, Beta, h, delta){
   p = nrow(Y)
   obs_num = ncol(Y)

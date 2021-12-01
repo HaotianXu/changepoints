@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean.R
 \name{WBS.univar.CPD}
 \alias{WBS.univar.CPD}
-\title{Univariate mean change point detection based on wild binary segmentation with tuning parameter selected by sSIC.}
+\title{Univariate mean change points detection based on wild binary segmentation with tuning parameter selected by sSIC.}
 \usage{
 WBS.univar.CPD(y, Alpha, Beta, delta)
 }
@@ -37,7 +37,8 @@ cpt_LR = local.refine.univar(cpt_hat, y)
 Hausdorff.dist(cpt_LR, cpt_true)
 }
 \references{
-Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection,  Ann. Statist. 42(6): 2243-2281 (December 2014). DOI: 10.1214/14-AOS1245
+Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>;
+            Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection, <DOI: 10.1214/14-AOS1245>
 }
 \author{
 Daren Wang & Haotian Xu

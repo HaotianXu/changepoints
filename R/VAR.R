@@ -5,7 +5,6 @@
 #' @param n          An \code{integer} scalar representing sample size.
 #' @param A          A \code{numeric} p-by-p matrix representing the transition matrix of the VAR1 model.
 #' @param vzero      A \code{numeric} vector representing the observation at time 0. If \code{vzero = NULL},it is generated following the distribution of the error terms. 
-#' @param ...        Additional arguments.
 #' @return  A p-by-n matrix.
 #' @export
 #' @author  Daren Wang
@@ -15,7 +14,8 @@
 #' n = 100
 #' A = matrix(rnorm(p*p), nrow = p)*0.1  # transition matrix
 #' simu.VAR1(sigma, p, n, A)
-simu.VAR1= function(sigma, p, n, A, vzero = NULL, ...){
+#' @references Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>
+simu.VAR1= function(sigma, p, n, A, vzero = NULL){
   X = matrix(0, nrow = p, ncol = n)
   if(is.null(vzero)){
     X[,1] = rnorm(p, mean = 0, sd = sigma)
@@ -57,7 +57,6 @@ error.pred.seg.VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps) {
 #' @param lambda    A \code{numeric} scalar of the tuning parameter for lasso penalty.
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
 #' @param eps       A \code{numeric} scalar of precision level for convergence of lasso.
-#' @param ...       Additional arguments.
 #' @return  partition: A vector of the best partition.
 #' @export
 #' @author Daren Wang, Haotian Xu
@@ -79,8 +78,9 @@ error.pred.seg.VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps) {
 #' X_futu = data[,2:N]
 #' parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
 #' part2local(parti)
+#' @references Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>
 #' @seealso \code{part2local} for obtaining change points estimation.
-DP.VAR1 <- function(X_futu, X_curr, gamma, lambda, delta, eps = 0.001, ...) {
+DP.VAR1 <- function(X_futu, X_curr, gamma, lambda, delta, eps = 0.001) {
   .Call('_changepoints_rcpp_DP_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, gamma, lambda, delta, eps)
 }
 
@@ -154,7 +154,6 @@ error.test.VAR1 = function(X_futu, X_curr, lower, upper, tran_hat){
 #' @param lambda_set    A \code{numeric} vector of candidate tuning parameters for lasso penalty.
 #' @param delta         A strictly \code{integer} scalar of minimum spacing.
 #' @param eps           A \code{numeric} scalar of precision level for convergence of lasso.
-#' @param ...           Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{cpt_hat}{A list of vector of estimated change points}
 #'  \item{K_hat}{A list of scalar of number of estimated change points}
@@ -185,7 +184,8 @@ error.test.VAR1 = function(X_futu, X_curr, lower, upper, tran_hat){
 #' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error)))
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 #' Hausdorff.dist(cpt_init, cpt_true)
-CV.search.DP.VAR1 = function(DATA, gamma_set, lambda_set, delta, eps = 0.001, ...){
+#' @references Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>
+CV.search.DP.VAR1 = function(DATA, gamma_set, lambda_set, delta, eps = 0.001){
   output = sapply(1:length(lambda_set), function(i) sapply(1:length(gamma_set), 
                                                            function(j) CV.DP.VAR1(DATA, gamma_set[j], lambda_set[i], delta, eps)))
   cpt_hat = output[seq(1,4*length(gamma_set),4),]## estimated change points
@@ -204,7 +204,6 @@ CV.search.DP.VAR1 = function(DATA, gamma_set, lambda_set, delta, eps = 0.001, ..
 #' @param cpt_init   A \code{integer} vector of initial change points estimation (sorted in strictly increasing order).
 #' @param DATA       A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.
 #' @param zeta       A \code{numeric} scalar of lasso penalty.
-#' @param ...       Additional arguments.
 #' @return  An \code{integer} vector of locally refined change points estimation.
 #' @export
 #' @author  Daren Wang & Haotian Xu
@@ -230,7 +229,8 @@ CV.search.DP.VAR1 = function(DATA, gamma_set, lambda_set, delta, eps = 0.001, ..
 #' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 #' local.refine.VAR1(cpt_init, data, zeta = 0.5)
-local.refine.VAR1 = function(cpt_init, DATA, zeta, ...){
+#' @references Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>
+local.refine.VAR1 = function(cpt_init, DATA, zeta){
   w = 0.9
   N = ncol(DATA)
   p = nrow(DATA)
@@ -307,7 +307,6 @@ X.glasso.converter.VAR1 = function(X, eta, s_ceil){
 #' @param DATA            A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimensions.
 #' @param zeta_set        A \code{numeric} vector of candidate tuning parameters for group lasso penalty.
 #' @param delta_local     A strictly \code{integer} scalar of minimum spacing for group lasso.
-#' @param ...             Additional arguments.
 #' @return  A \code{list} with the following structure:
 #'  \item{cpt_hat}{A vector of estimated change point locations (sorted in strictly increasing order)}
 #'  \item{zeta}{A scalar of selected zeta by cross-validation}
@@ -336,7 +335,8 @@ X.glasso.converter.VAR1 = function(X, eta, s_ceil){
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 #' temp_zeta = local.refine.CV.VAR1(cpt_init, data, c(0.1, 1), delta_local = 10)
 #' temp_zeta$cpt_hat
-local.refine.CV.VAR1 = function(cpt_init, DATA, zeta_set, delta_local, ...){
+#' @references Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>
+local.refine.CV.VAR1 = function(cpt_init, DATA, zeta_set, delta_local){
   w = 0.9
   DATA.temp = DATA
   if (ncol(DATA)%%2 == 0){

@@ -12,8 +12,7 @@ online.network(
   train_mat = NULL,
   alpha = NULL,
   gamma = NULL,
-  permu_num = NULL,
-  ...
+  permu_num = NULL
 )
 }
 \arguments{
@@ -32,8 +31,6 @@ online.network(
 \item{gamma}{An \code{integer} scalar of desired average run length.}
 
 \item{permu_num}{An \code{integer} scalar of number of random permutation for calibration.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -67,7 +64,7 @@ temp = online.network(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat
 cpt_hat = 2 * temp$cpt
 }
 \references{
-Yu Y, Padilla, O, Wang D, Rinaldo A. Optimal network online change point localisation. arXiv preprint arXiv:2101.05477.
+Yu, Padilla, Wang and Rinaldo (2021) <arxiv:2101.05477>
 }
 \author{
 Oscar Hernan Madrid Padilla & Haotian Xu

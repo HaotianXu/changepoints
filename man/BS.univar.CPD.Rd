@@ -4,14 +4,12 @@
 \alias{BS.univar.CPD}
 \title{Univariate mean change point detection based on standard binary segmentation with tuning parameter selected by sSIC.}
 \usage{
-BS.univar.CPD(y, delta, ...)
+BS.univar.CPD(y, delta)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of observations.}
 
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A \code{list} with the following structure:
@@ -35,7 +33,8 @@ cpt_LR = local.refine.univar(cpt_hat, y)
 Hausdorff.dist(cpt_LR, cpt_true)
 }
 \references{
-Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection,  Ann. Statist. 42(6): 2243-2281 (December 2014). DOI: 10.1214/14-AOS1245
+Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>;
+            Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection, <DOI: 10.1214/14-AOS1245>
 }
 \author{
 Daren Wang & Haotian Xu

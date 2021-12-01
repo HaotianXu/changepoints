@@ -4,7 +4,7 @@
 \alias{local.refine.regression}
 \title{Local refinement for regression change points detection.}
 \usage{
-local.refine.regression(cpt_init, y, X, zeta, ...)
+local.refine.regression(cpt_init, y, X, zeta)
 }
 \arguments{
 \item{cpt_init}{An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
@@ -14,8 +14,6 @@ local.refine.regression(cpt_init, y, X, zeta, ...)
 \item{X}{A \code{numeric} matrix of covariates with horizontal axis being time..}
 
 \item{zeta}{A \code{numeric} scalar of tuning parameter for the group lasso.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A vector of locally refined change points estimation.
@@ -42,6 +40,8 @@ local.refine.regression(cpt_init, data$y, X = data$X, zeta = 0.5)
 }
 \references{
 Rinaldo, A., Wang, D., Wen, Q., Willett, R., & Yu, Y. (2021, March). Localizing changes in high-dimensional regression models. In International Conference on Artificial Intelligence and Statistics (pp. 2089-2097). PMLR.
+
+Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>
 }
 \author{
 Daren Wang & Haotian Xu

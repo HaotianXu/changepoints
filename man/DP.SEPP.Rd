@@ -4,7 +4,7 @@
 \alias{DP.SEPP}
 \title{Dynamic programming for SEPP change points detection through \eqn{l_0} penalty.}
 \usage{
-DP.SEPP(DATA, gamma, lambda, delta, delta2, intercept, threshold, ...)
+DP.SEPP(DATA, gamma, lambda, delta, delta2, intercept, threshold)
 }
 \arguments{
 \item{DATA}{A \code{numeric} matrix of observations with horizontal axis being time.}
@@ -20,8 +20,6 @@ DP.SEPP(DATA, gamma, lambda, delta, delta2, intercept, threshold, ...)
 \item{intercept}{A \code{numeric} scalar representing the intercept of the model, which is assumed to be known.}
 
 \item{threshold}{A \code{numeric} scalar representing the upper bound for each coordinate of X_t (for stability).}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A vector of the best partition.
@@ -68,7 +66,7 @@ cpt_hat = part2local(parti)
 Wang, D., Yu, Y., & Willett, R. (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. arXiv preprint arXiv:2006.03572.
 }
 \seealso{
-\code{part2local} for obtaining change points estimation.
+\code{\link{part2local}} for obtaining change points estimation.
 }
 \author{
 Daren Wang & Haotian Xu

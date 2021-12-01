@@ -4,7 +4,7 @@
 \alias{simu.VAR1}
 \title{Simulate from a VAR1 model (without change point).}
 \usage{
-simu.VAR1(sigma, p, n, A, vzero = NULL, ...)
+simu.VAR1(sigma, p, n, A, vzero = NULL)
 }
 \arguments{
 \item{sigma}{A \code{numeric} scalar representing the standard deviation of error terms.}
@@ -16,8 +16,6 @@ simu.VAR1(sigma, p, n, A, vzero = NULL, ...)
 \item{A}{A \code{numeric} p-by-p matrix representing the transition matrix of the VAR1 model.}
 
 \item{vzero}{A \code{numeric} vector representing the observation at time 0. If \code{vzero = NULL},it is generated following the distribution of the error terms.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 A p-by-n matrix.
@@ -31,6 +29,9 @@ sigma = 1
 n = 100
 A = matrix(rnorm(p*p), nrow = p)*0.1  # transition matrix
 simu.VAR1(sigma, p, n, A)
+}
+\references{
+Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>
 }
 \author{
 Daren Wang
