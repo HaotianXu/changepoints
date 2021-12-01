@@ -30,6 +30,9 @@ y = rnorm(300) + c(rep(0,20),rep(1,30),rep(0,120),rep(1,130))
 cpt_hat = part2local(DP.univar(y, gamma = 5, delta = 5)$partition)
 Hausdorff.dist(cpt_hat, cpt_true)
 }
+\seealso{
+\code{part2local} for obtaining change points estimation.
+}
 \author{
 Haotian Xu
 }

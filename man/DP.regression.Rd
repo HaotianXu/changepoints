@@ -40,7 +40,7 @@ cpt_hat = part2local(temp$partition)
 Rinaldo, A., Wang, D., Wen, Q., Willett, R., & Yu, Y. (2021, March). Localizing changes in high-dimensional regression models. In International Conference on Artificial Intelligence and Statistics (pp. 2089-2097). PMLR.
 }
 \seealso{
-\code{part2local()} for estimated change points.
+\code{part2local} for obtaining change points estimation.
 }
 \author{
 Daren Wang & Haotian Xu

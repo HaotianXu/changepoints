@@ -133,6 +133,7 @@ basis.poly <- function(n, s, e, r) {
 #' plot.ts(y)
 #' temp = DP.poly(y, r = 2, gamma = 15, delta = 5)
 #' part2local(temp$partition)
+#' @seealso \code{part2local} for obtaining change points estimation.
 DP.poly <- function(y, r, gamma, delta, ...) {
   .Call('_changepoints_rcpp_DP_poly', PACKAGE = 'changepoints', y, r, gamma, delta)
 }

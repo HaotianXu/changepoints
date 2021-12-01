@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/HaotianXu/changepoints/workflows/R-CMD-check/badge.svg)](https://github.com/HaotianXu/changepoints/actions)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2021--11--29-green.svg)](https://github.com/HaotianXu/changepoints)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2021--12--01-green.svg)](https://github.com/HaotianXu/changepoints)
 [![license](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 <!-- badges: end -->
 
@@ -88,10 +88,9 @@ Alternatively, `wild binary segmentation` can also be performed:
 intervals = WBS.intervals(M = 100, lower = 1, upper = 200)
 ## perform WBS
 WBS_result = WBS.univar(y, 1, 200, intervals$Alpha, intervals$Beta, delta = 5)
+WBS_result
 ## trim binary tree with threshold being 3
 WBS_trimmed = threshold.BS(WBS_result, tau = 3)
-## print the binary tree without trimming
-print(WBS_trimmed$BS_tree, "value")
 ## print the trimmed binary tree
 print(WBS_trimmed$BS_tree_trimmed, "value")
 ## estimate change points and perform local refinement

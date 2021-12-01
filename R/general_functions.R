@@ -52,9 +52,9 @@ Hausdorff.dist = function(vec1, vec2, ...){
 }
 
 
-#' @title Thresholding a BS object.
+#' @title Thresholding a BS object with threshold value tau.
 #' @description         Given a BS object, perform thresholding to find the change point locations.
-#' @param BS_object     A \code{numeric} vector of observations.
+#' @param BS_object     A \code{BS} object.
 #' @param tau           A positive \code{numeric} scalar of thresholding value.
 #' @param ...           Additional arguments.
 #' @return  A \code{list} with the following structure:
@@ -69,7 +69,11 @@ Hausdorff.dist = function(vec1, vec2, ...){
 #' plot.ts(y)
 #' points(x = tail(temp$S[order(temp$Dval)],4), y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
 #' threshold.BS(temp, 20)
+#' @seealso \code{BS.univar}, \code{BS.cov}, \code{WBS.univar}, \code{WBS.network}
 threshold.BS = function(BS_object, tau, ...){
+  if(tau <= 0){
+    stop("The threshold tau should be a positive value.")
+  }
   level_unique = unique(BS_object$Level[order(BS_object$Level)])
   level_length = length(level_unique)
   BS_tree = vector("list", level_length)
@@ -319,3 +323,42 @@ rcpp_error_pred_seg_VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps = 
   .Call('_changepoints_rcpp_error_pred_seg_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, s, e, lambda, delta, eps)
 }
 
+
+#' @title Function to print a BS object
+#' @param x   A \code{BS} object.
+#' @param ...         Additional arguments.
+#' @export
+#' @author    Haotian Xu
+print.BS = function(x, ...){
+  level_unique = unique(x$Level[order(x$Level)])
+  level_length = length(level_unique)
+  BS_tree = vector("list", level_length)
+  BS_tree[[1]] = data.frame(current = 1, parent = NA, location = x$S[order(x$Level)][1], value = x$Dval[order(x$Level)][1])
+  for(i in 2:level_length){
+    idx_curr = cumsum(table(x$Level))[i-1] + 1:table(x$Level)[i]
+    idx_prev = cumsum(table(x$Level))[i-1] + 1 - table(x$Level)[i-1]:1
+    interval_prev = as.matrix(x$Parent[,order(x$Level)][,idx_prev])
+    e_curr = x$Parent[,order(x$Level)][2,idx_curr]
+    BS_tree[[i]] = data.frame(current = 1:length(idx_curr),
+                              parent = sapply(e_curr, function(x) which(rbind(interval_prev[1,] <= x & interval_prev[2,] >= x))), 
+                              location = x$S[order(x$Level)][idx_curr],
+                              value = x$Dval[order(x$Level)][idx_curr])
+  }
+  BS_tree_new = BS_tree
+  BS_tree_new[[1]] = BS_tree[[1]][,3:4]
+  BS_tree_new[[1]]$location = paste0("N",BS_tree_new[[1]]$location)
+  for(j in 2:level_length){
+    BS_tree_new[[j]]$parent = sapply(BS_tree_new[[j]]$parent, function(x){BS_tree_new[[j-1]]$location[x]})
+    BS_tree_new[[j]]$location = paste0(BS_tree_new[[j]]$parent, "$N", BS_tree_new[[j]]$location)
+    BS_tree_new[[j]] = BS_tree_new[[j]][,3:4]
+  }
+  binary_tree = list()
+  binary_tree$name = "Binary Segmentation Tree"
+  for(j in 1:level_length){
+    for(k in 1:nrow(BS_tree_new[[j]])){
+      eval(parse(text=paste0("binary_tree$",BS_tree_new[[j]]$location[k],"$value","<-",BS_tree_new[[j]]$value[k])))
+    }
+  }
+  BS_tree_node = data.tree::as.Node(binary_tree)
+  print(BS_tree_node, "value")
+}

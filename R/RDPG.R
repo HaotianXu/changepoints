@@ -85,7 +85,7 @@ NonPar.RDPG.CPD = function(data_mat, d, Alpha, Beta, delta){
       Y_mat[i,t] = phat[ind[2*i], ind[2*i-1]]
     }
   }
-  temp1 = NWBS(Y_mat, s = 1, e = obs_num, Alpha, Beta, N = rep(nrow(Y_mat), obs_num), delta)
+  temp1 = WBS.uni.nonpar(Y_mat, s = 1, e = obs_num, Alpha, Beta, N = rep(nrow(Y_mat), obs_num), delta)
   Dval = temp1$Dval
   aux = sort(Dval, decreasing = TRUE)
   tau_grid = rev(aux[1:50]-10^{-4})

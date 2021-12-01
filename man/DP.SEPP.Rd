@@ -67,6 +67,9 @@ cpt_hat = part2local(parti)
 \references{
 Wang, D., Yu, Y., & Willett, R. (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. arXiv preprint arXiv:2006.03572.
 }
+\seealso{
+\code{part2local} for obtaining change points estimation.
+}
 \author{
 Daren Wang & Haotian Xu
 }

@@ -33,6 +33,9 @@ plot.ts(y)
 temp = DP.poly(y, r = 2, gamma = 15, delta = 5)
 part2local(temp$partition)
 }
+\seealso{
+\code{part2local} for obtaining change points estimation.
+}
 \author{
 Haotian Xu
 }

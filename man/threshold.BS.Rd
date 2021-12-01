@@ -2,12 +2,12 @@
 % Please edit documentation in R/general_functions.R
 \name{threshold.BS}
 \alias{threshold.BS}
-\title{Thresholding a BS object.}
+\title{Thresholding a BS object with threshold value tau.}
 \usage{
 threshold.BS(BS_object, tau, ...)
 }
 \arguments{
-\item{BS_object}{A \code{numeric} vector of observations.}
+\item{BS_object}{A \code{BS} object.}
 
 \item{tau}{A positive \code{numeric} scalar of thresholding value.}
 
@@ -28,6 +28,9 @@ temp = BS.univar(y, 1, 300, 5)
 plot.ts(y)
 points(x = tail(temp$S[order(temp$Dval)],4), y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
 threshold.BS(temp, 20)
+}
+\seealso{
+\code{BS.univar}, \code{BS.cov}, \code{WBS.univar}, \code{WBS.network}
 }
 \author{
 Haotian Xu

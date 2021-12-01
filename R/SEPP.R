@@ -108,6 +108,7 @@ simu.SEPP = function(intercept, n, A, threshold, vzero = NULL, ...){
 #' threshold = 6
 #' parti = DP.SEPP(data, gamma = gamma, lambda = 0.03, delta, delta2, intercept, threshold)$partition
 #' cpt_hat = part2local(parti)
+#' @seealso \code{part2local} for obtaining change points estimation.
 DP.SEPP = function(DATA, gamma, lambda, delta, delta2, intercept, threshold, ...){
   M = nrow(DATA)
   N = ncol(DATA)

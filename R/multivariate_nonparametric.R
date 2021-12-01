@@ -62,11 +62,11 @@ CUSUM.KS.multivariate = function(Y, W, s, e, t, h){
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y)) #Random intervals
 #' K_max = 30
 #' h = 5*(K_max*log(n)/n)^{1/p} # bandwith
-#' temp = MNWBS(Y, Y, 1, ncol(Y), intervals$Alpha, intervals$Beta, h, delta = 10)
+#' temp = WBS.multi.nonpar(Y, Y, 1, ncol(Y), intervals$Alpha, intervals$Beta, h, delta = 10)
 #' result = threshold.BS(temp, median(temp$Dval))
 #' print(result$BS_tree_trimmed)
 #' plot(result$BS_tree_trimmed)
-MNWBS = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...){
+WBS.multi.nonpar = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...){
   print(paste0("WBS at level: ", level))
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
@@ -99,8 +99,8 @@ MNWBS = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...){
     }
     m_star = which.max(a)
   }
-  temp1 = MNWBS(Y, W, s, b[m_star]-1, Alpha, Beta, h, delta, level)
-  temp2 = MNWBS(Y, W, b[m_star], e, Alpha, Beta, h, delta, level)
+  temp1 = WBS.multi.nonpar(Y, W, s, b[m_star]-1, Alpha, Beta, h, delta, level)
+  temp2 = WBS.multi.nonpar(Y, W, b[m_star], e, Alpha, Beta, h, delta, level)
   S = c(temp1$S, b[m_star], temp2$S)
   Dval = c(temp1$Dval, a[m_star], temp2$Dval)
   Level = c(temp1$Level, level, temp2$Level)
@@ -145,12 +145,12 @@ MNWBS = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0, ...){
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y)) #Random intervals
 #' K_max = 30
 #' h = 5*(K_max*log(n)/n)^{1/p} # bandwith
-#' S = MNWBS.tune(Y, Y, intervals$Alpha, intervals$Beta, h, delta = 10)
+#' S = WBS.multi.nonpar.CPD(Y, Y, intervals$Alpha, intervals$Beta, h, delta = 10)
 #' S
-MNWBS.tune = function(Y, W, Alpha, Beta, h, delta){
+WBS.multi.nonpar.CPD = function(Y, W, Alpha, Beta, h, delta){
   p = nrow(Y)
   obs_num = ncol(Y)
-  temp1 = MNWBS(Y, W, 1, obs_num, Alpha, Beta, h, delta, level = 0)  
+  temp1 = WBS.multi.nonpar(Y, W, 1, obs_num, Alpha, Beta, h, delta, level = 0)  
   Dval = temp1$Dval
   aux = sort(Dval, decreasing = TRUE)
   len_tau = 30

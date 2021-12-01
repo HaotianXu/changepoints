@@ -79,6 +79,7 @@ error.pred.seg.VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps) {
 #' X_futu = data[,2:N]
 #' parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
 #' part2local(parti)
+#' @seealso \code{part2local} for obtaining change points estimation.
 DP.VAR1 <- function(X_futu, X_curr, gamma, lambda, delta, eps = 0.001, ...) {
   .Call('_changepoints_rcpp_DP_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, gamma, lambda, delta, eps)
 }

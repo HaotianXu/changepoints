@@ -79,7 +79,7 @@ simu.change.regression = function(d0, cpt_true, p, n, sigma, kappa, ...){
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 #' temp = DP.regression(y = data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
 #' cpt_hat = part2local(temp$partition)
-#' @seealso \code{part2local()} for estimated change points.
+#' @seealso \code{part2local} for obtaining change points estimation.
 #' @export
 DP.regression <- function(y, X, gamma, lambda, delta, eps = 0.001, ...) {
   .Call('_changepoints_rcpp_DP_regression', PACKAGE = 'changepoints', y, X, gamma, lambda, delta, eps)

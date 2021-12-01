@@ -46,6 +46,9 @@ X_futu = data[,2:N]
 parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
 part2local(parti)
 }
+\seealso{
+\code{part2local} for obtaining change points estimation.
+}
 \author{
 Daren Wang, Haotian Xu
 }

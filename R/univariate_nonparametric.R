@@ -17,10 +17,10 @@
 #' @examples
 #' Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))
 #' N = rep(1, 300)
-#' temp = NBS(Y, 1, 300, N, 5)
+#' temp = BS.uni.nonpar(Y, 1, 300, N, 5)
 #' plot.ts(t(Y))
 #' points(x = tail(temp$S[order(temp$Dval)],4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
-NBS = function(Y, s, e, N, delta, level = 0, ...){
+BS.uni.nonpar = function(Y, s, e, N, delta, level = 0, ...){
   S = NULL
   Dval = NULL
   Level = NULL
@@ -36,8 +36,8 @@ NBS = function(Y, s, e, N, delta, level = 0, ...){
     }
     best_value = max(a)
     best_t = which.max(a) + s + delta - 1
-    temp1 = NBS(Y, s, best_t-1, N, delta, level)
-    temp2 = NBS(Y, best_t, e, N, delta, level)
+    temp1 = BS.uni.nonpar(Y, s, best_t-1, N, delta, level)
+    temp2 = BS.uni.nonpar(Y, best_t, e, N, delta, level)
     S = c(temp1$S, best_t, temp2$S)
     Dval = c(temp1$Dval, best_value, temp2$Dval)
     Level = c(temp1$Level, level, temp2$Level)
@@ -61,10 +61,10 @@ NBS = function(Y, s, e, N, delta, level = 0, ...){
 #' @examples
 #' Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))
 #' N = rep(1, 300)
-#' temp = NBS.tune(Y, Y, N, 5)
-NBS.tune = function(Y, W, N, delta, ...){
+#' temp = BS.uni.nonpar.CPD(Y, Y, N, 5)
+BS.uni.nonpar.CPD = function(Y, W, N, delta, ...){
   obs_num = ncol(Y)
-  temp1 = NBS(W, 1, obs_num, N, delta, level = 0)  
+  temp1 = BS.uni.nonpar(W, 1, obs_num, N, delta, level = 0)  
   Dval = temp1$Dval
   aux = sort(Dval, decreasing = TRUE)
   len_tau = 30 # number of candidate values considered to tune the threshold
@@ -187,11 +187,11 @@ CUSUM.KS = function(Y, s, e, t, N, vector = FALSE){
 #' N = rep(1, 300)
 #' M = 20
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y))
-#' temp = NWBS(Y, 1, 300, intervals$Alpha, intervals$Beta, N, 5)
+#' temp = WBS.uni.nonpar(Y, 1, 300, intervals$Alpha, intervals$Beta, N, 5)
 #' plot.ts(t(Y))
 #' points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
 #' threshold.BS(temp, 2)
-NWBS = function(Y, s, e, Alpha, Beta, N, delta, level = 0, ...){ 
+WBS.uni.nonpar = function(Y, s, e, Alpha, Beta, N, delta, level = 0, ...){ 
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
   idx = which(Beta_new - Alpha_new > 2*delta)
@@ -230,8 +230,8 @@ NWBS = function(Y, s, e, Alpha, Beta, N, delta, level = 0, ...){
     }
     m_star = which.max(a)
   }
-  temp1 = NWBS(Y, s, b[m_star]-1, Alpha, Beta, N, delta, level)
-  temp2 = NWBS(Y, b[m_star], e, Alpha, Beta, N, delta, level)
+  temp1 = WBS.uni.nonpar(Y, s, b[m_star]-1, Alpha, Beta, N, delta, level)
+  temp2 = WBS.uni.nonpar(Y, b[m_star], e, Alpha, Beta, N, delta, level)
   S = c(temp1$S, b[m_star], temp2$S)
   Dval = c(temp1$Dval, a[m_star], temp2$Dval)
   Level = c(temp1$Level, level, temp2$Level)
@@ -260,10 +260,10 @@ NWBS = function(Y, s, e, Alpha, Beta, N, delta, level = 0, ...){
 #' N = rep(1, 300)
 #' M = 20
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y))
-#' temp = NWBS.tune(Y, Y, intervals$Alpha, intervals$Beta, N, 5)
-NWBS.tune = function(Y, W, Alpha, Beta, N, delta, ...){
+#' temp = WBS.uni.nonpar.CPD(Y, Y, intervals$Alpha, intervals$Beta, N, 5)
+WBS.uni.nonpar.CPD = function(Y, W, Alpha, Beta, N, delta, ...){
   obs_num = ncol(Y)
-  temp1 = NWBS(W, 1, obs_num, Alpha, Beta, N, delta, level = 0)  
+  temp1 = WBS.uni.nonpar(W, 1, obs_num, Alpha, Beta, N, delta, level = 0)  
   Dval = temp1$Dval
   aux = sort(Dval, decreasing = TRUE)
   len_tau = 30
