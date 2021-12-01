@@ -40,8 +40,8 @@ for(candidate in 1:ll){
     data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
     #For convenient due to data splitting, col(data) (or the length of the time series) is odd.
     #the change points are at 2*n and 4*n
-    lambda_lasso_set = c(3,4,10,20)
-    gamma_set = seq(1, 50,2) 
+    lambda_lasso_set = c(0.1, 0.5, 1, 2, 5)
+    gamma_set = c(0.1, 0.5, 1, 2, 5)
     #START: CV for DP
     start.time <- Sys.time()
     dp_result = CV.search.DP.VAR1(data, gamma_set, lambda_lasso_set, delta1)
@@ -59,7 +59,7 @@ for(candidate in 1:ll){
     print(haus_dp/rr)
     #END:  DP
     
-    zeta_group_set = c(0.5, 1, 1.5)
+    zeta_group_set = c(1, 1.5, 2)
     #START  local refinement#include X and Y
     lr_estimate = local.refine.CV.VAR1(dp_estimate, data, zeta_group_set, delta.local)$cpt_hat
     lr_estimate_ext = c(0, lr_estimate, 6*n)

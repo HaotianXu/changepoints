@@ -20,7 +20,7 @@ library(changepoints)
 
 This is a simple guide for offline multiple change points detection on univariate mean.
 
-There are 3 methods implemented for this propose:
+There are 3 methods implemented for this purpose:
 
 1. _DP.univar_: performs dynamic programming for univariate mean change points detection.
    + _CV.search.DP.univar_: perform grid search to select the tuning parameter (associated with the l_0 penalty) through Cross-Validation.
