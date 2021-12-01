@@ -21,7 +21,7 @@ A \code{list} with the following structure:
  \item{tau}{A scalar of selected threshold tau based on sSIC}
 }
 \description{
-Perform Univariate mean change point detection based on wild binary segmentation. The threshold parameter tau for WBS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
+Perform univariate mean change points detection based on wild binary segmentation. The threshold parameter tau for WBS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
 }
 \examples{
 set.seed(0)

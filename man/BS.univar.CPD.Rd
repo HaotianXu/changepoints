@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean.R
 \name{BS.univar.CPD}
 \alias{BS.univar.CPD}
-\title{Univariate mean change point detection based on standard binary segmentation with tuning parameter selected by sSIC.}
+\title{Univariate mean change points detection based on standard binary segmentation with tuning parameter selected by sSIC.}
 \usage{
 BS.univar.CPD(y, delta)
 }
@@ -17,7 +17,7 @@ A \code{list} with the following structure:
  \item{tau}{A scalar of selected threshold tau based on sSIC}
 }
 \description{
-Perform Univariate mean change point detection based on standard binary segmentation. The threshold parameter tau for BS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
+Perform univariate mean change points detection based on standard binary segmentation. The threshold parameter tau for BS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
 }
 \examples{
 set.seed(0)

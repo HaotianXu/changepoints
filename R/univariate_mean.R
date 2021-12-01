@@ -280,7 +280,7 @@ WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){
 
 
 #' @title Univariate mean change points detection based on wild binary segmentation with tuning parameter selected by sSIC.
-#' @description Perform Univariate mean change point detection based on wild binary segmentation. The threshold parameter tau for WBS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
+#' @description Perform univariate mean change points detection based on wild binary segmentation. The threshold parameter tau for WBS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
 #' @param y         A \code{numeric} vector of observations.
 #' @param Alpha     A \code{integer} vector of starting indices of random intervals.
 #' @param Beta      A \code{integer} vector of ending indices of random intervals.
@@ -329,8 +329,8 @@ WBS.univar.CPD = function(y, Alpha, Beta, delta){
 }
 
 
-#' @title Univariate mean change point detection based on standard binary segmentation with tuning parameter selected by sSIC.
-#' @description Perform Univariate mean change point detection based on standard binary segmentation. The threshold parameter tau for BS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
+#' @title Univariate mean change points detection based on standard binary segmentation with tuning parameter selected by sSIC.
+#' @description Perform univariate mean change points detection based on standard binary segmentation. The threshold parameter tau for BS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
 #' @param y         A \code{numeric} vector of observations.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @return  A \code{list} with the following structure:

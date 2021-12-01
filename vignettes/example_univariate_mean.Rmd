@@ -1,0 +1,81 @@
+---
+title: "example_univariate_mean"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{example_univariate_mean}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(changepoints)
+```
+
+This is a simple guide for offline multiple change points detection on univariate mean.
+
+There are 3 methods implemented for this propose:
+
+1. _DP.univar_: performs dynamic programming for univariate mean change points detection.
+   + _CV.search.DP.univar_: perform grid search to select the tuning parameter (associated with the l_0 penalty) through Cross-Validation.
+   
+2. _BS.univar_: performs standard binary segmentation for univariate mean change points detection.
+   + _BS.univar.CPD_: Perform univariate mean change points detection based on binary segmentation with the threshold parameter automatically selected based on the sSIC score.
+
+3. _WBS.univar_: performs wild binary segmentation for univariate mean change points detection.
+   + _WBS.univar.CPD_: Perform univariate mean change points detection based on wild binary segmentation with the threshold parameter automatically selected based on the sSIC score.
+
+In addition, function _local.refine.univar_ performs local refinement for an initial change point estimation.
+
+# Simulate data
+```{r}
+delta = 5 # 2*delta represents the minimum gap between boundaries
+sigma2 = 1 # error variance
+
+set.seed(1234)
+y = c(rep(0, 50), rep(2, 50), rep(0, 50), rep(-2, 50)) + rnorm(200, mean = 0, sd = sqrt(sigma2)) # univariate time series
+cpt_true = c(50, 100, 150)
+n = length(y) # sample size
+```
+
+# Perform dynamic programming
+```{r}
+gamma_set = c(0.01, 0.5, 1, 5, 10, 50) # a set of tuning parameters for DP
+DP_result = CV.search.DP.univar(y, gamma_set, delta) # grid search through cross-validation
+min_idx = which.min(DP_result$test_error) # select gamma achieves the minimum validation error
+cpt_DP_hat = unlist(DP_result$cpt_hat[[min_idx]]) # estimated change points by DP
+cpt_DP_hat
+Hausdorff.dist(cpt_DP_hat, cpt_true)
+cpt_DPlr_hat = local.refine.univar(cpt_DP_hat, y) # perform local refinement
+cpt_DPlr_hat
+Hausdorff.dist(cpt_DPlr_hat, cpt_true)
+```
+
+# Perform standard binary segmentation with user specified threshold parameter
+```{r}
+tau_BS = 4 # user specified threshold parameter for BS
+BS_result = threshold.BS(BS.univar(y, 1, n, delta), tau_BS)
+BS_result
+cpt_BS_hat = sort(BS_result$cpt_hat[,1]) # estimated change points by BS
+cpt_BS_hat
+Hausdorff.dist(cpt_BS_hat, cpt_true)
+cpt_BSlr_hat = local.refine.univar(cpt_BS_hat, y) # perform local refinement
+cpt_BSlr_hat
+Hausdorff.dist(cpt_BSlr_hat, cpt_true)
+```
+
+# Perform standard binary segmentation with automatically tuned threshold parameter
+```{r}
+BS_CPD_result = BS.univar.CPD(y, delta)
+BS_CPD_result$cpt
+Hausdorff.dist(BS_CPD_result$cpt, cpt_true)
+BS_CPD_LR = local.refine.univar(BS_CPD_result$cpt, y)
+BS_CPD_LR
+Hausdorff.dist(BS_CPD_LR, cpt_true)
+```
