@@ -101,7 +101,7 @@ cpt_BS_LR = local.refine.univar(cpt_WBS_hat, y)
 `wild binary segmentation` with tuning parameter selected by information criteria :
 
 ```{r, WBS.tune, eval = FALSE}
-WBS_CPD_result = WBS.univar.CPD(y, intervals$Alpha, intervals$Beta, 5)
+WBS_CPD_result = tuneBSunivar(WBS_result, y)
 WBS_CPD_LR = local.refine.univar(WBS_CPD_result$cpt, y)
 ```
 
