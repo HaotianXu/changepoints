@@ -60,7 +60,7 @@ Hausdorff.dist(cpt_DPlr_hat, cpt_true)
 # Perform standard binary segmentation with user specified threshold parameter
 ```{r}
 tau_BS = 4 # user specified threshold parameter for BS
-BS_result = threshold.BS(BS.univar(y, 1, n, delta), tau_BS)
+BS_result = thresholdBS(BS.univar(y, 1, n, delta), tau_BS)
 BS_result
 cpt_BS_hat = sort(BS_result$cpt_hat[,1]) # estimated change points by BS
 cpt_BS_hat

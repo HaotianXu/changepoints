@@ -48,10 +48,10 @@ X_prime = cbind(t(MASS::mvrnorm(50, mu = rep(0, p), A1)),
 intervals = WBS.intervals(M = 120, lower = 1, upper = dim(X)[2])
 temp = WBSIP.cov(X, X_prime, 1, dim(X)[2], intervals$Alpha, intervals$Beta, delta = 5)
 tau = sqrt(p*log(ncol(X)))*1.5
-sort(threshold.BS(temp, tau)$cpt_hat[,1])
+sort(thresholdBS(temp, tau)$cpt_hat[,1])
 }
 \seealso{
-\code{\link{threshold.BS}} for obtain change points estimation.
+\code{\link{thresholdBS}} for obtain change points estimation.
 }
 \author{
 Haotian Xu

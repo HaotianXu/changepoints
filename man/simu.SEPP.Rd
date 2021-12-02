@@ -53,7 +53,7 @@ data = cbind(data1, data2, data3)
 dim(data)
 }
 \references{
-Wang, D., Yu, Y., & Willett, R. (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. arXiv preprint arXiv:2006.03572.
+Wang, Yu, & Willett (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. <arXiv:2006.03572>.
 }
 \author{
 Daren Wang & Haotian Xu

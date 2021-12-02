@@ -45,7 +45,7 @@ for(cc in 1:length(N_candidate)){
     #start with NBS
     temp = BS.network(data1_mat, data2_mat, s, ncol(data1_mat), delta)
     tau = p*rho_hat
-    nbs = sort(2*as.vector(t(threshold.BS(temp, tau)$change_points["location"])))
+    nbs = sort(2*as.vector(t(thresholdBS(temp, tau)$change_points["location"])))
     print("nbs = ")  ;print(nbs)
     #end of NBS
     

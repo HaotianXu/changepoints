@@ -20,7 +20,9 @@ DP.regression(y, X, gamma, lambda, delta, eps = 0.001)
 \item{eps}{A \code{numeric} scalar of precision level for convergence of lasso.}
 }
 \value{
-A vector of the best partition of the dynamic programming algorithm.
+An object of \code{\link[base]{class}} "DP", which is a \code{list} with the following structure:
+ \item{partition}{A vector of the best partition.}
+ \item{cpt}{A vector of change points estimation.}
 }
 \description{
 Perform dynamic programming algorithm for regression change points detection.
@@ -32,13 +34,10 @@ n = 100
 cpt_true = c(30, 70)
 data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 temp = DP.regression(y = data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
-cpt_hat = part2local(temp$partition)
+cpt_hat = temp$cpt
 }
 \references{
 Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>
-}
-\seealso{
-\code{\link{part2local}} for obtaining change points estimation.
 }
 \author{
 Daren Wang & Haotian Xu

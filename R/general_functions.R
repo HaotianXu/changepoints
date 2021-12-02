@@ -2,7 +2,7 @@
 #' @description     Find change point locations from the best partition produced by dynamic programming altorithm.
 #' @param parti_vec    A \code{integer} vector of best partition produced by dynamic programming algorithm.
 #' @return  A vector of change point locations.
-#' @export
+#' @noRd
 #' @author Haotian Xu
 #' @examples
 #' y = c(rep(0, 100), rep(1, 100))
@@ -64,9 +64,14 @@ Hausdorff.dist = function(vec1, vec2){
 #' temp = BS.univar(y, 1, 300, 5)
 #' plot.ts(y)
 #' points(x = tail(temp$S[order(temp$Dval)],4), y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
-#' threshold.BS(temp, 20)
+#' thresholdBS(temp, 20)
 #' @seealso \code{\link{BS.univar}}, \code{\link{BS.uni.nonpar}}, \code{\link{BS.cov}}, \code{\link{WBS.univar}}, \code{\link{WBS.uni.nonpar}}, \code{\link{WBS.multi.nonpar}}, \code{\link{WBS.network}}, \code{\link{WBSIP.cov}}
-threshold.BS = function(BS_object, tau){
+thresholdBS <- function(BS_object, tau){
+  UseMethod("thresholdBS", BS_object)
+}
+
+#' @export
+thresholdBS.BS = function(BS_object, tau){
   if(tau <= 0){
     stop("The threshold tau should be a positive value.")
   }
@@ -319,13 +324,8 @@ rcpp_error_pred_seg_VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps = 
 }
 
 
-#' @title A method for printing a \code{BS} object
-#' @description Print a \code{BS} object as a binary tree with the associated values
-#' @param x   A \code{BS} object.
-#' @param ...         Additional arguments.
+
 #' @export
-#' @author    Haotian Xu
-#' @seealso \code{\link{BS.univar}}, \code{\link{BS.uni.nonpar}}, \code{\link{BS.cov}}, \code{\link{WBS.univar}}, \code{\link{WBS.uni.nonpar}}, \code{\link{WBS.multi.nonpar}}, \code{\link{WBS.network}}, \code{\link{WBSIP.cov}}
 print.BS = function(x, ...){
   level_unique = unique(x$Level[order(x$Level)])
   level_length = length(level_unique)

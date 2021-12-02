@@ -72,7 +72,7 @@ BS.uni.nonpar.CPD = function(Y, W, N, delta){
   tau_grid = c(tau_grid, 10)
   B_list = c()
   for(j in 1:length(tau_grid)){
-    aux = threshold.BS(temp1, tau_grid[j])$cpt_hat[,1]
+    aux = thresholdBS(temp1, tau_grid[j])$cpt_hat[,1]
     if(length(aux) == 0){
       break
     }
@@ -189,7 +189,7 @@ CUSUM.KS = function(Y, s, e, t, N, vector = FALSE){
 #' temp = WBS.uni.nonpar(Y, 1, 300, intervals$Alpha, intervals$Beta, N, 5)
 #' plot.ts(t(Y))
 #' points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
-#' threshold.BS(temp, 2)
+#' thresholdBS(temp, 2)
 #' @references Padilla, Yu, Wang and Rinaldo (2021) <doi:10.1214/21-EJS1809>
 WBS.uni.nonpar = function(Y, s, e, Alpha, Beta, N, delta, level = 0){ 
   Alpha_new = pmax(Alpha, s)
@@ -271,7 +271,7 @@ WBS.uni.nonpar.CPD = function(Y, W, Alpha, Beta, N, delta){
   tau_grid = c(tau_grid, 10)
   B_list = c()
   for(j in 1:length(tau_grid)){
-    aux = threshold.BS(temp1, tau_grid[j])$cpt_hat[,1]
+    aux = thresholdBS(temp1, tau_grid[j])$cpt_hat[,1]
     if(length(aux) == 0){
       break
     }

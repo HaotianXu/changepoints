@@ -121,21 +121,25 @@ basis.poly <- function(n, s, e, r){
 #' @param gamma     A \code{numeric} scalar of the tuning parameter associated with the \eqn{l_0} penalty.
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
 #' @return A \code{list} with the following structure:
-#'  \item{partition}{A vector of the best partition}
-#'  \item{yhat}{A vector of mean estimation for corresponding to the best partition}
+#' @return An object of \code{\link[base]{class}} "DP", which is a \code{list} with the following structure:
+#'  \item{partition}{A vector of the best partition.}
+#'  \item{yhat}{A vector of mean estimation for corresponding to the best partition.}
+#'  \item{cpt}{A vector of change points estimation.}
 #' @export
 #' @author  Haotian Xu
+#' @references Yu and Chatterjee (2020) <arXiv:2007.09910>
 #' @examples
 #' set.seed(0)
 #' cpt_true = c(20, 50, 170)
 #' y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
 #' plot.ts(y)
 #' temp = DP.poly(y, r = 2, gamma = 15, delta = 5)
-#' part2local(temp$partition)
-#' @references Yu and Chatterjee (2020) <arXiv:2007.09910>
-#' @seealso \code{part2local} for obtaining change points estimation.
+#' temp$cpt
 DP.poly <- function(y, r, gamma, delta) {
-  .Call('_changepoints_rcpp_DP_poly', PACKAGE = 'changepoints', y, r, gamma, delta)
+  DP_result = .Call('_changepoints_rcpp_DP_poly', PACKAGE = 'changepoints', y, r, gamma, delta)
+  result = append(DP_result, list(cpt = part2local(DP_result$partition)))
+  class(result) = "DP"
+  return(result)
 }
 
 
@@ -159,7 +163,7 @@ CV.DP.poly = function(y, r, gamma, delta){
   train.y = y[odd_indexes]
   validation.y = y[even_indexes]
   temp = DP.poly(train.y, r, gamma, delta)
-  init_cpt_train = part2local(temp$partition)
+  init_cpt_train = temp$cpt
   y_hat_train = temp$yhat
   init_cpt_train.long = c(0, init_cpt_train, length(train.y))
   diff.point = diff(init_cpt_train.long)

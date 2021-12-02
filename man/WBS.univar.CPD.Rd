@@ -17,8 +17,8 @@ WBS.univar.CPD(y, Alpha, Beta, delta)
 }
 \value{
 A \code{list} with the following structure:
- \item{cpt}{A vector of estimated change point locations (sorted in strictly increasing order)}
- \item{tau}{A scalar of selected threshold tau based on sSIC}
+ \item{cpt}{A vector of estimated change point locations (sorted in strictly increasing order).}
+ \item{tau}{A scalar of selected threshold tau based on sSIC.}
 }
 \description{
 Perform univariate mean change points detection based on wild binary segmentation. The threshold parameter tau for WBS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).

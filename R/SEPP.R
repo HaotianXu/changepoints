@@ -8,7 +8,7 @@
 #' @return   A p-by-n matrix.
 #' @export
 #' @author  Daren Wang & Haotian Xu
-#' @references Wang, D., Yu, Y., & Willett, R. (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. arXiv preprint arXiv:2006.03572.
+#' @references Wang, Yu, & Willett (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. <arXiv:2006.03572>.
 #' @examples
 #' p = 10 # dimension
 #' n = 50
@@ -68,7 +68,9 @@ simu.SEPP = function(intercept, n, A, threshold, vzero = NULL){
 #' @param delta2    An \code{integer} scalar representing the maximal of the change point spacing (for reducing computation cost).
 #' @param intercept A \code{numeric} scalar representing the intercept of the model, which is assumed to be known.
 #' @param threshold A \code{numeric} scalar representing the upper bound for each coordinate of X_t (for stability).
-#' @return A vector of the best partition.
+#' @return An object of \code{\link[base]{class}} "DP", which is a \code{list} with the following structure:
+#'  \item{partition}{A vector of the best partition.}
+#'  \item{cpt}{A vector of change points estimation.}
 #' @export
 #' @author Daren Wang & Haotian Xu
 #' @references Wang, D., Yu, Y., & Willett, R. (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. arXiv preprint arXiv:2006.03572.
@@ -104,9 +106,8 @@ simu.SEPP = function(intercept, n, A, threshold, vzero = NULL){
 #' delta2 = 1.5*n
 #' intercept = 1/2
 #' threshold = 6
-#' parti = DP.SEPP(data, gamma = gamma, lambda = 0.03, delta, delta2, intercept, threshold)$partition
-#' cpt_hat = part2local(parti)
-#' @seealso \code{\link{part2local}} for obtaining change points estimation.
+#' DP_result = DP.SEPP(data, gamma = gamma, lambda = 0.03, delta, delta2, intercept, threshold)
+#' cpt_hat = DP_result$cpt
 DP.SEPP = function(DATA, gamma, lambda, delta, delta2, intercept, threshold){
   M = nrow(DATA)
   N = ncol(DATA)
@@ -135,7 +136,10 @@ DP.SEPP = function(DATA, gamma, lambda, delta, delta2, intercept, threshold){
     r = l
     l = partition[r]
   }
-  return(list(partition = partition))
+  cpt = part2local(partition)
+  result = list(partition = partition, cpt = cpt)
+  class(result) = "DP"
+  return(result)
 }
 
 
@@ -191,7 +195,7 @@ error.seg.SEPP = function(s, e, DATA, lambda, delta, delta2, intercept, threshol
 #'   p = nrow(DATA.temp)
 #'   DATA.train = DATA.temp[,seq(1,N,2)]
 #'   DATA.test = DATA.temp[,seq(2,N,2)]
-#'   init_cpt_train = part2local(DP.SEPP(DATA.train, gamma, lambda, delta, delta2, intercept, threshold)$partition)
+#'   init_cpt_train = DP.SEPP(DATA.train, gamma, lambda, delta, delta2, intercept, threshold)$cpt
 #'   init_cpt = 2*init_cpt_train
 #'   len = length(init_cpt)
 #'   init_cpt_long = c(init_cpt_train, ncol(DATA.train))

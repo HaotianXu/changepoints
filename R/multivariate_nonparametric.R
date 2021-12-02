@@ -62,11 +62,11 @@ CUSUM.KS.multivariate = function(Y, W, s, e, t, h){
 #' K_max = 30
 #' h = 5*(K_max*log(n)/n)^{1/p} # bandwith
 #' temp = WBS.multi.nonpar(Y, Y, 1, ncol(Y), intervals$Alpha, intervals$Beta, h, delta = 10)
-#' result = threshold.BS(temp, median(temp$Dval))
+#' result = thresholdBS(temp, median(temp$Dval))
 #' print(result$BS_tree_trimmed)
 #' plot(result$BS_tree_trimmed)
 #' @references Padilla, Yu, Wang and Rinaldo (2019) <arxiv:1910.13289>
-#' @seealso \code{\link{threshold.BS}} for obtain change points estimation.
+#' @seealso \code{\link{thresholdBS}} for obtain change points estimation.
 WBS.multi.nonpar = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0){
   print(paste0("WBS at level: ", level))
   Alpha_new = pmax(Alpha, s)
@@ -159,7 +159,7 @@ WBS.multi.nonpar.CPD = function(Y, W, Alpha, Beta, h, delta){
   tau_grid = rev(aux[1:min(len_tau,length(Dval))]) - 10^{-30}
   B_list = c()
   for(j in 1:length(tau_grid)){
-    aux = threshold.BS(temp1, tau_grid[j])$cpt_hat[,1]
+    aux = thresholdBS(temp1, tau_grid[j])$cpt_hat[,1]
     if(length(aux) == 0){
       break
     }

@@ -92,7 +92,7 @@ NonPar.RDPG.CPD = function(data_mat, d, Alpha, Beta, delta){
   tau_grid = c(tau_grid,10) 
   S = c()
   for(j in 1:length(tau_grid)){
-    aux = unlist(threshold.BS(temp1, tau_grid[j])$cpt_hat[,1])
+    aux = unlist(thresholdBS(temp1, tau_grid[j])$cpt_hat[,1])
     if(length(aux) == 0){
       break
     }

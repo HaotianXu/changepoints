@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean.R
 \name{local.refine.univar}
 \alias{local.refine.univar}
-\title{Local refinement for univariate mean change points detection.}
+\title{Local refinement of an initial estimator for univariate mean change points detection.}
 \usage{
 local.refine.univar(cpt_init, y)
 }
@@ -30,7 +30,7 @@ cpt_LR = local.refine.univar(cpt_hat, y)
 Hausdorff.dist(cpt_LR, cpt_true)
 }
 \references{
-Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>
+Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>.
 }
 \author{
 Haotian Xu

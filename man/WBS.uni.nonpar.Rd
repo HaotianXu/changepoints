@@ -41,7 +41,7 @@ intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y))
 temp = WBS.uni.nonpar(Y, 1, 300, intervals$Alpha, intervals$Beta, N, 5)
 plot.ts(t(Y))
 points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval)],4)], col = "red")
-threshold.BS(temp, 2)
+thresholdBS(temp, 2)
 }
 \references{
 Padilla, Yu, Wang and Rinaldo (2021) <doi:10.1214/21-EJS1809>

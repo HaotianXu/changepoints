@@ -59,7 +59,7 @@ intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y)) #Random intervals
 K_max = 30
 h = 5*(K_max*log(n)/n)^{1/p} # bandwith
 temp = WBS.multi.nonpar(Y, Y, 1, ncol(Y), intervals$Alpha, intervals$Beta, h, delta = 10)
-result = threshold.BS(temp, median(temp$Dval))
+result = thresholdBS(temp, median(temp$Dval))
 print(result$BS_tree_trimmed)
 plot(result$BS_tree_trimmed)
 }
@@ -67,7 +67,7 @@ plot(result$BS_tree_trimmed)
 Padilla, Yu, Wang and Rinaldo (2019) <arxiv:1910.13289>
 }
 \seealso{
-\code{\link{threshold.BS}} for obtain change points estimation.
+\code{\link{thresholdBS}} for obtain change points estimation.
 }
 \author{
 Oscar Hernan Madrid Padilla & Haotian Xu

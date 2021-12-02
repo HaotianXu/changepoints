@@ -31,6 +31,7 @@ CUSUM.cov = function(X, s, e, t){
 #' } 
 #' @export
 #' @author Haotian Xu
+#' @seealso \code{\link{thresholdBS}} for obtain change points estimation.
 #' @examples
 #' p = 10
 #' A1 = gen.cov.mat(p, 1, "equal")
@@ -40,8 +41,7 @@ CUSUM.cov = function(X, s, e, t){
 #'           t(MASS::mvrnorm(150, mu = rep(0, p), A2)), 
 #'           t(MASS::mvrnorm(200, mu = rep(0, p), A3)))
 #' temp = BS.cov(X, 1, 450)
-#' threshold.BS(temp, 10)
-#' @seealso \code{\link{threshold.BS}} for obtain change points estimation.
+#' thresholdBS(temp, 10)
 BS.cov = function(X, s, e, level = 0){
   p = dim(X)[1]
   n = dim(X)[2]
@@ -117,6 +117,7 @@ PC.cov = function(X, Alpha, Beta){
 #'  \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row}
 #' @export
 #' @author Haotian Xu
+#' @seealso \code{\link{thresholdBS}} for obtain change points estimation.
 #' @examples
 #' p = 10
 #' A1 = gen.cov.mat(p, 1, "equal")
@@ -132,8 +133,7 @@ PC.cov = function(X, Alpha, Beta){
 #' intervals = WBS.intervals(M = 120, lower = 1, upper = dim(X)[2])
 #' temp = WBSIP.cov(X, X_prime, 1, dim(X)[2], intervals$Alpha, intervals$Beta, delta = 5)
 #' tau = sqrt(p*log(ncol(X)))*1.5
-#' sort(threshold.BS(temp, tau)$cpt_hat[,1])
-#' @seealso \code{\link{threshold.BS}} for obtain change points estimation.
+#' sort(thresholdBS(temp, tau)$cpt_hat[,1])
 WBSIP.cov = function(X, X_prime, s, e, Alpha, Beta, delta, level = 0){
   S = NULL
   Dval = NULL

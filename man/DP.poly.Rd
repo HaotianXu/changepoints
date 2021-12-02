@@ -17,8 +17,11 @@ DP.poly(y, r, gamma, delta)
 }
 \value{
 A \code{list} with the following structure:
- \item{partition}{A vector of the best partition}
- \item{yhat}{A vector of mean estimation for corresponding to the best partition}
+
+An object of \code{\link[base]{class}} "DP", which is a \code{list} with the following structure:
+ \item{partition}{A vector of the best partition.}
+ \item{yhat}{A vector of mean estimation for corresponding to the best partition.}
+ \item{cpt}{A vector of change points estimation.}
 }
 \description{
 Perform dynamic programming algorithm for univariate polynomials change points detection.
@@ -29,13 +32,10 @@ cpt_true = c(20, 50, 170)
 y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
 plot.ts(y)
 temp = DP.poly(y, r = 2, gamma = 15, delta = 5)
-part2local(temp$partition)
+temp$cpt
 }
 \references{
 Yu and Chatterjee (2020) <arXiv:2007.09910>
-}
-\seealso{
-\code{part2local} for obtaining change points estimation.
 }
 \author{
 Haotian Xu

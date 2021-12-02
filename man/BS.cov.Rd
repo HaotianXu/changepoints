@@ -36,10 +36,10 @@ X = cbind(t(MASS::mvrnorm(100, mu = rep(0, p), A1)),
           t(MASS::mvrnorm(150, mu = rep(0, p), A2)), 
           t(MASS::mvrnorm(200, mu = rep(0, p), A3)))
 temp = BS.cov(X, 1, 450)
-threshold.BS(temp, 10)
+thresholdBS(temp, 10)
 }
 \seealso{
-\code{\link{threshold.BS}} for obtain change points estimation.
+\code{\link{thresholdBS}} for obtain change points estimation.
 }
 \author{
 Haotian Xu

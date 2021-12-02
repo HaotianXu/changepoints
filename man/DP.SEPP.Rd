@@ -22,7 +22,9 @@ DP.SEPP(DATA, gamma, lambda, delta, delta2, intercept, threshold)
 \item{threshold}{A \code{numeric} scalar representing the upper bound for each coordinate of X_t (for stability).}
 }
 \value{
-A vector of the best partition.
+An object of \code{\link[base]{class}} "DP", which is a \code{list} with the following structure:
+ \item{partition}{A vector of the best partition.}
+ \item{cpt}{A vector of change points estimation.}
 }
 \description{
 Perform dynamic programming for SEPP change points detection.
@@ -59,14 +61,11 @@ delta = 0.5*n
 delta2 = 1.5*n
 intercept = 1/2
 threshold = 6
-parti = DP.SEPP(data, gamma = gamma, lambda = 0.03, delta, delta2, intercept, threshold)$partition
-cpt_hat = part2local(parti)
+DP_result = DP.SEPP(data, gamma = gamma, lambda = 0.03, delta, delta2, intercept, threshold)
+cpt_hat = DP_result$cpt
 }
 \references{
 Wang, D., Yu, Y., & Willett, R. (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. arXiv preprint arXiv:2006.03572.
-}
-\seealso{
-\code{\link{part2local}} for obtaining change points estimation.
 }
 \author{
 Daren Wang & Haotian Xu

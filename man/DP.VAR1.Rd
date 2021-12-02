@@ -20,7 +20,9 @@ DP.VAR1(X_futu, X_curr, gamma, lambda, delta, eps = 0.001)
 \item{eps}{A \code{numeric} scalar of precision level for convergence of lasso.}
 }
 \value{
-partition: A vector of the best partition.
+An object of \code{\link[base]{class}} "DP", which is a \code{list} with the following structure:
+ \item{partition}{A vector of the best partition.}
+ \item{cpt}{A vector of change points estimation.}
 }
 \description{
 Perform dynamic programming for VAR1 change points detection through \eqn{l_0} penalty.
@@ -41,15 +43,12 @@ data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
 N = ncol(data)
 X_curr = data[,1:(N-1)]
 X_futu = data[,2:N]
-parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
-part2local(parti)
+DP_result = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)
+DP_result$cpt
 }
 \references{
 Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>
 }
-\seealso{
-\code{part2local} for obtaining change points estimation.
-}
 \author{
-Daren Wang, Haotian Xu
+Daren Wang & Haotian Xu
 }

@@ -14,9 +14,10 @@ DP.univar(y, gamma, delta)
 \item{delta}{A positive \code{integer} scalar of minimum spacing.}
 }
 \value{
-A \code{list} with the following structure:
- \item{partition}{A vector of the best partition}
- \item{yhat}{A vector of mean estimation for corresponding to the best partition}
+An object of \code{\link[base]{class}} "DP", which is a \code{list} with the following structure:
+ \item{partition}{A vector of the best partition.}
+ \item{yhat}{A vector of mean estimation for corresponding to the best partition.}
+ \item{cpt}{A vector of change points estimation.}
 }
 \description{
 Perform dynamic programming for univariate mean change points detection.
@@ -25,14 +26,12 @@ Perform dynamic programming for univariate mean change points detection.
 set.seed(123)
 cpt_true = c(20, 50, 170)
 y = rnorm(300) + c(rep(0,20),rep(1,30),rep(0,120),rep(1,130))
-cpt_hat = part2local(DP.univar(y, gamma = 5, delta = 5)$partition)
+DP_result = DP.univar(y, gamma = 5, delta = 5)
+cpt_hat = DP_result$cpt
 Hausdorff.dist(cpt_hat, cpt_true)
 }
 \references{
 Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>
-}
-\seealso{
-\code{\link{part2local}} for obtaining change points estimation.
 }
 \author{
 Haotian Xu

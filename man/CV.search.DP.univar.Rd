@@ -15,10 +15,10 @@ CV.search.DP.univar(y, gamma_set, delta)
 }
 \value{
 A \code{list} with the following structure:
- \item{cpt_hat}{A list of vector of estimated change points (sorted in strictly increasing order)}
- \item{K_hat}{A list of scalar of number of estimated change points}
- \item{test_error}{A list of vector of testing errors}
- \item{train_error}{A list of vector of training errors}
+ \item{cpt_hat}{A list of vector of estimated change points (sorted in strictly increasing order).}
+ \item{K_hat}{A list of scalar of number of estimated change points.}
+ \item{test_error}{A list of vector of testing errors.}
+ \item{train_error}{A list of vector of training errors.}
 }
 \description{
 Perform grid search for dynamic programming to select the tuning parameter through Cross-Validation.

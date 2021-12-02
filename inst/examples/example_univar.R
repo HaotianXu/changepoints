@@ -10,7 +10,7 @@ min_idx = which.min(DP_result$test_error)
 cpt_DP_hat = unlist(DP_result$cpt_hat[[min_idx]])
 cpt_DP_LR = local.refine.univar(cpt_DP_hat, y)
 
-BS_result = threshold.BS(BS.univar(y, 1, n, delta), tau = 2)
+BS_result = thresholdBS(BS.univar(y, 1, n, delta), tau = 2)
 tree_BS = BS_result$BS_tree_trimmed
 BS_result$change_points
 cpt_BS_hat = sort(BS_result$change_points[,1])
@@ -20,7 +20,7 @@ BS_CPD_result = BS.univar.CPD(y, delta)
 BS_CPD_LR = local.refine.univar(BS_CPD_result, y)
 
 intervals = WBS.intervals(M = 300, lower = 1, upper = n)
-WBS_result = threshold.BS(WBS.univar(y, 1, n, intervals$Alpha, intervals$Beta, delta), 3)
+WBS_result = thresholdBS(WBS.univar(y, 1, n, intervals$Alpha, intervals$Beta, delta), 3)
 tree_WBS = WBS_result$BS_tree_trimmed
 WBS_result$change_points
 cpt_WBS_hat = sort(WBS_result$change_points[,1])

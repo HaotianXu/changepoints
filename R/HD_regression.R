@@ -65,7 +65,9 @@ simu.change.regression = function(d0, cpt_true, p, n, sigma, kappa){
 #' @param lambda    A positive \code{numeric} scalar of tuning parameter for lasso penalty.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param eps       A \code{numeric} scalar of precision level for convergence of lasso.
-#' @return          A vector of the best partition of the dynamic programming algorithm.
+#' @return An object of \code{\link[base]{class}} "DP", which is a \code{list} with the following structure:
+#'  \item{partition}{A vector of the best partition.}
+#'  \item{cpt}{A vector of change points estimation.}
 #' @export
 #' @author Daren Wang & Haotian Xu
 #' @references Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>
@@ -76,11 +78,13 @@ simu.change.regression = function(d0, cpt_true, p, n, sigma, kappa){
 #' cpt_true = c(30, 70)
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 #' temp = DP.regression(y = data$y, X = data$X, gamma = 2, lambda = 1, delta = 5)
-#' cpt_hat = part2local(temp$partition)
-#' @seealso \code{\link{part2local}} for obtaining change points estimation.
+#' cpt_hat = temp$cpt
 #' @export
 DP.regression <- function(y, X, gamma, lambda, delta, eps = 0.001) {
-  .Call('_changepoints_rcpp_DP_regression', PACKAGE = 'changepoints', y, X, gamma, lambda, delta, eps)
+  DP_result = .Call('_changepoints_rcpp_DP_regression', PACKAGE = 'changepoints', y, X, gamma, lambda, delta, eps)
+  result = append(DP_result, list(cpt = part2local(DP_result$partition)))
+  class(result) = "DP"
+  return(result)
 }
 
 
@@ -126,7 +130,7 @@ CV.DP.regression = function(y, X, gamma, lambda, delta, eps = 0.001){
   train.y = y[odd_indexes]
   validation.X = X[,even_indexes]
   validation.y = y[even_indexes]
-  init_cpt_train = part2local(DP.regression(train.y, train.X, gamma, lambda, delta, eps)$partition)
+  init_cpt_train = DP.regression(train.y, train.X, gamma, lambda, delta, eps)$cpt
   init_cpt_train.long = c(0, init_cpt_train, ncol(train.X))
   diff.point = diff(init_cpt_train.long)
   if (length(which(diff.point == 1)) > 0){
@@ -334,7 +338,7 @@ CV.DP.LR.regression = function(y, X, gamma, lambda, zeta, delta, eps = 0.001){
   train.y = y[odd_indexes]
   validation.X = X[,even_indexes]
   validation.y = y[even_indexes]
-  init_cpt_train = part2local(DP.regression(train.y, train.X, gamma, lambda, delta, eps)$partition)
+  init_cpt_train = DP.regression(train.y, train.X, gamma, lambda, delta, eps)$cpt
   if(length(init_cpt_train) != 0){
     init_cp_dp = odd_indexes[init_cpt_train]
     init_cp = local.refine.regression(init_cp_dp, y, X, zeta)

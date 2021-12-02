@@ -55,7 +55,7 @@ temp = WBS.network(data_mat1, data_mat2, 1, ncol(data_mat1),
                    intervals$Alpha, intervals$Beta, delta = 5)
 rho_hat = quantile(rowMeans(data_mat), 0.95)
 tau = p*rho_hat*(log(n))^2/20 # default threshold given in the paper
-cpt_init = unlist(threshold.BS(temp, tau)$cpt_hat[,1])
+cpt_init = unlist(thresholdBS(temp, tau)$cpt_hat[,1])
 cpt_refined = local.refine.network(cpt_init, data_mat1, data_mat2, 
                       self = TRUE, tau2 = p*rho_hat/3, tau3 = Inf)
 cpt_WBS = 2*cpt_init

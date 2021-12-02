@@ -57,9 +57,12 @@ error.pred.seg.VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps) {
 #' @param lambda    A \code{numeric} scalar of the tuning parameter for lasso penalty.
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
 #' @param eps       A \code{numeric} scalar of precision level for convergence of lasso.
-#' @return  partition: A vector of the best partition.
+#' @return An object of \code{\link[base]{class}} "DP", which is a \code{list} with the following structure:
+#'  \item{partition}{A vector of the best partition.}
+#'  \item{cpt}{A vector of change points estimation.}
 #' @export
-#' @author Daren Wang, Haotian Xu
+#' @author Daren Wang & Haotian Xu
+#' @references Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>
 #' @examples
 #' p = 10
 #' sigma = 1
@@ -76,12 +79,13 @@ error.pred.seg.VAR1 <- function(X_futu, X_curr, s, e, lambda, delta, eps) {
 #' N = ncol(data)
 #' X_curr = data[,1:(N-1)]
 #' X_futu = data[,2:N]
-#' parti = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)$partition
-#' part2local(parti)
-#' @references Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>
-#' @seealso \code{part2local} for obtaining change points estimation.
+#' DP_result = DP.VAR1(X_futu, X_curr, gamma = 1, lambda = 1, delta = 5)
+#' DP_result$cpt
 DP.VAR1 <- function(X_futu, X_curr, gamma, lambda, delta, eps = 0.001) {
-  .Call('_changepoints_rcpp_DP_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, gamma, lambda, delta, eps)
+  DP_result = .Call('_changepoints_rcpp_DP_VAR1', PACKAGE = 'changepoints', X_futu, X_curr, gamma, lambda, delta, eps)
+  result = append(DP_result, list(cpt = part2local(DP_result$partition)))
+  class(result) = "DP"
+  return(result)
 }
 
 
@@ -105,7 +109,7 @@ CV.DP.VAR1 = function(DATA, gamma, lambda, delta, eps = 0.001){
   X_futu.train = X_train[,2:(N/2)]
   X_curr.test = X_test[,1:(N/2-1)]
   X_futu.test = X_test[,2:(N/2)]
-  init_cpt_train = part2local(DP.VAR1(X_futu.train, X_curr.train, gamma, lambda, delta)$partition)
+  init_cpt_train = DP.VAR1(X_futu.train, X_curr.train, gamma, lambda, delta)$cpt
   init_cpt = 2*init_cpt_train
   len = length(init_cpt)
   init_cpt_long = c(init_cpt_train, ncol(X_curr.train))
