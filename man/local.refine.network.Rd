@@ -61,7 +61,7 @@ cpt_WBS = 2*cpt_init
 cpt_refined = 2*cpt_refined
 }
 \references{
-Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>
+Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>.
 }
 \author{
 Daren Wang & Haotian Xu

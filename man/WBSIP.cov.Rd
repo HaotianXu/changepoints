@@ -24,7 +24,7 @@ WBSIP.cov(X, X_prime, s, e, Alpha, Beta, delta, level = 0)
 \item{level}{A parameter for tracking the level at which a change point is detected. Should be fixed as 0.}
 }
 \value{
-A \code{list} with the following structure:
+An object of \code{\link[base]{class}} "BS", which is a \code{list} with the following structure:
  \item{S}{A vector of estimated change points (sorted in strictly increasing order)}
  \item{Dval}{A vector of values of CUSUM statistic based on KS distance}
  \item{Level}{A vector representing the levels at which each change point is detected}
@@ -49,6 +49,9 @@ intervals = WBS.intervals(M = 120, lower = 1, upper = dim(X)[2])
 temp = WBSIP.cov(X, X_prime, 1, dim(X)[2], intervals$Alpha, intervals$Beta, delta = 5)
 tau = sqrt(p*log(ncol(X)))*1.5
 sort(thresholdBS(temp, tau)$cpt_hat[,1])
+}
+\references{
+Wang, Yu and Rinaldo (2021) <doi:10.3150/20-BEJ1249>.
 }
 \seealso{
 \code{\link{thresholdBS}} for obtain change points estimation.

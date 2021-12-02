@@ -51,10 +51,10 @@ cpt_LR = local.refine.univar(cpt_hat, y)
 Hausdorff.dist(cpt_LR, cpt_true)
 }
 \references{
-Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>
+Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>.
 }
 \seealso{
-\code{\link{thresholdBS}} for obtaining change points estimation, \code{\link{WBS.univar.CPD}} for a tuning free version.
+\code{\link{thresholdBS}} for obtaining change points estimation, \code{\link{tuneBSunivar}} for a tuning version.
 }
 \author{
 Haotian Xu

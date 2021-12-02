@@ -24,11 +24,11 @@ WBS.network(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0)
 \item{level}{Should be fixed as 0.}
 }
 \value{
-A \code{list} with the following structure:
- \item{S}{A vector of estimated change points (sorted in strictly increasing order)}
- \item{Dval}{A vector of values of CUSUM statistic based on KS distance}
- \item{Level}{A vector representing the levels at which each change point is detected}
- \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row}
+An object of \code{\link[base]{class}} "BS", which is a \code{list} with the following structure:
+ \item{S}{A vector of estimated change points (sorted in strictly increasing order).}
+ \item{Dval}{A vector of values of CUSUM statistic based on KS distance.}
+ \item{Level}{A vector representing the levels at which each change point is detected.}
+ \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row.}
 }
 \description{
 Perform wild binary segmentation for network change points detection.
@@ -62,7 +62,10 @@ cpt_WBS = 2*cpt_init
 cpt_refined = 2*cpt_refined
 }
 \references{
-Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>
+Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>.
+}
+\seealso{
+\code{\link{thresholdBS}} for obtaining change points estimation.
 }
 \author{
 Daren Wang & Haotian Xu

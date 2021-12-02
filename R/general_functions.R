@@ -3,11 +3,6 @@
 #' @param parti_vec    A \code{integer} vector of best partition produced by dynamic programming algorithm.
 #' @return  A vector of change point locations.
 #' @noRd
-#' @author Haotian Xu
-#' @examples
-#' y = c(rep(0, 100), rep(1, 100))
-#' part2local(DP.univar(y, 1, 4)$partition)
-#' @seealso \code{\link{DP.univar}}, \code{\link{DP.poly}}, \code{\link{DP.regression}}, \code{\link{DP.SEPP}}, \code{\link{DP.VAR1}}
 part2local = function(parti_vec){
   N = length(parti_vec)
   localization = c()
@@ -59,13 +54,13 @@ Hausdorff.dist = function(vec1, vec2){
 #'  \item{cpt_hat}{A matrix contains change point locations, values of corresponding statistic, and levels at which each change point is detected}
 #' @export
 #' @author Haotian Xu
+#' @seealso \code{\link{BS.univar}}, \code{\link{BS.uni.nonpar}}, \code{\link{BS.cov}}, \code{\link{WBS.univar}}, \code{\link{WBS.uni.nonpar}}, \code{\link{WBS.multi.nonpar}}, \code{\link{WBS.network}}, \code{\link{WBSIP.cov}}
 #' @examples
 #' y = c(rnorm(100, 0, 1), rnorm(100, 10, 10), rnorm(100, 40, 10))
 #' temp = BS.univar(y, 1, 300, 5)
 #' plot.ts(y)
 #' points(x = tail(temp$S[order(temp$Dval)],4), y = y[tail(temp$S[order(temp$Dval)],4)], col = "red")
 #' thresholdBS(temp, 20)
-#' @seealso \code{\link{BS.univar}}, \code{\link{BS.uni.nonpar}}, \code{\link{BS.cov}}, \code{\link{WBS.univar}}, \code{\link{WBS.uni.nonpar}}, \code{\link{WBS.multi.nonpar}}, \code{\link{WBS.network}}, \code{\link{WBSIP.cov}}
 thresholdBS <- function(BS_object, tau){
   UseMethod("thresholdBS", BS_object)
 }
@@ -358,4 +353,10 @@ print.BS = function(x, ...){
   }
   BS_tree_node = data.tree::as.Node(binary_tree)
   print(BS_tree_node, "value")
+}
+
+
+#' @export
+print.DP = function(x, ...){
+  cat("Estimated change points by DP:", x$cpt, "\n")
 }

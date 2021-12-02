@@ -100,13 +100,15 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 #' @param Beta       A \code{integer} vector of ending indices of random intervals.
 #' @param delta      A positive \code{integer} scalar of minimum spacing.
 #' @param level      Should be fixed as 0.
-#' @return  A \code{list} with the following structure:
-#'  \item{S}{A vector of estimated change points (sorted in strictly increasing order)}
-#'  \item{Dval}{A vector of values of CUSUM statistic based on KS distance}
-#'  \item{Level}{A vector representing the levels at which each change point is detected}
-#'  \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row}
+#' @return  An object of \code{\link[base]{class}} "BS", which is a \code{list} with the following structure:
+#'  \item{S}{A vector of estimated change points (sorted in strictly increasing order).}
+#'  \item{Dval}{A vector of values of CUSUM statistic based on KS distance.}
+#'  \item{Level}{A vector representing the levels at which each change point is detected.}
+#'  \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row.}
 #' @export
 #' @author  Daren Wang & Haotian Xu
+#' @references Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>.
+#' @seealso \code{\link{thresholdBS}} for obtaining change points estimation.
 #' @examples
 #' p = 15 # number of nodes
 #' rho = 0.5 # sparsity parameter
@@ -134,7 +136,6 @@ CUSUM.innerprod = function(data_mat1, data_mat2, s, e, t){
 #'                       self = TRUE, tau2 = p*rho_hat/3, tau3 = Inf)
 #' cpt_WBS = 2*cpt_init
 #' cpt_refined = 2*cpt_refined
-#' @references Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>
 WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0){
   Alpha_new = pmax(Alpha, s)
   Beta_new = pmin(Beta, e)
@@ -194,7 +195,7 @@ WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0
 #' @return  A \code{numeric} vector of locally refined change point locations.
 #' @export
 #' @author  Daren Wang & Haotian Xu
-#' @references Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>
+#' @references Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>.
 #' @examples
 #' p = 15 # number of nodes
 #' rho = 0.5 # sparsity parameter

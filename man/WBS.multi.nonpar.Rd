@@ -26,11 +26,11 @@ WBS.multi.nonpar(Y, W, s, e, Alpha, Beta, h, delta, level = 0)
 \item{level}{Should be fixed as 0.}
 }
 \value{
-A \code{list} with the following structure:
- \item{S}{A vector of estimated change points (sorted in strictly increasing order)}
- \item{Dval}{A vector of values of CUSUM statistic based on KS distance}
- \item{Level}{A vector representing the levels at which each change point is detected}
- \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row}
+An object of \code{\link[base]{class}} "BS", which is a \code{list} with the following structure:
+ \item{S}{A vector of estimated change points (sorted in strictly increasing order).}
+ \item{Dval}{A vector of values of CUSUM statistic based on KS distance.}
+ \item{Level}{A vector representing the levels at which each change point is detected.}
+ \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row.}
 }
 \description{
 Perform wild binary segmentation for multivariate nonparametric change points detection.
@@ -64,10 +64,10 @@ print(result$BS_tree_trimmed)
 plot(result$BS_tree_trimmed)
 }
 \references{
-Padilla, Yu, Wang and Rinaldo (2019) <arxiv:1910.13289>
+Padilla, Yu, Wang and Rinaldo (2019) <arxiv:1910.13289>.
 }
 \seealso{
-\code{\link{thresholdBS}} for obtain change points estimation.
+\code{\link{thresholdBS}} for obtain change points estimation, \code{\link{tuneBSmultinonpar}} for a tuning version.
 }
 \author{
 Oscar Hernan Madrid Padilla & Haotian Xu

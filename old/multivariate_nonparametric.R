@@ -39,7 +39,7 @@ CUSUM.KS.multivariate = function(Y, W, s, e, t, h){
 #' @export
 #' @author Oscar Hernan Madrid Padilla & Haotian Xu
 #' @references Padilla, Yu, Wang and Rinaldo (2019) <arxiv:1910.13289>.
-#' @seealso \code{\link{thresholdBS}} for obtain change points estimation, \code{\link{tuneBSmultinonpar}} for a tuning version.
+#' @seealso \code{\link{thresholdBS}} for obtain change points estimation.
 #' @examples
 #' n = 100
 #' v = c(floor(n/3), 2*floor(n/3)) # location of change points
@@ -113,13 +113,16 @@ WBS.multi.nonpar = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0){
 
 
 
-#' A function to compute change points based on the multivariate nonparametic method with tuning parameter selected by FDR control.
-#' @param BS_object A "BS" object produced by \code{WBS.multi.nonpar}.
+#' A function to compute change points based on the multivariate nonparametic method.
 #' @param Y         A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.
+#' @param W         A copy of the matrix Y, it can be Y itself.
+#' @param Alpha     A \code{integer} vector of starting indices of random intervals.
+#' @param Beta      A \code{integer} vector of ending indices of random intervals.
+#' @param h         A \code{numeric} scalar of bandwith parameter.
+#' @param delta     A \code{integer} scalar of minimum spacing.
 #' @return A vector of estimated change points.
 #' @author Oscar Hernan Madrid Padilla & Haotian Xu
 #' @references Padilla, Yu, Wang and Rinaldo (2019) <arxiv:1910.13289>.
-#' @seealso \code{\link{WBS.multi.nonpar}}.
 #' @export
 #' @examples 
 #' n = 100
@@ -144,24 +147,19 @@ WBS.multi.nonpar = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0){
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y)) #Random intervals
 #' K_max = 30
 #' h = 5*(K_max*log(n)/n)^{1/p} # bandwith
-#' temp = WBS.multi.nonpar(Y, Y, 1, ncol(Y), intervals$Alpha, intervals$Beta, h, delta = 10)
-#' S = tuneBSmultinonpar(temp, Y)
+#' S = WBS.multi.nonpar.CPD(Y, Y, intervals$Alpha, intervals$Beta, h, delta = 10)
 #' S
-tuneBSmultinonpar = function(BS_object, Y){
-  UseMethod("tuneBSmultinonpar", BS_object)
-}
-
-#' @export
-tuneBSmultinonpar.BS = function(BS_object, Y){
+WBS.multi.nonpar.CPD = function(Y, W, Alpha, Beta, h, delta){
   p = nrow(Y)
   obs_num = ncol(Y)
-  Dval = BS_object$Dval
+  temp1 = WBS.multi.nonpar(Y, W, 1, obs_num, Alpha, Beta, h, delta, level = 0)  
+  Dval = temp1$Dval
   aux = sort(Dval, decreasing = TRUE)
   len_tau = 30
   tau_grid = rev(aux[1:min(len_tau,length(Dval))]) - 10^{-30}
   B_list = c()
   for(j in 1:length(tau_grid)){
-    aux = thresholdBS(BS_object, tau_grid[j])$cpt_hat[,1]
+    aux = thresholdBS(temp1, tau_grid[j])$cpt_hat[,1]
     if(length(aux) == 0){
       break
     }

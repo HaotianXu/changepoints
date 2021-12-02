@@ -60,7 +60,8 @@ Hausdorff.dist(cpt_DPlr_hat, cpt_true)
 # Perform standard binary segmentation with user specified threshold parameter
 ```{r}
 tau_BS = 4 # user specified threshold parameter for BS
-BS_result = thresholdBS(BS.univar(y, 1, n, delta), tau_BS)
+BS_object = BS.univar(y, 1, n, delta)
+BS_result = thresholdBS(BS_object, tau_BS)
 BS_result
 cpt_BS_hat = sort(BS_result$cpt_hat[,1]) # estimated change points by BS
 cpt_BS_hat
@@ -72,10 +73,35 @@ Hausdorff.dist(cpt_BSlr_hat, cpt_true)
 
 # Perform standard binary segmentation with automatically tuned threshold parameter
 ```{r}
-BS_CPD_result = BS.univar.CPD(y, delta)
+BS_CPD_result = tuneBSunivar(BS_object, y)
 BS_CPD_result$cpt
 Hausdorff.dist(BS_CPD_result$cpt, cpt_true)
 BS_CPD_LR = local.refine.univar(BS_CPD_result$cpt, y)
 BS_CPD_LR
 Hausdorff.dist(BS_CPD_LR, cpt_true)
+```
+
+# Perform wild binary segmentation with user specified threshold parameter
+```{r}
+tau_WBS = 4 # user specified threshold parameter for WBS
+intervals = WBS.intervals(M = 300, lower = 1, upper = n)
+WBS_object = WBS.univar(y, 1, n, intervals$Alpha, intervals$Beta, delta)
+WBS_result = thresholdBS(WBS_object, tau_WBS)
+WBS_result
+cpt_WBS_hat = sort(WBS_result$cpt_hat[,1]) # estimated change points by WBS
+cpt_WBS_hat
+Hausdorff.dist(cpt_WBS_hat, cpt_true)
+cpt_WBSlr_hat = local.refine.univar(cpt_WBS_hat, y) # perform local refinement
+cpt_WBSlr_hat
+Hausdorff.dist(cpt_WBSlr_hat, cpt_true)
+```
+
+# Perform wild binary segmentation with automatically tuned threshold parameter
+```{r}
+WBS_CPD_result = tuneBSunivar(WBS_object, y)
+WBS_CPD_result$cpt
+Hausdorff.dist(WBS_CPD_result$cpt, cpt_true)
+WBS_CPD_LR = local.refine.univar(WBS_CPD_result$cpt, y)
+WBS_CPD_LR
+Hausdorff.dist(WBS_CPD_LR, cpt_true)
 ```

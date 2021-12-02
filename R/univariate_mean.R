@@ -147,8 +147,8 @@ local.refine.univar = function(cpt_init, y){
 #'  \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row.}
 #' @export
 #' @author  Haotian Xu
-#' @references Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>
-#' @seealso \code{\link{thresholdBS}} for obtaining change points estimation, \code{\link{BS.univar.CPD}} for a tuning free version.
+#' @references Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>.
+#' @seealso \code{\link{thresholdBS}} for obtaining change points estimation, \code{\link{tuneBSunivar}} for a tuning version.
 #' @examples
 #' set.seed(0)
 #' cpt_true = c(20, 50, 170)
@@ -212,8 +212,8 @@ BS.univar = function(y, s, e, delta = 2, level = 0){
 #'  \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row.}
 #' @export
 #' @author Haotian Xu
-#' @references Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>
-#' @seealso \code{\link{thresholdBS}} for obtaining change points estimation, \code{\link{WBS.univar.CPD}} for a tuning free version.
+#' @references Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>.
+#' @seealso \code{\link{thresholdBS}} for obtaining change points estimation, \code{\link{tuneBSunivar}} for a tuning version.
 #' @examples
 #' set.seed(0)
 #' cpt_true = c(20, 50, 170)
@@ -283,90 +283,51 @@ WBS.univar = function(y, s, e, Alpha, Beta, delta = 2, level = 0){
 }
 
 
-#' @title Univariate mean change points detection based on wild binary segmentation with tuning parameter selected by sSIC.
-#' @description Perform univariate mean change points detection based on wild binary segmentation. The threshold parameter tau for WBS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
+#' @title Univariate mean change points detection based on standard or wild binary segmentation with tuning parameter selected by sSIC.
+#' @description Perform univariate mean change points detection based on standard or wild binary segmentation. The threshold parameter tau for WBS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
+#' @param BS_object A "BS" object produced by \code{BS.univar} or \code{WBS.univar}.
 #' @param y         A \code{numeric} vector of observations.
-#' @param Alpha     A \code{integer} vector of starting indices of random intervals.
-#' @param Beta      A \code{integer} vector of ending indices of random intervals.
-#' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @return  A \code{list} with the following structure:
 #'  \item{cpt}{A vector of estimated change point locations (sorted in strictly increasing order).}
 #'  \item{tau}{A scalar of selected threshold tau based on sSIC.}
 #' @export
 #' @author Daren Wang & Haotian Xu
 #' @references Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>;
-#'             Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection, <DOI: 10.1214/14-AOS1245>
+#'             Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection, <DOI: 10.1214/14-AOS1245>.
+#' @seealso \code{\link{BS.univar}} and \code{\link{WBS.univar}}.
 #' @examples
 #' set.seed(0)
 #' cpt_true = c(20, 50, 170)
 #' y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
+#' ## change points detection by BS
+#' temp1 = BS.univar(y, 1, length(y), delta = 5)
+#' BS_result = tuneBSunivar(temp1, y)
+#' cpt_BS = BS_result$cpt
+#' Hausdorff.dist(cpt_BS, cpt_true)
+#' cpt_BS_LR = local.refine.univar(cpt_BS, y)
+#' Hausdorff.dist(cpt_BS_LR, cpt_true)
+#' ## change points detection by WBS
 #' intervals = WBS.intervals(M = 300, lower = 1, upper = length(y))
-#' temp = WBS.univar.CPD(y, intervals$Alpha, intervals$Beta, delta = 5)
-#' cpt_hat = temp$cpt
-#' plot.ts(y)
-#' points(x = cpt_hat, y = y[cpt_hat], col = "red")
-#' Hausdorff.dist(cpt_hat, cpt_true)
-#' cpt_LR = local.refine.univar(cpt_hat, y)
-#' Hausdorff.dist(cpt_LR, cpt_true)
-WBS.univar.CPD = function(y, Alpha, Beta, delta){
-  obs_num = length(y)
-  temp1 = WBS.univar(y, s = 1, e = obs_num, Alpha, Beta, delta)
-  Dval = temp1$Dval
-  aux = sort(Dval, decreasing = TRUE)
-  tau_grid = rev(aux[1:100]-10^{-4})
-  tau_grid = tau_grid[which(is.na(tau_grid)==FALSE)]
-  tau_grid = c(tau_grid,10)
-  S = c()
-  for(j in 1:length(tau_grid)){
-    aux = thresholdBS(temp1, tau_grid[j])$cpt_hat[,1]
-    if(length(aux) == 0)
-      break;
-    S[[j]] = sort(aux)
-  }
-  S = unique(S)
-  score = rep(0, length(S))
-  for(j in 1:length(S)){
-    score[j] = sSIC.obj(y, S[[j]])
-  }
-  best_ind = which.min(score)
-  return(list(cpt = S[[best_ind]], tau = tau_grid[best_ind]))
+#' temp2 = WBS.univar(y, 1, length(y), intervals$Alpha, intervals$Beta, delta = 5)
+#' WBS_result = tuneBSunivar(temp2, y)
+#' cpt_WBS = WBS_result$cpt
+#' Hausdorff.dist(cpt_WBS, cpt_true)
+#' cpt_WBS_LR = local.refine.univar(cpt_WBS, y)
+#' Hausdorff.dist(cpt_WBS_LR, cpt_true)
+tuneBSunivar = function(BS_object, y){
+  UseMethod("tuneBSunivar", BS_object)
 }
 
-
-#' @title Univariate mean change points detection based on standard binary segmentation with tuning parameter selected by sSIC.
-#' @description Perform univariate mean change points detection based on standard binary segmentation. The threshold parameter tau for BS is automatically selected based on the sSIC score defined in Equation (4) in Fryzlewicz (2014).
-#' @param y         A \code{numeric} vector of observations.
-#' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @return  A \code{list} with the following structure:
-#'  \item{cpt}{A vector of estimated change point locations (sorted in strictly increasing order).}
-#'  \item{tau}{A scalar of selected threshold tau based on sSIC.}
 #' @export
-#' @author Daren Wang & Haotian Xu
-#' @references Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>;
-#'             Fryzlewicz (2014), Wild binary segmentation for multiple change-point detection, <DOI: 10.1214/14-AOS1245>
-#' @examples
-#' set.seed(0)
-#' cpt_true = c(20, 50, 170)
-#' y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
-#' intervals = WBS.intervals(M = 300, lower = 1, upper = length(y))
-#' temp = BS.univar.CPD(y, delta = 5)
-#' cpt_hat = temp$cpt
-#' plot.ts(y)
-#' points(x = cpt_hat, y = y[cpt_hat], col = "red")
-#' Hausdorff.dist(cpt_hat, cpt_true)
-#' cpt_LR = local.refine.univar(cpt_hat, y)
-#' Hausdorff.dist(cpt_LR, cpt_true)
-BS.univar.CPD = function(y, delta){
-  obs_num = length(y)
-  temp1 = BS.univar(y, s = 1, e = obs_num, delta)
-  Dval = temp1$Dval
+tuneBSunivar.BS = function(BS_object, y){
+  Dval = BS_object$Dval
   aux = sort(Dval, decreasing = TRUE)
   tau_grid = rev(aux[1:100]-10^{-4})
   tau_grid = tau_grid[which(is.na(tau_grid)==FALSE)]
   tau_grid = c(tau_grid,10)
   S = c()
   for(j in 1:length(tau_grid)){
-    aux = thresholdBS(temp1, tau_grid[j])$cpt_hat[,1]
+    aux = thresholdBS(BS_object, tau_grid[j])$cpt_hat[,1]
     if(length(aux) == 0)
       break;
     S[[j]] = sort(aux)

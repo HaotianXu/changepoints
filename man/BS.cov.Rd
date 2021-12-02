@@ -16,7 +16,7 @@ BS.cov(X, s, e, level = 0)
 \item{level}{A parameter for tracking the level at which a change point is detected. Should be fixed as 0.}
 }
 \value{
-A \code{list} with the structure:
+An object of \code{\link[base]{class}} "BS", which is a \code{list} with the structure:
 \itemize{
  \item S:           A vector of estimated changepoints (sorted in strictly increasing order).
  \item Dval:        A vector of values of CUSUM statistic based on KS distance.
@@ -37,6 +37,9 @@ X = cbind(t(MASS::mvrnorm(100, mu = rep(0, p), A1)),
           t(MASS::mvrnorm(200, mu = rep(0, p), A3)))
 temp = BS.cov(X, 1, 450)
 thresholdBS(temp, 10)
+}
+\references{
+Wang, Yu and Rinaldo (2021) <doi:10.3150/20-BEJ1249>.
 }
 \seealso{
 \code{\link{thresholdBS}} for obtain change points estimation.

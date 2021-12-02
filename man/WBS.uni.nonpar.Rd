@@ -44,7 +44,10 @@ points(x = tail(temp$S[order(temp$Dval)], 4), y = Y[,tail(temp$S[order(temp$Dval
 thresholdBS(temp, 2)
 }
 \references{
-Padilla, Yu, Wang and Rinaldo (2021) <doi:10.1214/21-EJS1809>
+Padilla, Yu, Wang and Rinaldo (2021) <doi:10.1214/21-EJS1809>.
+}
+\seealso{
+\code{\link{thresholdBS}} for obtaining change points estimation, \code{\link{tuneBSuninonpar}} for a tuning version.
 }
 \author{
 Oscar Hernan Madrid Padilla, Haotian Xu

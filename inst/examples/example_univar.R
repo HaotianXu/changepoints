@@ -10,21 +10,22 @@ min_idx = which.min(DP_result$test_error)
 cpt_DP_hat = unlist(DP_result$cpt_hat[[min_idx]])
 cpt_DP_LR = local.refine.univar(cpt_DP_hat, y)
 
-BS_result = thresholdBS(BS.univar(y, 1, n, delta), tau = 2)
+BS_object = BS.univar(y, 1, n, delta)
+BS_result = thresholdBS(BS_object, tau = 2)
 tree_BS = BS_result$BS_tree_trimmed
-BS_result$change_points
-cpt_BS_hat = sort(BS_result$change_points[,1])
+BS_result
+cpt_BS_hat = sort(BS_result$cpt_hat[,1])
 cpt_BS_LR = local.refine.univar(cpt_BS_hat, y)
 
-BS_CPD_result = BS.univar.CPD(y, delta)
-BS_CPD_LR = local.refine.univar(BS_CPD_result, y)
+BS_tune_result = tuneBSunivar(BS_object, y)
+BS_tune_LR = local.refine.univar(BS_tune_result$cpt, y)
 
 intervals = WBS.intervals(M = 300, lower = 1, upper = n)
-WBS_result = thresholdBS(WBS.univar(y, 1, n, intervals$Alpha, intervals$Beta, delta), 3)
-tree_WBS = WBS_result$BS_tree_trimmed
-WBS_result$change_points
-cpt_WBS_hat = sort(WBS_result$change_points[,1])
-cpt_BS_LR = local.refine.univar(cpt_WBS_hat, y)
+WBS_object = WBS.univar(y, 1, n, intervals$Alpha, intervals$Beta, delta)
+WBS_result = thresholdBS(WBS_object, tau = 3)
+WBS_result
+cpt_WBS_hat = sort(WBS_result$cpt_hat[,1])
+cpt_WBS_LR = local.refine.univar(cpt_WBS_hat, y)
 
-WBS_CPD_result = WBS.univar.CPD(y, intervals$Alpha, intervals$Beta, delta)
-WBS_CPD_LR = local.refine.univar(WBS_CPD_result, y)
+WBS_tune_result = tuneBSunivar(WBS_object, y)
+WBS_tune_LR = local.refine.univar(WBS_tune_result$cpt, y)

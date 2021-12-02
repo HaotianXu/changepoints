@@ -90,7 +90,7 @@ intervals = WBS.intervals(M = 100, lower = 1, upper = 200)
 WBS_result = WBS.univar(y, 1, 200, intervals$Alpha, intervals$Beta, delta = 5)
 WBS_result
 ## trim binary tree with threshold being 3
-WBS_trimmed = threshold.BS(WBS_result, tau = 3)
+WBS_trimmed = thresholdBS(WBS_result, tau = 3)
 ## print the trimmed binary tree
 print(WBS_trimmed$BS_tree_trimmed, "value")
 ## estimate change points and perform local refinement

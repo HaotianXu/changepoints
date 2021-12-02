@@ -22,7 +22,7 @@ CUSUM.cov = function(X, s, e, t){
 #' @param s         A \code{integer} scalar of starting index.
 #' @param e         A \code{integer} scalar of ending index.
 #' @param level     A parameter for tracking the level at which a change point is detected. Should be fixed as 0.
-#' @return  A \code{list} with the structure:
+#' @return  An object of \code{\link[base]{class}} "BS", which is a \code{list} with the structure:
 #' \itemize{
 #'  \item S:           A vector of estimated changepoints (sorted in strictly increasing order).
 #'  \item Dval:        A vector of values of CUSUM statistic based on KS distance.
@@ -31,6 +31,7 @@ CUSUM.cov = function(X, s, e, t){
 #' } 
 #' @export
 #' @author Haotian Xu
+#' @references Wang, Yu and Rinaldo (2021) <doi:10.3150/20-BEJ1249>.
 #' @seealso \code{\link{thresholdBS}} for obtain change points estimation.
 #' @examples
 #' p = 10
@@ -110,13 +111,14 @@ PC.cov = function(X, Alpha, Beta){
 #' @param Beta      A \code{integer} vector of ending indices of random intervals.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
 #' @param level     A parameter for tracking the level at which a change point is detected. Should be fixed as 0.
-#' @return  A \code{list} with the following structure:
+#' @return  An object of \code{\link[base]{class}} "BS", which is a \code{list} with the following structure:
 #'  \item{S}{A vector of estimated change points (sorted in strictly increasing order)}
 #'  \item{Dval}{A vector of values of CUSUM statistic based on KS distance}
 #'  \item{Level}{A vector representing the levels at which each change point is detected}
 #'  \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row}
 #' @export
 #' @author Haotian Xu
+#' @references Wang, Yu and Rinaldo (2021) <doi:10.3150/20-BEJ1249>.
 #' @seealso \code{\link{thresholdBS}} for obtain change points estimation.
 #' @examples
 #' p = 10
