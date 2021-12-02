@@ -44,7 +44,7 @@ algorithms for
 9.  dependent dynamic nonparametric random dot product graphs
     -   [Padilla, Yu and
         Priebe (2019)](https://arxiv.org/abs/1911.07494)
-10. univariate mean against adversarial attacks
+10. robust univariate mean against adversarial attacks
     -   [Li and Yu (2021)](https://arxiv.org/abs/2105.10417)
 
 ## Installation
