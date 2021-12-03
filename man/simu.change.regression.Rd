@@ -21,10 +21,10 @@ simu.change.regression(d0, cpt_true, p, n, sigma, kappa)
 }
 \value{
 A \code{list} with the following structure:
- \item{cpt_true}{A vector of true changepoints (sorted in strictly increasing order)}
- \item{X}{A p-by-n design matrix}
- \item{y}{A n-dim vector of response variable}
- \item{betafullmat}{A p-by-n matrix of coefficients}
+ \item{cpt_true}{A vector of true changepoints (sorted in strictly increasing order).}
+ \item{X}{A p-by-n design matrix.}
+ \item{y}{A n-dim vector of response variable.}
+ \item{betafullmat}{A p-by-n matrix of coefficients.}
 }
 \description{
 Simulate a sparse regression model with change points in coefficients under the setting of Simulations 4.2 in Rinaldo et al. (2021).
@@ -37,7 +37,7 @@ cpt_true = c(10, 30, 40, 70, 90)
 data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 }
 \references{
-Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>
+Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>.
 }
 \author{
 Daren Wang & Haotian Xu

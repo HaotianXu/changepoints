@@ -33,7 +33,7 @@ kappa_mat = cbind(c(3, 9, -27), c(-3, 9, -27))
 plot.ts(gen.piece.poly(init_coef_vec, cpt_true, kappa_mat, n, sigma), ylab = "y")
 }
 \references{
-Yu and Chatterjee (2020) <arXiv:2007.09910>
+Yu and Chatterjee (2020) <arXiv:2007.09910>.
 }
 \author{
 Haotian Xu

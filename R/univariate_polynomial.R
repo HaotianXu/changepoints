@@ -32,7 +32,7 @@ coef.repara = function(coef_vec, cpt1, cpt2, n){
 #' @param sigma          A \code{numeric} scalar of standard deviation of error terms.
 #' @return A vector of data generated from piecewise polynomials.
 #' @export
-#' @references Yu and Chatterjee (2020) <arXiv:2007.09910>
+#' @references Yu and Chatterjee (2020) <arXiv:2007.09910>.
 #' @author  Haotian Xu
 #' @examples
 #' r = 2

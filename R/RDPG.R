@@ -1,79 +1,98 @@
-#' @title Change points detection for dependent dynamic random dot product graph models.
-#' @description Perform Change points detection for dependent dynamic random dot product graph models. The tuning parameter tau for WBS is automatically selected based on the BIC-type scores defined in Equation (2.4) in Zou et al. (2014).
+#' @title Simulate a dot product graph (without change point).
+#' @description  Simulate a dot product graph (without change point). The generated data is a matrix with each column corresponding to the vectorized adjacency (sub)matrix at a time point. For example, if the network matrix is required to be symmetric and without self-loop, only the strictly lower diagonal entries are considered.
+#' @param x_mat       A \code{numeric} matrix representing the latent positions with horizontal axis being latent dimensions and vertical axis being nodes (each entry takes value in \eqn{[0,1]}).
+#' @param n           A \code{integer} scalar representing the number of observations.
+#' @param symm        A \code{logic} scalar indicating if adjacency matrices are required to be symmetric.
+#' @param self        A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.
+#' @return  A \code{list} with the following structure:
+#'  \item{obs_mat}{A matrix, with each column be the vectorized adjacency (sub)matrix. For example, if "symm = TRUE" and "self = FALSE", only the strictly lower triangular matrix is considered.}
+#'  \item{graphon_mat}{Underlying graphon matrix.}
+#' @export
+#' @author Haotian Xu
+#' @examples
+#' p = 30 # number of nodes
+#' n = 75 # sample size for each segment
+#' lat_dim_num = 5 # number of latent dimensions
+#' set.seed(1)
+#' x_mat = matrix(runif(p*lat_dim_num), nrow = p, ncol = lat_dim_num)
+#' x_tilde_mat = matrix(runif(p*lat_dim_num), nrow = p, ncol = lat_dim_num)
+#' y_mat = rbind(x_tilde_mat[1:floor(p/4),], x_mat[(floor(p/4)+1):p,])
+#' rdpg1 = simu.RDPG(x_mat, n, symm = TRUE, self = FALSE)
+#' rdpg2 = simu.RDPG(y_mat, n, symm = TRUE, self = FALSE)
+#' data1_mat = rdpg1$obs_mat
+#' data2_mat = rdpg2$obs_mat
+#' data_mat = cbind(data1_mat, data2_mat)
+simu.RDPG = function(x_mat, n, symm = TRUE, self = FALSE){
+  if(self == TRUE){
+    stop("this function does not allow self-loop.")
+  }
+  p = nrow(x_mat)
+  x_l2_vec = apply(x_mat, 1, function(x) (sum(x^2))^(1/2))
+  ratio_x_mat = (x_mat %*% t(x_mat))/(x_l2_vec %*% t(x_l2_vec))
+  diag(ratio_x_mat) = 0
+  if((symm == TRUE) & (self == FALSE)){
+    obs_mat = matrix(NA, p*(p-1)/2, n)
+    ratio_vec = ratio_x_mat[lower.tri(ratio_x_mat, diag = F)]
+    for(t in 1:n){
+      obs_mat[,t] = rbinom(rep(1,length(ratio_vec)), rep(1,length(ratio_vec)), ratio_vec)
+    }
+  }else if((symm == FALSE) & (self == FALSE)){
+    obs_mat = matrix(NA, p*p, n)
+    ratio_vec = as.vector(ratio_x_mat)
+    for(t in 1:n){
+      obs_mat[,t] = rbinom(rep(1,length(ratio_vec)), rep(1,length(ratio_vec)), ratio_vec)
+    }
+  }
+  return(list(obs_mat = obs_mat, graphon_mat = ratio_x_mat))
+}
+
+
+#' @title Wild binary segmentation for dependent dynamic random dot product graph models.
+#' @description Perform wild binary segmentation for dependent dynamic random dot product graph models.
 #' @param data_mat  A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being vectorized adjacency matrix.
+#' @param lowerdiag A \code{logic} scalar. TRUE, if each row of data_mat is the vectorization of the strictly lower diagonal elements in an adjacency matrix. FALSE, if each row of data_mat is the vectorization of all elements in an adjacency matrix.
 #' @param d         A \code{numeric} scalar of the number of leading singular values of an adjacency matrix considered in the scaled PCA algorithm.
 #' @param Alpha     A \code{integer} vector of starting indices of random intervals.
 #' @param Beta      A \code{integer} vector of ending indices of random intervals.
 #' @param delta     A positive \code{integer} scalar of minimum spacing.
-#' @return  A \code{numeric} vector of estimated change points.
+#' @return  An object of \code{\link[base]{class}} "BS", which is a \code{list} with the following structure:
+#'  \item{S}{A vector of estimated change point locations (sorted in strictly increasing order).}
+#'  \item{Dval}{A vector of values of CUSUM statistic.}
+#'  \item{Level}{A vector representing the levels at which each change point is detected.}
+#'  \item{Parent}{A matrix with the starting indices on the first row and the ending indices on the second row.}
 #' @export
 #' @author Oscar Hernan Madrid Padilla, Haotian Xu
-#' @references Padilla, Yu and Priebe (2019) <arxiv:1911.07494>
+#' @references Padilla, Yu and Priebe (2019) <arxiv:1911.07494>.
+#' @seealso \code{\link{thresholdBS}} for obtaining change points estimation, \code{\link{tuneBSnonparRDPG}} for a tuning version.
 #' @examples
 #' ### generate data 
-#' d = 10
-#' n = 30  # number of nodes
-#' M = 10
+#' p = 30 # number of nodes
+#' n = 75 # sample size for each segment
+#' lat_dim_num = 5 # number of latent dimensions
+#' set.seed(1)
+#' x_mat = matrix(runif(p*lat_dim_num), nrow = p, ncol = lat_dim_num)
+#' x_tilde_mat = matrix(runif(p*lat_dim_num), nrow = p, ncol = lat_dim_num)
+#' y_mat = rbind(x_tilde_mat[1:floor(p/4),], x_mat[(floor(p/4)+1):p,])
+#' rdpg1 = simu.RDPG(x_mat, n, symm = TRUE, self = FALSE)
+#' rdpg2 = simu.RDPG(y_mat, n, symm = TRUE, self = FALSE)
+#' data1_mat = rdpg1$obs_mat
+#' data2_mat = rdpg2$obs_mat
+#' data_mat = cbind(data1_mat, data2_mat)
+#' ### detect change points
+#' M = 30 # number of random intervals for WBS
+#' d = 10 # parameter for scaled PCA algorithm
 #' delta = 5
-#' obs_num = 100 # number of observations
-#' rho_a = 0.9
-#' v = c(floor(obs_num/3)+1, 2*floor(obs_num/3)+1)
-#' data_mat = matrix(0, n^2, obs_num)
-#' for(t in 1:obs_num){
-#'   if(t == 1 || t == v[2]+1){
-#'     P = matrix(0.3,n,n)
-#'     P[1:floor(n/4), 1:floor(n/4)] = 0.5
-#'     P[(1+floor(n/4)):(2*floor(n/4)),(1+floor(n/4)):(2*floor(n/4))] = 0.5
-#'     P[(1+2*floor(n/4)):(3*floor(n/4)),(1+2*floor(n/4)):(3*floor(n/4))] = 0.5
-#'     P[(1+3*floor(n/4)):n,(1+3*floor(n/4)):n] = 0.5
-#'     diag(P) = 0
-#'     A = matrix(rbinom(matrix(1,n,n),matrix(1,n,n),P),n,n)
-#'     aux = drop(A)
-#'     aux[lower.tri(aux)] = t(aux)[lower.tri(aux)]
-#'     diag(aux) = 0
-#'     data_mat[,t] = drop(matrix(aux,n^2,1))
-#'   }
-#'   if((t > 1 && t <= v[1]) || (t > v[2]+1)){
-#'     aux1 = P + (1-P)*rho_a
-#'     aux2 = P*(1-rho_a)
-#'     aux1 = matrix(rbinom(matrix(1,n,n),matrix(1,n,n),aux1),n,n)
-#'     aux2 = matrix(rbinom(matrix(1,n,n),matrix(1,n,n),aux2),n,n)
-#'     A =  aux1*A + aux2*(1-A)
-#'     aux = drop(A)
-#'     aux[lower.tri(aux)] = t(aux)[lower.tri(aux)]  
-#'     diag(aux) = 0
-#'     data_mat[,t] = drop(matrix(aux,n^2,1))
-#'   }
-#'   if(t == v[1]+1){
-#'     Q = matrix(0.2,n,n)
-#'     Q[1:floor(n/4), 1:floor(n/4)] = 0.45
-#'     Q[(1+floor(n/4)):(2*floor(n/4)),(1+floor(n/4)):(2*floor(n/4)) ] = 0.45
-#'     Q[(1+2*floor(n/4)):(3*floor(n/4)),(1+2*floor(n/4)):(3*floor(n/4)) ] = 0.45
-#'     Q[(1+3*floor(n/4)):n,(1+3*floor(n/4)):n ] = 0.45
-#'     diag(Q) = 0
-#'     A = matrix(rbinom(matrix(1,n,n),matrix(1,n,n),Q),n,n)
-#'     aux = drop(A)
-#'     aux[lower.tri(aux)] = t(aux)[lower.tri(aux)]  
-#'     diag(aux) = 0
-#'     data_mat[,t] = drop(matrix(aux,n^2,1))
-#'   }
-#'   if(t > v[1]+1 && t <= v[2]){
-#'     aux1 = Q + (1-Q)*rho_a
-#'     aux2 = Q*(1-rho_a)
-#'     aux1 = matrix(rbinom(matrix(1,n,n),matrix(1,n,n),aux1),n,n)
-#'     aux2 = matrix(rbinom(matrix(1,n,n),matrix(1,n,n),aux2),n,n)
-#'     A = aux1*A + aux2*(1-A)
-#'     aux = drop(A)
-#'     aux[lower.tri(aux)] = t(aux)[lower.tri(aux)]  
-#'     diag(aux) = 0
-#'     data_mat[,t] = drop(matrix(aux,n^2,1))
-#'   }
-#' }
-#' intervals = WBS.intervals(M = M, lower = 1, upper = obs_num)
-#' cpt_hat = NonPar.RDPG.CPD(data_mat, d, Alpha = intervals$Alpha, Beta = intervals$Beta, delta)
-NonPar.RDPG.CPD = function(data_mat, d, Alpha, Beta, delta){
+#' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(data_mat))
+#' WBS_result = WBS.nonpar.RDPG(data_mat, lowerdiag = TRUE, d, 
+#'              Alpha = intervals$Alpha, Beta = intervals$Beta, delta)
+WBS.nonpar.RDPG = function(data_mat, lowerdiag = FALSE, d, Alpha, Beta, delta){
   obs_num = ncol(data_mat)
-  n = sqrt(nrow(data_mat))
+  if(lowerdiag == TRUE){
+    n = 1/2 + sqrt(2*nrow(data_mat) + 1/4) #obtain the number of nodes
+    data_mat = apply(data_mat, MARGIN = 2, function(x) lowertri2mat(x, n, diag = FALSE))
+  }else{
+    n = sqrt(nrow(data_mat))
+  }
   xhat = lapply(1:obs_num, function(i){scaledPCA(matrix(data_mat[,i], n, n),d)})
   Y_mat = matrix(0, floor(n/2), obs_num)
   for(t in 1:obs_num){
@@ -84,15 +103,75 @@ NonPar.RDPG.CPD = function(data_mat, d, Alpha, Beta, delta){
       Y_mat[i,t] = phat[ind[2*i], ind[2*i-1]]
     }
   }
-  temp1 = WBS.uni.nonpar(Y_mat, s = 1, e = obs_num, Alpha, Beta, N = rep(nrow(Y_mat), obs_num), delta)
-  Dval = temp1$Dval
+  result = WBS.uni.nonpar(Y_mat, s = 1, e = obs_num, Alpha, Beta, N = rep(nrow(Y_mat), obs_num), delta)
+  return(result)
+}
+
+
+#' @title Change points detection for dependent dynamic random dot product graph models.
+#' @description Perform Change points detection for dependent dynamic random dot product graph models. The tuning parameter tau for WBS is automatically selected based on the BIC-type scores defined in Equation (2.4) in Zou et al. (2014).
+#' @param BS_object A "BS" object produced by \code{WBS.nonpar.RDPG}.
+#' @param data_mat  A \code{numeric} matrix of observations with horizontal axis being time, and vertical axis being vectorized adjacency matrix.
+#' @param lowerdiag A \code{logic} scalar. TRUE, if each row of data_mat is the vectorization of the strictly lower diagonal elements in an adjacency matrix. FALSE, if each row of data_mat is the vectorization of all elements in an adjacency matrix.
+#' @param d         A \code{numeric} scalar of the number of leading singular values of an adjacency matrix considered in the scaled PCA algorithm.
+#' @return  A \code{numeric} vector of estimated change points.
+#' @export
+#' @author Oscar Hernan Madrid Padilla & Haotian Xu
+#' @references Padilla, Yu and Priebe (2019) <arxiv:1911.07494>.
+#' @seealso \code{\link{WBS.nonpar.RDPG}}.
+#' @examples
+#' ### generate data 
+#' p = 30 # number of nodes
+#' n = 75 # sample size for each segment
+#' lat_dim_num = 5 # number of latent dimensions
+#' set.seed(1)
+#' x_mat = matrix(runif(p*lat_dim_num), nrow = p, ncol = lat_dim_num)
+#' x_tilde_mat = matrix(runif(p*lat_dim_num), nrow = p, ncol = lat_dim_num)
+#' y_mat = rbind(x_tilde_mat[1:floor(p/4),], x_mat[(floor(p/4)+1):p,])
+#' rdpg1 = simu.RDPG(x_mat, n, symm = TRUE, self = FALSE)
+#' rdpg2 = simu.RDPG(y_mat, n, symm = TRUE, self = FALSE)
+#' data1_mat = rdpg1$obs_mat
+#' data2_mat = rdpg2$obs_mat
+#' data_mat = cbind(data1_mat, data2_mat)
+#' ### detect change points
+#' M = 30 # number of random intervals for WBS
+#' d = 10 # parameter for scaled PCA algorithm
+#' delta = 5
+#' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(data_mat))
+#' WBS_result = WBS.nonpar.RDPG(data_mat, lowerdiag = TRUE, d, 
+#'              Alpha = intervals$Alpha, Beta = intervals$Beta, delta)
+#' cpt_hat = tuneBSnonparRDPG(WBS_result, data_mat, lowerdiag = TRUE, d)
+tuneBSnonparRDPG = function(BS_object, data_mat, lowerdiag = FALSE, d){
+  UseMethod("tuneBSnonparRDPG", BS_object)
+}
+
+#' @export
+tuneBSnonparRDPG.BS = function(BS_object, data_mat, lowerdiag = FALSE, d){
+  obs_num = ncol(data_mat)
+  if(lowerdiag == TRUE){
+    n = 1/2 + sqrt(2*nrow(data_mat) + 1/4) #obtain the number of nodes
+    data_mat = apply(data_mat, MARGIN = 2, function(x) lowertri2mat(x, n, diag = FALSE))
+  }else{
+    n = sqrt(nrow(data_mat))
+  }
+  xhat = lapply(1:obs_num, function(i){scaledPCA(matrix(data_mat[,i], n, n),d)})
+  Y_mat = matrix(0, floor(n/2), obs_num)
+  for(t in 1:obs_num){
+    phat = drop(xhat[[t]] %*% t(xhat[[t]]))
+    ind = sample(1:n, n, replace = FALSE)
+    #aux = phat[ind[2*(1:floor(n/2))], ind[2*(1:floor(n/2)) -1]  ]
+    for(i in 1:floor(n/2)){
+      Y_mat[i,t] = phat[ind[2*i], ind[2*i-1]]
+    }
+  }
+  Dval = BS_object$Dval
   aux = sort(Dval, decreasing = TRUE)
   tau_grid = rev(aux[1:50]-10^{-4})
   tau_grid = tau_grid[which(is.na(tau_grid)==FALSE)]
   tau_grid = c(tau_grid,10) 
   S = c()
   for(j in 1:length(tau_grid)){
-    aux = unlist(thresholdBS(temp1, tau_grid[j])$cpt_hat[,1])
+    aux = unlist(thresholdBS(BS_object, tau_grid[j])$cpt_hat[,1])
     if(length(aux) == 0){
       break
     }

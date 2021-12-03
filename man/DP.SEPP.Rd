@@ -31,7 +31,7 @@ Perform dynamic programming for SEPP change points detection.
 }
 \examples{
 p = 10 # dimension
-n = 20
+n = 15
 s = 5 # s is sparsity
 factor = 0.2 # large factor gives exact recovery
 threshold = 4 # thresholding makes the process stable

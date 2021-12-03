@@ -7,13 +7,13 @@
 #' @param sigma      A \code{numeric} scalar of error standard deviation.
 #' @param kappa      A \code{numeric} scalar of minimum jump size of coefficient vector in terms of \eqn{l_2} norm.
 #' @return A \code{list} with the following structure:
-#'  \item{cpt_true}{A vector of true changepoints (sorted in strictly increasing order)}
-#'  \item{X}{A p-by-n design matrix}
-#'  \item{y}{A n-dim vector of response variable}
-#'  \item{betafullmat}{A p-by-n matrix of coefficients}
+#'  \item{cpt_true}{A vector of true changepoints (sorted in strictly increasing order).}
+#'  \item{X}{A p-by-n design matrix.}
+#'  \item{y}{A n-dim vector of response variable.}
+#'  \item{betafullmat}{A p-by-n matrix of coefficients.}
 #' @export
 #' @author Daren Wang & Haotian Xu
-#' @references Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>
+#' @references Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>.
 #' @examples
 #' d0 = 10
 #' p = 30

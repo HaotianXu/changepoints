@@ -76,7 +76,7 @@ simu.SEPP = function(intercept, n, A, threshold, vzero = NULL){
 #' @references Wang, D., Yu, Y., & Willett, R. (2020). Detecting Abrupt Changes in High-Dimensional Self-Exciting Poisson Processes. arXiv preprint arXiv:2006.03572.
 #' @examples
 #' p = 10 # dimension
-#' n = 20
+#' n = 15
 #' s = 5 # s is sparsity
 #' factor = 0.2 # large factor gives exact recovery
 #' threshold = 4 # thresholding makes the process stable

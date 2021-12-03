@@ -6,10 +6,11 @@
 #' @param symm        A \code{logic} scalar indicating if adjacency matrices are required to be symmetric.
 #' @param self        A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.
 #' @return  A \code{list} with the following structure:
-#'  \item{obs_mat}{A matrix, with each column be the vectorized adjacency (sub)matrix. For example, if "symm = TRUE" and "self = FALSE", only the strictly lower triangular matrix is considered}
-#'  \item{graphon_mat}{Underlying graphon matrix}
+#'  \item{obs_mat}{A matrix, with each column be the vectorized adjacency (sub)matrix. For example, if "symm = TRUE" and "self = FALSE", only the strictly lower triangular matrix is considered.}
+#'  \item{graphon_mat}{Underlying graphon matrix.}
 #' @export
 #' @author Daren Wang & Haotian Xu
+#' @references Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>.
 #' @examples
 #' p = 15 # number of nodes
 #' rho = 0.5 # sparsity parameter
@@ -24,7 +25,6 @@
 #' sbm1 = simu.SBM(conn1_mat, can_vec, n, symm = TRUE, self = TRUE)
 #' sbm2 = simu.SBM(conn2_mat, can_vec, n, symm = TRUE, self = TRUE)
 #' data_mat = cbind(sbm1$obs_mat, sbm2$obs_mat)
-#' @references Wang, Yu and Rinaldo (2018) <arxiv:1809.09602>
 simu.SBM = function(connec_mat, can_vec, n, symm = FALSE, self = TRUE){
   block_num = dim(connec_mat)[1]
   p = length(can_vec)
