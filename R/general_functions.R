@@ -65,6 +65,7 @@ thresholdBS <- function(BS_object, tau){
   UseMethod("thresholdBS", BS_object)
 }
 
+
 #' @export
 thresholdBS.BS = function(BS_object, tau){
   if(tau <= 0){
@@ -129,7 +130,7 @@ thresholdBS.BS = function(BS_object, tau){
   BS_tree_trimmed_new[[1]] = BS_tree_trimmed[[1]][,3:4]
   BS_tree_trimmed_new[[1]]$location = paste0("N",BS_tree_trimmed_new[[1]]$location)
   if(length(BS_tree_trimmed) == 1){
-    return(list(BS_tree = BS_tree_node, BS_tree_trimmed = BS_tree_trimmed[[1]], cpt_hat = change_points))
+    return(list(BS_tree_trimmed = BS_tree_trimmed[[1]], cpt_hat = change_points))
   }
   for(j in 2:sum(points_at_level != 0)){
     BS_tree_trimmed_new[[j]]$parent = sapply(BS_tree_trimmed_new[[j]]$parent, function(x){BS_tree_trimmed_new[[j-1]]$location[rownames(BS_tree_trimmed_new[[j-1]]) == x]})
