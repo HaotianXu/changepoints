@@ -29,6 +29,10 @@ rcpp_basis_poly <- function(n, s, e, r) {
     .Call('_changepoints_rcpp_basis_poly', PACKAGE = 'changepoints', n, s, e, r)
 }
 
+rcpp_huber_mean <- function(x, tau) {
+    .Call('_changepoints_rcpp_huber_mean', PACKAGE = 'changepoints', x, tau)
+}
+
 rcpp_soft_threshold_scalar <- function(x, lambda) {
     .Call('_changepoints_rcpp_soft_threshold_scalar', PACKAGE = 'changepoints', x, lambda)
 }

@@ -360,3 +360,25 @@ print.BS = function(x, ...){
 print.DP = function(x, ...){
   cat("Estimated change points by DP:", x$cpt, "\n")
 }
+
+
+#' @title Element-wise adaptive Huber mean estimator
+#' @description Computes the element-wise adaptive Huber mean estimator
+#' @param x         A \code{numeric} vector of observations.
+#' @param tau       A \code{numeric} scalar corresponding to the robustification parameter (larger than 0).
+#' @return          A \code{numeric} scalar corresponding to the adaptive Huber mean estimator.
+#' @export
+#' @author Haotian Xu
+#' @examples
+#' set.seed(123)
+#' y = rnorm(100)
+#' mean(y)
+#' huber_mean(y, 1.345)
+huber_mean <- function(x, tau){
+  if (tau <= 0){
+    stop("tau should be larger than 0.")
+  }
+  .Call('_changepoints_rcpp_huber_mean', PACKAGE = 'changepoints', x, tau)
+}
+
+

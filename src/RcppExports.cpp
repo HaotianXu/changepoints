@@ -118,6 +118,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_huber_mean
+double rcpp_huber_mean(const arma::vec& x, double tau);
+RcppExport SEXP _changepoints_rcpp_huber_mean(SEXP xSEXP, SEXP tauSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_huber_mean(x, tau));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_soft_threshold_scalar
 double rcpp_soft_threshold_scalar(double x, double lambda);
 RcppExport SEXP _changepoints_rcpp_soft_threshold_scalar(SEXP xSEXP, SEXP lambdaSEXP) {
@@ -273,6 +285,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_changepoints_rcpp_DP_regression", (DL_FUNC) &_changepoints_rcpp_DP_regression, 6},
     {"_changepoints_rcpp_DP_univar", (DL_FUNC) &_changepoints_rcpp_DP_univar, 3},
     {"_changepoints_rcpp_basis_poly", (DL_FUNC) &_changepoints_rcpp_basis_poly, 4},
+    {"_changepoints_rcpp_huber_mean", (DL_FUNC) &_changepoints_rcpp_huber_mean, 2},
     {"_changepoints_rcpp_soft_threshold_scalar", (DL_FUNC) &_changepoints_rcpp_soft_threshold_scalar, 2},
     {"_changepoints_rcpp_lasso_standardized_obj", (DL_FUNC) &_changepoints_rcpp_lasso_standardized_obj, 4},
     {"_changepoints_rcpp_lasso_standardized", (DL_FUNC) &_changepoints_rcpp_lasso_standardized, 5},
