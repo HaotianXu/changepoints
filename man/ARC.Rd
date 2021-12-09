@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean_robust.R
 \name{ARC}
 \alias{ARC}
-\title{Adversarially robust change point detection algorithm}
+\title{Adversarially robust univariate mean change point detection.}
 \usage{
 ARC(y, h, block_num = 1, epsilon, gaussian = TRUE)
 }

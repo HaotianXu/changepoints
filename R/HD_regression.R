@@ -178,7 +178,7 @@ error.test.regression = function(y, X, lower, upper, beta.hat){
 } 
 
 
-#' @title Grid search based on cross-validation of dynamic programming for regression change points detection via \eqn{l_0} penalty
+#' @title Grid search based on cross-validation of dynamic programming for regression change points detection via \eqn{l_0} penalty.
 #' @description Perform grid search to select tuning parameters gamma (for \eqn{l_0} penalty of DP) and lambda (for lasso penalty) based on cross-validation.
 #' @param y             A \code{numeric} vector of response variable.
 #' @param X             A \code{numeric} matrix of covariates with horizontal axis being time.

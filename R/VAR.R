@@ -211,29 +211,8 @@ CV.search.DP.VAR1 = function(DATA, gamma_set, lambda_set, delta, eps = 0.001){
 #' @return  An \code{integer} vector of locally refined change points estimation.
 #' @export
 #' @author  Daren Wang & Haotian Xu
-#' @examples
-#' set.seed(123)
-#' p = 10
-#' sigma = 1
-#' n = 20
-#' v1 = 2*(seq(1,p,1)%%2) - 1
-#' v2 = -v1
-#' AA = matrix(0, nrow = p, ncol = p-2)
-#' A1 = cbind(v1,v2,AA)*0.1
-#' A2 = cbind(v2,v1,AA)*0.1
-#' A3 = A1
-#' data = simu.VAR1(sigma, p, 2*n+1, A1)
-#' data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
-#' data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
-#' gamma_set = c(0.1, 0.5, 1)
-#' lambda_set = c(0.1, 1, 3.2)
-#' temp = CV.search.DP.VAR1(data, gamma_set, lambda_set, delta = 5)
-#' temp$test_error # test error result
-#' # find the indices of gamma.set and lambda.set which minimizes the test error
-#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
-#' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
-#' local.refine.VAR1(cpt_init, data, zeta = 0.5)
-#' @references Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>
+#' @references Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>.
+#' @seealso \code{\link{local.refine.CV.VAR1}}.
 local.refine.VAR1 = function(cpt_init, DATA, zeta){
   w = 0.9
   N = ncol(DATA)
@@ -331,7 +310,7 @@ X.glasso.converter.VAR1 = function(X, eta, s_ceil){
 #' data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
 #' data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
 #' gamma_set = c(0.1, 0.5, 1)
-#' lambda_set = c(0.1, 1, 3.2)
+#' lambda_set = c(0.1, 1)
 #' temp = CV.search.DP.VAR1(data, gamma_set, lambda_set, delta = 5)
 #' temp$test_error # test error result
 #' # find the indices of gamma.set and lambda.set which minimizes the test error

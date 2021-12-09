@@ -2,7 +2,7 @@
 % Please edit documentation in R/network_with_missing.R
 \name{lambda.network.missing}
 \alias{lambda.network.missing}
-\title{Function to compute the thresholding parameter for leading singular value in the soft-impute algorithm (see Theorem 2 in the reference)}
+\title{Function to compute the default thresholding parameter for leading singular value in the soft-impute algorithm.}
 \usage{
 lambda.network.missing(s, e, t, alpha, rho, pi_ub, p, C_lambda)
 }
@@ -27,7 +27,10 @@ lambda.network.missing(s, e, t, alpha, rho, pi_ub, p, C_lambda)
 The default thresholding parameter for leading singular value in the soft-impute algorithm
 }
 \description{
-Function to compute the thresholding parameter for leading singular value in the soft-impute algorithm (see Theorem 2 in the reference)
+Function to compute the default thresholding parameter for leading singular value in the soft-impute algorithm.
+}
+\details{
+The default thresholding parameter is given in Theorem 2 of the reference.
 }
 \references{
 Dubey, Xu and Yu (2021) <arxiv:2110.06450>

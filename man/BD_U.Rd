@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean_robust.R
 \name{BD_U}
 \alias{BD_U}
-\title{Backward detection with a robust bootstrap change point test using U-statistics.}
+\title{Backward detection with a robust bootstrap change point test using U-statistics for univariate mean change.}
 \usage{
 BD_U(y, M, B = 100, inter = NULL, inter_ini = TRUE)
 }

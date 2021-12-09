@@ -2,7 +2,7 @@
 % Please edit documentation in R/general_functions.R
 \name{huber_mean}
 \alias{huber_mean}
-\title{Element-wise adaptive Huber mean estimator}
+\title{Element-wise adaptive Huber mean estimator.}
 \usage{
 huber_mean(x, tau)
 }
@@ -15,7 +15,7 @@ huber_mean(x, tau)
 A \code{numeric} scalar corresponding to the adaptive Huber mean estimator.
 }
 \description{
-Computes the element-wise adaptive Huber mean estimator
+Computes the element-wise adaptive Huber mean estimator.
 }
 \examples{
 set.seed(123)

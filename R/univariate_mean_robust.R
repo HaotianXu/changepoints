@@ -13,7 +13,7 @@ rtest = function(dat1, th1, th2){
 
 
 
-#' @title Robust univariate mean estimation
+#' @title Robust univariate mean estimation.
 #' @description Compute robust univariate mean estimation.
 #' @param y       A \code{numeric} vector of observations.
 #' @param k       An \code{integer} representing the lag of differences for a sorted vector.
@@ -43,7 +43,7 @@ rume = function(y, k, random = FALSE){
 }
 
 
-#' @title Adversarially robust change point detection algorithm 
+#' @title Adversarially robust univariate mean change point detection.
 #' @description Perform the adversarially robust change point detection method.
 #' @param y          A \code{numeric} vector of observations.
 #' @param h          An \code{integer} scalar representing block size.
@@ -112,8 +112,8 @@ ARC = function(y, h, block_num = 1, epsilon, gaussian = TRUE){
 
 
 
-#' @title Automatic adversarially robust change point detection algorithm
-#' @description Perform the adversarially robust change point detection method with automatic selection of the contamination proportion epsilon when treating the inliner distributions as Gaussian
+#' @title Automatic adversarially robust univariate mean change point detection.
+#' @description Perform the adversarially robust change point detection method with automatic selection of the contamination proportion epsilon when treating the inliner distributions as Gaussian.
 #' @param y           A \code{numeric} vector of observations.
 #' @param t_dat       A \code{numeric} vector of observations that is used to select epsilon in the Huber contamination model.
 #' @param guess_true  A \code{numeric} scalar representing a guess of epsilon value.
@@ -220,7 +220,7 @@ JMB_B = function(y,B){
   return(T)
 }
 
-#' @title Backward detection with a robust bootstrap change point test using U-statistics.
+#' @title Backward detection with a robust bootstrap change point test using U-statistics for univariate mean change.
 #' @description Perform the backward detection method with a robust bootstrap change point test using U-statistics on univariate data.
 #' @param y       A \code{numeric} vector of observations.
 #' @param M       An \code{integer} scalar representing initial block size of the backward detection algorithm.

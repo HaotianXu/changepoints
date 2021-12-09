@@ -2,7 +2,7 @@
 % Please edit documentation in R/network_with_missing.R
 \name{softImpute.network.missing}
 \alias{softImpute.network.missing}
-\title{Internal function: Estimate graphon matrix by soft-impute for independent adjacency matrices with missing values}
+\title{Estimate graphon matrix by soft-impute for independent adjacency matrices with missing values.}
 \usage{
 softImpute.network.missing(
   data_incomplete_list,
@@ -27,7 +27,7 @@ softImpute.network.missing(
 Estimated graphon matrix
 }
 \description{
-Internal function: Estimate graphon matrix by soft-impute for independent adjacency matrices with missing values
+Estimate graphon matrix by soft-impute for independent adjacency matrices with missing values.
 }
 \references{
 Dubey, Xu and Yu (2021) <arxiv:2110.06450>

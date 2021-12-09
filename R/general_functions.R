@@ -363,8 +363,8 @@ print.DP = function(x, ...){
 }
 
 
-#' @title Element-wise adaptive Huber mean estimator
-#' @description Computes the element-wise adaptive Huber mean estimator
+#' @title Element-wise adaptive Huber mean estimator.
+#' @description Computes the element-wise adaptive Huber mean estimator.
 #' @param x         A \code{numeric} vector of observations.
 #' @param tau       A \code{numeric} scalar corresponding to the robustification parameter (larger than 0).
 #' @return          A \code{numeric} scalar corresponding to the adaptive Huber mean estimator.

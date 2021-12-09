@@ -1,4 +1,4 @@
-#' @title Internal function: Estimate graphon matrix by soft-impute for independent adjacency matrices with missing values
+#' @title Estimate graphon matrix by soft-impute for independent adjacency matrices with missing values.
 #' @param data_incomplete_list  A \code{list} of adjacency matrices (with entries being 0 or 1) with missing values being coercing to 0.
 #' @param eta_list              A \code{list} of matrices associated with data_incomplete_list, each matrix indicates the missing entries in corresponding adjacency matrix.
 #' @param lambda                A \code{numeric} scalar of thresholding parameter for leading singular value in the soft-impute algorithm.
@@ -13,7 +13,8 @@ softImpute.network.missing <- function(data_incomplete_list, eta_list, lambda, a
 }
 
 
-#' @title Function to compute the thresholding parameter for leading singular value in the soft-impute algorithm (see Theorem 2 in the reference)
+#' @title Function to compute the default thresholding parameter for leading singular value in the soft-impute algorithm.
+#' @details The default thresholding parameter is given in Theorem 2 of the reference.
 #' @param s          An \code{integer} scalar of the starting index.
 #' @param e          An \code{integer} scalar of the ending index.
 #' @param t          An \code{integer} scalar of the splitting index.

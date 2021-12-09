@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_mean_robust.R
 \name{aARC}
 \alias{aARC}
-\title{Automatic adversarially robust change point detection algorithm}
+\title{Automatic adversarially robust univariate mean change point detection.}
 \usage{
 aARC(y, t_dat, guess_true = 0.05, h, block_num = 1)
 }
@@ -21,7 +21,7 @@ aARC(y, t_dat, guess_true = 0.05, h, block_num = 1)
 An \code{numeric} vector of estimated change point locations.
 }
 \description{
-Perform the adversarially robust change point detection method with automatic selection of the contamination proportion epsilon when treating the inliner distributions as Gaussian
+Perform the adversarially robust change point detection method with automatic selection of the contamination proportion epsilon when treating the inliner distributions as Gaussian.
 }
 \examples{
 #' ### simulate data with contamination

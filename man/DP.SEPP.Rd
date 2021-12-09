@@ -30,9 +30,9 @@ An object of \code{\link[base]{class}} "DP", which is a \code{list} with the fol
 Perform dynamic programming for SEPP change points detection.
 }
 \examples{
-p = 10 # dimension
+p = 8 # dimension
 n = 15
-s = 5 # s is sparsity
+s = 4 # s is sparsity
 factor = 0.2 # large factor gives exact recovery
 threshold = 4 # thresholding makes the process stable
 intercept = 1/2 # intercept of the model. Assume to be known as in the existing literature

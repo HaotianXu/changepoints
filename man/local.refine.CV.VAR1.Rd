@@ -38,7 +38,7 @@ data = simu.VAR1(sigma, p, 2*n+1, A1)
 data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
 data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
 gamma_set = c(0.1, 0.5, 1)
-lambda_set = c(0.1, 1, 3.2)
+lambda_set = c(0.1, 1)
 temp = CV.search.DP.VAR1(data, gamma_set, lambda_set, delta = 5)
 temp$test_error # test error result
 # find the indices of gamma.set and lambda.set which minimizes the test error

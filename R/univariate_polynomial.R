@@ -23,7 +23,7 @@ coef.repara = function(coef_vec, cpt1, cpt2, n){
 
 
 
-#' @title Generate univariate data from piecewise polynomials of degree at most r
+#' @title Generate univariate data from piecewise polynomials of degree at most r.
 #' @description Generate univariate data from piecewise polynomials (currently, only the linear, quadratic functions and cubic functions are considered). 
 #' @param init_coef_vec  A (r+1)-dim \code{numeric} vector of coefficients for the first segment.
 #' @param cpt_vec        A K-dim \code{integer} vector of change points.
@@ -61,7 +61,7 @@ gen.piece.poly = function(init_coef_vec, cpt_vec, kappa_mat, n, sigma){
 }
 
 
-#' @title Mean function of piecewise polynomials
+#' @title Mean function of piecewise polynomials.
 #' @description Compute mean function of piecewise polynomials (currently, only the linear, quadratic functions and cubic functions are considered). 
 #' @param init_coef_vec  A \code{numeric} vector of coefficients for the first segment.
 #' @param cpt_vec        An \code{integer} vector of change points.

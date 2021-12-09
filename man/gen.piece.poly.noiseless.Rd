@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_polynomial.R
 \name{gen.piece.poly.noiseless}
 \alias{gen.piece.poly.noiseless}
-\title{Mean function of piecewise polynomials}
+\title{Mean function of piecewise polynomials.}
 \usage{
 gen.piece.poly.noiseless(init_coef_vec, cpt_vec, kappa_mat, n)
 }

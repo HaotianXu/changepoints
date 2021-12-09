@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate_polynomial.R
 \name{gen.piece.poly}
 \alias{gen.piece.poly}
-\title{Generate univariate data from piecewise polynomials of degree at most r}
+\title{Generate univariate data from piecewise polynomials of degree at most r.}
 \usage{
 gen.piece.poly(init_coef_vec, cpt_vec, kappa_mat, n, sigma)
 }
