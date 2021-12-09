@@ -422,8 +422,8 @@ CV.search.DP.LR.gl = function(y, X, gamma.set, lambda.set, zeta, delta, eps = 0.
 #' n = 100
 #' cpt_true = c(30, 70)
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-#' gamma_set = c(0.01, 0.1, 1)
-#' lambda_set = c(0.01, 0.1, 1, 3)
+#' gamma_set = c(0.01, 0.1)
+#' lambda_set = c(0.01, 0.1)
 #' temp = CV.search.DP.regression(y = data$y, X = data$X, gamma_set, lambda_set, delta = 2)
 #' temp$test_error # test error result
 #' # find the indices of gamma_set and lambda_set which minimizes the test error
@@ -431,7 +431,7 @@ CV.search.DP.LR.gl = function(y, X, gamma.set, lambda.set, zeta, delta, eps = 0.
 #' gamma_set[min_idx[1]]
 #' lambda_set[min_idx[2]]
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
-#' zeta_set = c(0.01, 0.1, 1)
+#' zeta_set = c(0.1, 1)
 #' temp_zeta = CV.search.DP.LR.regression(data$y, data$X, gamma_set[min_idx[1]],
 #'                   lambda_set[min_idx[2]], zeta_set, delta = 2, eps = 0.001)
 #' min_zeta_idx = which.min(unlist(temp_zeta$test_error))

@@ -23,30 +23,6 @@ A \code{list} with the following structure:
 \description{
 Perform local refinement for VAR1 change points detection.
 }
-\examples{
-set.seed(123)
-p = 10
-sigma = 1
-n = 20
-v1 = 2*(seq(1,p,1)\%\%2) - 1
-v2 = -v1
-AA = matrix(0, nrow = p, ncol = p-2)
-A1 = cbind(v1,v2,AA)*0.1
-A2 = cbind(v2,v1,AA)*0.1
-A3 = A1
-data = simu.VAR1(sigma, p, 2*n+1, A1)
-data = cbind(data, simu.VAR1(sigma, p, 2*n, A2, vzero=c(data[,ncol(data)])))
-data = cbind(data, simu.VAR1(sigma, p, 2*n, A3, vzero=c(data[,ncol(data)])))
-gamma_set = c(0.1, 0.5, 1)
-lambda_set = c(0.1, 1)
-temp = CV.search.DP.VAR1(data, gamma_set, lambda_set, delta = 5)
-temp$test_error # test error result
-# find the indices of gamma.set and lambda.set which minimizes the test error
-min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
-cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
-temp_zeta = local.refine.CV.VAR1(cpt_init, data, c(0.1, 1), delta_local = 10)
-temp_zeta$cpt_hat
-}
 \references{
 Wang, Yu, Rinaldo and Willett (2019) <arxiv:1909.06359>
 }

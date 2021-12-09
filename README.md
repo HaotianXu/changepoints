@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/HaotianXu/changepoints/workflows/R-CMD-check/badge.svg)](https://github.com/HaotianXu/changepoints/actions)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2021--12--02-green.svg)](https://github.com/HaotianXu/changepoints)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2021--12--09-green.svg)](https://github.com/HaotianXu/changepoints)
 [![license](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 <!-- badges: end -->
 
@@ -14,20 +14,18 @@ Performs a series of offline and/or online change-point detection
 algorithms for
 
 1.  univariate mean
-    -   [Wang, Yu and
-        Rinaldo (2020)](https://doi.org/10.1214/20-EJS1710)
+    -   [Wang, Yu and Rinaldo (2020)](https://arxiv.org/abs/1810.09498)
     -   [Yu, Padilla, Wang and
         Rinaldo (2020)](https://arxiv.org/abs/2006.03283)
 2.  univariate polynomials
     -   [Yu and Chatterjee (2020)](https://arxiv.org/abs/2007.09910)
 3.  univariate and multivariate nonparametric settings
     -   [Padilla, Yu, Wang and
-        Rinaldo (2021)](https://doi.org/10.1214/21-EJS1809)
+        Rinaldo (2021)](https://arxiv.org/abs/1905.10019)
     -   [Padilla, Yu, Wang and
         Rinaldo (2019)](https://arxiv.org/abs/1910.13289)
 4.  high-dimensional covariances
-    -   [Wang, Yu and
-        Rinaldo (2021)](https://doi.org/10.3150/20-BEJ1249)
+    -   [Wang, Yu and Rinaldo (2021)](https://arxiv.org/abs/1712.09912)
 5.  high-dimensional networks with and without missing values
     -   [Wang, Yu and Rinaldo (2018)](https://arxiv.org/abs/1809.09602)
     -   [Yu, Padilla, Wang and

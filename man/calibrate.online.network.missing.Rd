@@ -79,7 +79,7 @@ rho_hat = quantile(graphon_miss_hat, 0.95)
 rank_hat = sum(graphon_miss_impute$d != 0)
 alpha_grid = c(0.05, 0.01)
 permu_num = 20
-threshold_len = 100
+threshold_len = 50
 temp = calibrate.online.network.missing(train_miss_list, train_eta_list, threshold_len, alpha_grid, 
                    permu_num, pi_lb_hat, pi_ub_hat, rho_hat, rank_hat, C_lambda, delta = 5)
 }
