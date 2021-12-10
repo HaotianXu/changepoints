@@ -1,12 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# A collections of change-point detection methods
+# A collection of change-point detection methods.
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/HaotianXu/changepoints/workflows/R-CMD-check/badge.svg)](https://github.com/HaotianXu/changepoints/actions)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2021--12--09-green.svg)](https://github.com/HaotianXu/changepoints)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2021--12--10-green.svg)](https://github.com/HaotianXu/changepoints)
 [![license](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 <!-- badges: end -->
 
@@ -62,7 +62,8 @@ devtools::install_github("HaotianXu/changepoints")
 
 ## Example
 
-This is an example for offline univariate mean change point detection:
+This is an example for offline univariate mean change point detection by
+*l*<sub>0</sub> penalization:
 
 ``` r
 library(changepoints)

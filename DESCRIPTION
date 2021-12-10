@@ -1,6 +1,6 @@
 Package: changepoints
 Type: Package
-Title: A Collections of Change-Point Detection Methods 
+Title: A Collection of Change-Point Detection Methods 
 Version: 1.0.0
 Date: 2021-12-09
 Authors@R: c(

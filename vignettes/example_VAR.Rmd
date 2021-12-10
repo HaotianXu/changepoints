@@ -32,7 +32,6 @@ Dynamic programming and local refinement are implemented for VAR1 change points 
 
 # Simulate data
 ```{r}
-library(changepoints)
 ## parameters for simulating data
 rho = 0.4 #candidate of rho (rho can not be too large so that the time series is stable)
 p = 20 # dimension

@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# A collections of change-point detection methods 
+# A collection of change-point detection methods.
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/HaotianXu/changepoints/workflows/R-CMD-check/badge.svg)](https://github.com/HaotianXu/changepoints/actions)
@@ -64,7 +64,7 @@ devtools::install_github("HaotianXu/changepoints")
 
 ## Example
 
-This is an example for offline univariate mean change point detection:
+This is an example for offline univariate mean change point detection by $l_0$ penalization:
 
 ```{r, DP, eval = FALSE}
 library(changepoints)
