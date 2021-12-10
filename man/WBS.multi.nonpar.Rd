@@ -36,9 +36,9 @@ An object of \code{\link[base]{class}} "BS", which is a \code{list} with the fol
 Perform wild binary segmentation for multivariate nonparametric change points detection.
 }
 \examples{
-n = 100
+n = 70
 v = c(floor(n/3), 2*floor(n/3)) # location of change points
-p = 5
+p = 4
 Y = matrix(0, p, n) # matrix for data
 mu0 = rep(0, p) # mean of the data
 mu1 = rep(0, p)
@@ -60,8 +60,6 @@ K_max = 30
 h = 5*(K_max*log(n)/n)^{1/p} # bandwith
 temp = WBS.multi.nonpar(Y, Y, 1, ncol(Y), intervals$Alpha, intervals$Beta, h, delta = 10)
 result = thresholdBS(temp, median(temp$Dval))
-print(result$BS_tree_trimmed)
-plot(result$BS_tree_trimmed)
 }
 \references{
 Padilla, Yu, Wang and Rinaldo (2019) <arxiv:1910.13289>.

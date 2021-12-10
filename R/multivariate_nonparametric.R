@@ -41,9 +41,9 @@ CUSUM.KS.multivariate = function(Y, W, s, e, t, h){
 #' @references Padilla, Yu, Wang and Rinaldo (2019) <arxiv:1910.13289>.
 #' @seealso \code{\link{thresholdBS}} for obtain change points estimation, \code{\link{tuneBSmultinonpar}} for a tuning version.
 #' @examples
-#' n = 100
+#' n = 70
 #' v = c(floor(n/3), 2*floor(n/3)) # location of change points
-#' p = 5
+#' p = 4
 #' Y = matrix(0, p, n) # matrix for data
 #' mu0 = rep(0, p) # mean of the data
 #' mu1 = rep(0, p)
@@ -65,8 +65,6 @@ CUSUM.KS.multivariate = function(Y, W, s, e, t, h){
 #' h = 5*(K_max*log(n)/n)^{1/p} # bandwith
 #' temp = WBS.multi.nonpar(Y, Y, 1, ncol(Y), intervals$Alpha, intervals$Beta, h, delta = 10)
 #' result = thresholdBS(temp, median(temp$Dval))
-#' print(result$BS_tree_trimmed)
-#' plot(result$BS_tree_trimmed)
 WBS.multi.nonpar = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0){
   print(paste0("WBS at level: ", level))
   Alpha_new = pmax(Alpha, s)
@@ -122,9 +120,9 @@ WBS.multi.nonpar = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0){
 #' @seealso \code{\link{WBS.multi.nonpar}}.
 #' @export
 #' @examples 
-#' n = 100
+#' n = 70
 #' v = c(floor(n/3), 2*floor(n/3)) # location of change points
-#' p = 5
+#' p = 4
 #' Y = matrix(0, p, n) # matrix for data
 #' mu0 = rep(0, p) # mean of the data
 #' mu1 = rep(0, p)
@@ -140,13 +138,12 @@ WBS.multi.nonpar = function(Y, W, s, e, Alpha, Beta, h, delta, level = 0){
 #'      Y[,t] = MASS::mvrnorm(n = 1, mu1, Sigma1)
 #'   }
 #' }## close for generate data
-#' M = 10
+#' M = 8
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y)) #Random intervals
 #' K_max = 30
 #' h = 5*(K_max*log(n)/n)^{1/p} # bandwith
 #' temp = WBS.multi.nonpar(Y, Y, 1, ncol(Y), intervals$Alpha, intervals$Beta, h, delta = 10)
 #' S = tuneBSmultinonpar(temp, Y)
-#' S
 tuneBSmultinonpar = function(BS_object, Y){
   UseMethod("tuneBSmultinonpar", BS_object)
 }

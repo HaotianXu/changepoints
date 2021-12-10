@@ -24,8 +24,8 @@ A \code{list} with the following structure:
 Simulate a dot product graph (without change point). The generated data is a matrix with each column corresponding to the vectorized adjacency (sub)matrix at a time point. For example, if the network matrix is required to be symmetric and without self-loop, only the strictly lower diagonal entries are considered.
 }
 \examples{
-p = 30 # number of nodes
-n = 75 # sample size for each segment
+p = 20 # number of nodes
+n = 50 # sample size for each segment
 lat_dim_num = 5 # number of latent dimensions
 set.seed(1)
 x_mat = matrix(runif(p*lat_dim_num), nrow = p, ncol = lat_dim_num)

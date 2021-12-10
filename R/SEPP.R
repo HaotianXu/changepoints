@@ -77,7 +77,7 @@ simu.SEPP = function(intercept, n, A, threshold, vzero = NULL){
 #' @examples
 #' p = 8 # dimension
 #' n = 15
-#' s = 4 # s is sparsity
+#' s = 3 # s is sparsity
 #' factor = 0.2 # large factor gives exact recovery
 #' threshold = 4 # thresholding makes the process stable
 #' intercept = 1/2 # intercept of the model. Assume to be known as in the existing literature
@@ -92,15 +92,9 @@ simu.SEPP = function(intercept, n, A, threshold, vzero = NULL){
 #' diag(A2[-1,]) = 1
 #' A2 = A2*factor
 #' A2[(s+1):p, (s+1):p] = 0
-#' diag(A3[,-1]) = 1
-#' diag(A3) = 1
-#' diag(A3[-1,]) = -1
-#' A3 = A3*factor
-#' A3[(s+1):p, (s+1):p] = 0
 #' data1 = simu.SEPP(intercept, n, A1, threshold, vzero = NULL)
 #' data2 = simu.SEPP(intercept, n, A2, threshold, vzero = data1[,n])
-#' data3 = simu.SEPP(intercept, n, A3, threshold, vzero = data2[,n])
-#' data = cbind(data1, data2, data3)
+#' data = cbind(data1, data2)
 #' gamma = 0.1
 #' delta = 0.5*n
 #' delta2 = 1.5*n

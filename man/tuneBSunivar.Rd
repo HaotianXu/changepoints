@@ -23,21 +23,12 @@ Perform univariate mean change points detection based on standard or wild binary
 set.seed(0)
 cpt_true = c(20, 50, 170)
 y = rnorm(300) + c(rep(0,20),rep(2,30),rep(0,120),rep(2,130))
-## change points detection by BS
-temp1 = BS.univar(y, 1, length(y), delta = 5)
-BS_result = tuneBSunivar(temp1, y)
-cpt_BS = BS_result$cpt
-Hausdorff.dist(cpt_BS, cpt_true)
-cpt_BS_LR = local.refine.univar(cpt_BS, y)
-Hausdorff.dist(cpt_BS_LR, cpt_true)
 ## change points detection by WBS
-intervals = WBS.intervals(M = 300, lower = 1, upper = length(y))
+intervals = WBS.intervals(M = 100, lower = 1, upper = length(y))
 temp2 = WBS.univar(y, 1, length(y), intervals$Alpha, intervals$Beta, delta = 5)
 WBS_result = tuneBSunivar(temp2, y)
 cpt_WBS = WBS_result$cpt
 Hausdorff.dist(cpt_WBS, cpt_true)
-cpt_WBS_LR = local.refine.univar(cpt_WBS, y)
-Hausdorff.dist(cpt_WBS_LR, cpt_true)
 }
 \references{
 Wang, Yu and Rinaldo (2020) <doi:10.1214/20-EJS1710>;

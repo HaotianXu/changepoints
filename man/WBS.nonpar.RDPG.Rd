@@ -31,8 +31,8 @@ Perform wild binary segmentation for dependent dynamic random dot product graph 
 }
 \examples{
 ### generate data 
-p = 30 # number of nodes
-n = 75 # sample size for each segment
+p = 20 # number of nodes
+n = 50 # sample size for each segment
 lat_dim_num = 5 # number of latent dimensions
 set.seed(1)
 x_mat = matrix(runif(p*lat_dim_num), nrow = p, ncol = lat_dim_num)

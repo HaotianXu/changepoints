@@ -23,8 +23,8 @@ Perform Change points detection for dependent dynamic random dot product graph m
 }
 \examples{
 ### generate data 
-p = 30 # number of nodes
-n = 75 # sample size for each segment
+p = 20 # number of nodes
+n = 50 # sample size for each segment
 lat_dim_num = 5 # number of latent dimensions
 set.seed(1)
 x_mat = matrix(runif(p*lat_dim_num), nrow = p, ncol = lat_dim_num)
@@ -36,7 +36,7 @@ data1_mat = rdpg1$obs_mat
 data2_mat = rdpg2$obs_mat
 data_mat = cbind(data1_mat, data2_mat)
 ### detect change points
-M = 30 # number of random intervals for WBS
+M = 20 # number of random intervals for WBS
 d = 10 # parameter for scaled PCA algorithm
 delta = 5
 intervals = WBS.intervals(M = M, lower = 1, upper = ncol(data_mat))

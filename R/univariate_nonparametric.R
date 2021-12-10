@@ -174,10 +174,11 @@ WBS.uni.nonpar = function(Y, s, e, Alpha, Beta, N, delta, level = 0){
 #' @references Padilla, Yu, Wang and Rinaldo (2021) <doi:10.1214/21-EJS1809>.
 #' @seealso \code{\link{BS.uni.nonpar}} and \code{\link{WBS.uni.nonpar}}.
 #' @examples
-#' Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(100, 0, 40))))
+#' Y = t(as.matrix(c(rnorm(100, 0, 1), rnorm(100, 0, 10), rnorm(50, 0, 40))))
 #' W = Y # W is a copy of the matrix Y, it can be Y itself.
-#' N = rep(1, 300)
-#' M = 20
+#' N = rep(1, 250)
+#' M = 5
+#' set.seed(123)
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y))
 #' BS_object = WBS.uni.nonpar(W, 1, ncol(Y), intervals$Alpha, intervals$Beta, N, delta = 5)
 #' cpt_hat = tuneBSuninonpar(BS_object, Y, N)

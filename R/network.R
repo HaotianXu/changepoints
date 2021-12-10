@@ -387,7 +387,7 @@ data.split.statistic = function(data_mat1, data_mat2, self = FALSE, t, s, rho, a
 #' data_mat2 = data_mat[,seq(2,ncol(data_mat),2)]
 #' train_mat = simu.SBM(conn1_mat, can_vec, n = 150, symm = TRUE, self = TRUE)$obs_mat
 #' temp = online.network(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat, alpha = 0.05, 
-#'                       gamma = NULL, permu_num = 50)
+#'                       gamma = NULL, permu_num = 20)
 #' cpt_hat = 2 * temp$cpt
 online.network = function(data_mat1, data_mat2, self = TRUE, b_vec = NULL, train_mat = NULL, alpha = NULL, gamma = NULL, permu_num = NULL){
   n = ncol(data_mat1)
