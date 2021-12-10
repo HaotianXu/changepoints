@@ -41,8 +41,8 @@ Perform grid search based on Cross-Validation of all tuning parameters (gamma, l
 }
 \examples{
 set.seed(123)
-d0 = 10
-p = 20
+d0 = 8
+p = 15
 n = 100
 cpt_true = c(30, 70)
 data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)

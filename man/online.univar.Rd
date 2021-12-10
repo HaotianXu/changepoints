@@ -35,10 +35,10 @@ A \code{list} with the following structure:
 Perform online change point detection with controlled false alarm rate or average run length.
 }
 \examples{
-y_vec = rnorm(200) + c(rep(0, 100), rep(1, 100))
-train_vec = rnorm(150)
+y_vec = rnorm(150) + c(rep(0, 100), rep(1, 50))
+train_vec = rnorm(100)
 # control the false alarm rate
-temp1 = online.univar(y_vec = y_vec, train_vec = train_vec, alpha = 0.05, permu_num = 30)
+temp1 = online.univar(y_vec = y_vec, train_vec = train_vec, alpha = 0.05, permu_num = 20)
 temp1$cpt_hat
 temp1$b_vec # calibrated threshold
 }

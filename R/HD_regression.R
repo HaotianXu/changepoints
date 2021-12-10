@@ -417,8 +417,8 @@ CV.search.DP.LR.gl = function(y, X, gamma.set, lambda.set, zeta, delta, eps = 0.
 #' @author Daren Wang & Haotian Xu
 #' @examples
 #' set.seed(123)
-#' d0 = 10
-#' p = 20
+#' d0 = 8
+#' p = 15
 #' n = 100
 #' cpt_true = c(30, 70)
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
