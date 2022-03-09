@@ -190,6 +190,7 @@ WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0
 #' @param data_mat1  A \code{numeric} matrix of observations with with horizontal axis being time, and with each column be the vectorized adjacency matrix.
 #' @param data_mat2  A independent copy of data_mat1.
 #' @param self       A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.
+#' @param w          A \code{numeric} scalar in (0,1) indicating the level of shrinkage (large shrinkage if w is small) on the interval between the (k-1)th and (k+1)th preliminary changepoint estimator.
 #' @param tau2       A positive \code{numeric} scalar for USVT corresponding to the threshold for singular values of input matrix.
 #' @param tau3       A positive \code{numeric} scalar for USVT corresponding to the threshold for entries of output matrix.
 #' @return  A \code{numeric} vector of locally refined change point locations.
@@ -223,15 +224,14 @@ WBS.network = function(data_mat1, data_mat2, s, e, Alpha, Beta, delta, level = 0
 #'                                    tau2 = p*rho_hat/3, tau3 = Inf)
 #' cpt_WBS = 2*cpt_init
 #' cpt_refined = 2*cpt_refined
-local.refine.network = function(cpt_init, data_mat1, data_mat2, self = FALSE, tau2, tau3 = Inf){
+local.refine.network = function(cpt_init, data_mat1, data_mat2, self = FALSE, w = 0.5, tau2, tau3 = Inf){
   obs_num = ncol(data_mat1)
   cpt_init_ext = c(0, cpt_init, obs_num)
   K = length(cpt_init)
   cpt_refined = rep(0, K+1)
-  w = 0.9
   for(k in 1:K){
     s_inter = ceiling(w*cpt_init_ext[k] + (1-w)*cpt_init_ext[k+1])
-    e_inter = floor(w*cpt_init_ext[k+1] + (1-w)*cpt_init_ext[k+2])
+    e_inter = floor((1-w)*cpt_init_ext[k+1] + w*cpt_init_ext[k+2])
     Delta_tilde = sqrt((e_inter-cpt_init_ext[k+1])*(cpt_init_ext[k+1]-s_inter)/(e_inter-s_inter))
     A_tilde = sapply((s_inter + 1):(e_inter - 1), function(eta) CUSUM.vec(data_mat1, s_inter, e_inter, eta))
     cpt_refined[k+1] = s_inter + which.max(sapply((s_inter + 1):(e_inter - 1), function(x) USVT.norm(A_tilde[,x-s_inter], CUSUM.vec(data_mat2, s_inter, e_inter, cpt_init_ext[k+1]), self, tau2, Delta_tilde*tau3)))
