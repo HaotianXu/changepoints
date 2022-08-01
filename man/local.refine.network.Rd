@@ -9,6 +9,7 @@ local.refine.network(
   data_mat1,
   data_mat2,
   self = FALSE,
+  w = 0.5,
   tau2,
   tau3 = Inf
 )
@@ -21,6 +22,8 @@ local.refine.network(
 \item{data_mat2}{A independent copy of data_mat1.}
 
 \item{self}{A \code{logic} scalar indicating if adjacency matrices are required to have self-loop.}
+
+\item{w}{A \code{numeric} scalar in (0,1) indicating the level of shrinkage (large shrinkage if w is small) on the interval between the (k-1)th and (k+1)th preliminary changepoint estimator.}
 
 \item{tau2}{A positive \code{numeric} scalar for USVT corresponding to the threshold for singular values of input matrix.}
 

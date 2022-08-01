@@ -57,6 +57,26 @@ rcpp_lasso_seq <- function(X, Y, lambda_seq, eps) {
     .Call('_changepoints_rcpp_lasso_seq', PACKAGE = 'changepoints', X, Y, lambda_seq, eps)
 }
 
+rcpp_lassoDPDU_standardized_obj <- function(Mtilde, Vtilde, beta, n, lambda) {
+    .Call('_changepoints_rcpp_lassoDPDU_standardized_obj', PACKAGE = 'changepoints', Mtilde, Vtilde, beta, n, lambda)
+}
+
+rcpp_lassoDPDU_standardized <- function(Mtilde, Vtilde, beta_start, n, lambda, eps) {
+    .Call('_changepoints_rcpp_lassoDPDU_standardized', PACKAGE = 'changepoints', Mtilde, Vtilde, beta_start, n, lambda, eps)
+}
+
+rcpp_lassoDPDU_standardized_seq <- function(Mtilde, Vtilde, n, lambda_seq, eps) {
+    .Call('_changepoints_rcpp_lassoDPDU_standardized_seq', PACKAGE = 'changepoints', Mtilde, Vtilde, n, lambda_seq, eps)
+}
+
+rcpp_lassoDPDU <- function(Mtilde, Vtilde, Xmeans, Ymean, weights, n, lambda, eps) {
+    .Call('_changepoints_rcpp_lassoDPDU', PACKAGE = 'changepoints', Mtilde, Vtilde, Xmeans, Ymean, weights, n, lambda, eps)
+}
+
+rcpp_DPDU_regression <- function(y, X, lambda, zeta, eps) {
+    .Call('_changepoints_rcpp_DPDU_regression', PACKAGE = 'changepoints', y, X, lambda, zeta, eps)
+}
+
 rcpp_soft_threshold <- function(x_mat, lambda) {
     .Call('_changepoints_rcpp_soft_threshold', PACKAGE = 'changepoints', x_mat, lambda)
 }

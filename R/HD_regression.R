@@ -475,3 +475,35 @@ X.glasso.converter.regression = function(X, eta, s_ceil){
 
 
 
+
+
+#' @title Dynamic programming with dynamic update algorithm for regression change points detection through \eqn{l_0} penalty.
+#' @description     Perform DPDU algorithm for regression change points detection.
+#' @param y         A \code{numeric} vector of response variable.
+#' @param X         A \code{numeric} matrix of covariates with vertical axis being time.
+#' @param lambda    A positive \code{numeric} scalar of tuning parameter for lasso penalty.
+#' @param zeta      A positive \code{integer} scalar of tuning parameter associated with \eqn{l_0} penalty (minimum interval size).
+#' @param eps       A \code{numeric} scalar of precision level for convergence of lasso.
+#' @return An object of \code{\link[base]{class}} "DP", which is a \code{list} with the following structure:
+#'  \item{partition}{A vector of the best partition.}
+#'  \item{cpt}{A vector of change points estimation.}
+#' @export
+#' @author Haotian Xu
+#' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>
+#' @examples
+#' d0 = 10
+#' p = 20
+#' n = 100
+#' cpt_true = c(30, 70)
+#' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
+#' temp = DPDU.regression(y = data$y, X = t(data$X), lambda = 1, zeta = 10)
+#' cpt_hat = temp$cpt
+#' @export
+DPDU.regression <- function(y, X, lambda, zeta, eps = 0.001) {
+  DPDU_result = .Call('_changepoints_rcpp_DPDU_regression', PACKAGE = 'changepoints', y, X, lambda, zeta, eps)
+  result = append(DPDU_result, list(cpt = part2local(DPDU_result$partition)))
+  class(result) = "DP"
+  return(result)
+}
+
+
