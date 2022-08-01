@@ -39,6 +39,7 @@ Performs a series of offline and/or online change-point detection algorithms for
    + [Dubey, Xu and Yu (2021)](https://arxiv.org/abs/2110.06450)
 6. high-dimensional linear regression models
    + [Rinaldo, Wang, Wen, Willett and Yu (2020)](https://arxiv.org/abs/2010.10410)
+   + [Xu, Wang, Zhao, and Yu (2022)](https://arxiv.org/abs/2207.12453)
 7. high-dimensional vector autoregressive models
    + [Wang, Yu, Rinaldo and Willett (2019)](https://arxiv.org/abs/1909.06359)
 8. high-dimensional self exciting point processes
