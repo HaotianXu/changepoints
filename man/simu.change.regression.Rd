@@ -4,30 +4,46 @@
 \alias{simu.change.regression}
 \title{Simulate a sparse regression model with change points in coefficients.}
 \usage{
-simu.change.regression(d0, cpt_true, p, n, sigma, kappa)
+simu.change.regression(
+  d0,
+  cpt_true,
+  p,
+  n,
+  sigma,
+  kappa,
+  cov_type = "I",
+  mod_X = "IID",
+  mod_e = "IID"
+)
 }
 \arguments{
-\item{d0}{A \code{numeric} scalar of number of nonzero coefficients.}
+\item{d0}{A \code{numeric} scalar stands for the number of nonzero coefficients.}
 
-\item{cpt_true}{An \code{integer} vector of true change points (sorted in strictly increasing order).}
+\item{cpt_true}{An \code{integer} vector contains true change points (sorted in strictly increasing order).}
 
-\item{p}{An \code{integer} scalar of dimensionality.}
+\item{p}{An \code{integer} scalar stands for the dimensionality.}
 
-\item{n}{An \code{integer} scalar of sample size.}
+\item{n}{An \code{integer} scalar stands for the sample size.}
 
-\item{sigma}{A \code{numeric} scalar of error standard deviation.}
+\item{sigma}{A \code{numeric} scalar stands for error standard deviation.}
 
-\item{kappa}{A \code{numeric} scalar of minimum jump size of coefficient vector in terms of \eqn{l_2} norm.}
+\item{kappa}{A \code{numeric} scalar stands for the minimum jump size of coefficient vector in \eqn{l_2} norm.}
+
+\item{cov_type}{A \code{character} string stands for the type of covariance matrix of covariates. 'I': Identity; 'T': Toeplitz; 'E': Equal-correlation.}
+
+\item{mod_X}{A \code{character} string stands for the time series model followed by the covariates. 'IID': IID multivariate Gaussian; 'AR': Multivariate AR1 with rho = 0.5; Multivariate MA1 theta = 0.5.}
+
+\item{mod_e}{A \code{character} string stands for the time series model followed by the errors 'IID': IID univariate Gaussian; 'AR': Univariate AR1 with rho = 0.5; Univariate MA1 theta = 0.5.}
 }
 \value{
 A \code{list} with the following structure:
  \item{cpt_true}{A vector of true changepoints (sorted in strictly increasing order).}
- \item{X}{A p-by-n design matrix.}
- \item{y}{A n-dim vector of response variable.}
+ \item{X}{An n-by-p design matrix.}
+ \item{y}{An n-dim vector of response variable.}
  \item{betafullmat}{A p-by-n matrix of coefficients.}
 }
 \description{
-Simulate a sparse regression model with change points in coefficients under the setting of Simulations 4.2 in Rinaldo et al. (2021).
+Simulate a sparse regression model with change points in coefficients under temporal dependence.
 }
 \examples{
 d0 = 10
@@ -37,8 +53,8 @@ cpt_true = c(10, 30, 40, 70, 90)
 data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 }
 \references{
-Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>.
+Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>; Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
 }
 \author{
-Daren Wang & Haotian Xu
+Daren Wang, Zifeng Zhao & Haotian Xu
 }

@@ -17,7 +17,7 @@ CV.search.DP.LR.regression(
 \arguments{
 \item{y}{A \code{numeric} vector of response variable.}
 
-\item{X}{A \code{numeric} matrix of covariates with horizontal axis being time.}
+\item{X}{A \code{numeric} matrix of covariates with vertical axis being time.}
 
 \item{gamma_set}{A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.}
 

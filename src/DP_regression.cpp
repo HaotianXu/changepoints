@@ -5,15 +5,15 @@
 
 // [[Rcpp::export]]
 Rcpp::List rcpp_error_pred_seg_regression(const arma::vec& y, const arma::mat& X, int s, int e, const arma::vec& lambda, int delta, double eps){
-  int p = X.n_rows;
-  int n = X.n_cols;
+  int p = X.n_cols;
+  int n = X.n_rows;
   arma::vec beta_hat;
   Rcpp::List lassofit;
   arma::mat X_temp;
   arma::vec y_temp;
   double error = 0.0;
   if(e - s > 2*delta){
-    X_temp = X.cols(s-1, e-1).t();
+    X_temp = X.rows(s-1, e-1);
     y_temp = y.subvec(s-1, e-1);
     lassofit = rcpp_lasso_seq(X_temp, y_temp, lambda*sqrt(std::max(log(std::max(n,p)), (e-s+0.0)))*sqrt(log(std::max(n,p)))/(e-s), eps);
     beta_hat = Rcpp::as<arma::vec>(lassofit["beta_mat"]);
@@ -30,7 +30,7 @@ Rcpp::List rcpp_error_pred_seg_regression(const arma::vec& y, const arma::mat& X
 // [[Rcpp::export]]
 Rcpp::List rcpp_DP_regression(const arma::vec& y, const arma::mat& X, double gamma, const arma::vec& lambda, int delta, double eps){
   int n = y.n_elem;
-  int p = X.n_rows;
+  int p = X.n_cols;
   double b = 0;
   arma::vec bestvalue = arma::zeros<arma::vec>(n+1);
   arma::vec partition = arma::zeros<arma::vec>(n+1);

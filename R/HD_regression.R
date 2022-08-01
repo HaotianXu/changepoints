@@ -1,26 +1,57 @@
+#' @title Simulate the design matrix following AR1
+#' @noRd
+simu_ar_data <- function(ar1_rho, n, Cov_X, burnin=50){
+  p <- dim(Cov_X)[1]
+  X_data <- matrix(0,n+burnin,p)
+  for(time_index in 2:(n+burnin)){
+    # print(time_index)
+    X_data[time_index,] <- ar1_rho*X_data[time_index-1,]+mvrnorm(n=1,mu=rep(0,p),Sigma=Cov_X)
+  }
+  return(X_data[-c(1:burnin),])
+}
+
+#' @title Simulate the design matrix following MA1
+#' @noRd
+simu_ma_data <- function(ma1_theta, n, Cov_X){
+  p <- dim(Cov_X)[1]
+  error_data0 <- mvrnorm(n=1,mu=rep(0,p),Sigma=Cov_X)
+  error_data1 <- mvrnorm(n=1,mu=rep(0,p),Sigma=Cov_X)
+  X_data <- c()
+  for(time_index in 1:n){
+    X_data <- rbind(X_data, error_data1+ma1_theta*error_data0)
+    error_data0 <- error_data1
+    error_data1 <- mvrnorm(n=1,mu=rep(0,p),Sigma=Cov_X)
+  }
+  return(X_data)
+}
+
+
 #' @title Simulate a sparse regression model with change points in coefficients.
-#' @description      Simulate a sparse regression model with change points in coefficients under the setting of Simulations 4.2 in Rinaldo et al. (2021).
-#' @param d0         A \code{numeric} scalar of number of nonzero coefficients.
-#' @param cpt_true   An \code{integer} vector of true change points (sorted in strictly increasing order).
-#' @param p          An \code{integer} scalar of dimensionality.
-#' @param n          An \code{integer} scalar of sample size.
-#' @param sigma      A \code{numeric} scalar of error standard deviation.
-#' @param kappa      A \code{numeric} scalar of minimum jump size of coefficient vector in terms of \eqn{l_2} norm.
+#' @description      Simulate a sparse regression model with change points in coefficients under temporal dependence.
+#' @param d0         A \code{numeric} scalar stands for the number of nonzero coefficients.
+#' @param cpt_true   An \code{integer} vector contains true change points (sorted in strictly increasing order).
+#' @param p          An \code{integer} scalar stands for the dimensionality.
+#' @param n          An \code{integer} scalar stands for the sample size.
+#' @param sigma      A \code{numeric} scalar stands for error standard deviation.
+#' @param kappa      A \code{numeric} scalar stands for the minimum jump size of coefficient vector in \eqn{l_2} norm.
+#' @param cov_type   A \code{character} string stands for the type of covariance matrix of covariates. 'I': Identity; 'T': Toeplitz; 'E': Equal-correlation.
+#' @param mod_X      A \code{character} string stands for the time series model followed by the covariates. 'IID': IID multivariate Gaussian; 'AR': Multivariate AR1 with rho = 0.5; Multivariate MA1 theta = 0.5.
+#' @param mod_e      A \code{character} string stands for the time series model followed by the errors 'IID': IID univariate Gaussian; 'AR': Univariate AR1 with rho = 0.5; Univariate MA1 theta = 0.5.
 #' @return A \code{list} with the following structure:
 #'  \item{cpt_true}{A vector of true changepoints (sorted in strictly increasing order).}
-#'  \item{X}{A p-by-n design matrix.}
-#'  \item{y}{A n-dim vector of response variable.}
+#'  \item{X}{An n-by-p design matrix.}
+#'  \item{y}{An n-dim vector of response variable.}
 #'  \item{betafullmat}{A p-by-n matrix of coefficients.}
 #' @export
-#' @author Daren Wang & Haotian Xu
-#' @references Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>.
+#' @author Daren Wang, Zifeng Zhao & Haotian Xu
+#' @references Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>; Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
 #' @examples
 #' d0 = 10
 #' p = 30
 #' n = 100
 #' cpt_true = c(10, 30, 40, 70, 90)
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-simu.change.regression = function(d0, cpt_true, p, n, sigma, kappa){
+simu.change.regression = function(d0, cpt_true, p, n, sigma, kappa, cov_type = 'I', mod_X = 'IID', mod_e = 'IID'){
   if(d0 >= p){
     stop("d0 should be strictly smaller than p")
   }
@@ -30,11 +61,49 @@ simu.change.regression = function(d0, cpt_true, p, n, sigma, kappa){
   if(kappa <= 0){
     stop("kappa should be strictly larger than 0")
   }
+  if(!is.element(cov_type, c('I', 'T', 'E'))){
+    stop("cov_type should be one element of c('I', 'T', 'E')")
+  }
+  if(!is.element(mod_X, c('IID', 'AR', 'MA'))){
+    stop("mod_X should be one element of c('IID', 'AR', 'MA')")
+  }
+  if(!is.element(mod_e, c('IID', 'AR', 'MA'))){
+    stop("mod_e should be one element of c('IID', 'AR', 'MA')")
+  }
   no.cpt = length(cpt_true)
   if(is.unsorted(cpt_true, strictly = TRUE) | min(cpt_true) <= 1 | max(cpt_true >= n) | no.cpt > n-2){
     stop("cpt_true is not correctly specified")
   }
-  X = matrix(rnorm(p*n,0,1), p, n)
+  ### covariance matrix of X
+  if(cov_type == 'I'){
+    cov_X <- diag(p)
+  }else if(cov_type == 'T'){
+    cov_X <- matrix(NA, nrow = p, ncol = p)
+    for(i in 1:p){
+      for(j in 1:p){
+        cov_X[i,j] = 0.6^(abs(i-j))
+      }
+    }
+  }else if(cov_type == 'E'){
+    cov_X <- matrix(0.3,p,p)
+    diag(cov_X) <- 1
+  }
+  ### time series model of X
+  if(mod_X == "IID"){
+    X = mvrnorm(n = n, mu = rep(0,p), Sigma = cov_X)
+  }else if(mod_X == "AR"){
+    X = simu_ar_data(ar1_rho = 0.5, n = n, cov_X)
+  }else if(mod_X == "MA"){
+    X = simu_ma_data(ma1_theta = 0.5, n = n, cov_X)
+  }
+  ### time series model of errors
+  if(mod_e == "IID"){
+    err = rnorm(n, sigma)
+  }else if(mod_X == "AR"){
+    err = as.numeric(arima.sim(list(order=c(1,0,0), ar=.5), n = n, sd = sqrt(0.75)*sigma))
+  }else if(mod_X == "MA"){
+    err = as.numeric(arima.sim(list(order=c(0,0,1), ma=.5), n = n, sd = sigma/sqrt(1.25)))
+  }
   y = matrix(0, n, 1)
   nonzero.element.loc = c(1:d0)
   cpt = c(0, cpt_true, n)
@@ -47,7 +116,7 @@ simu.change.regression = function(d0, cpt_true, p, n, sigma, kappa){
     else{
       beta[nonzero.element.loc, i] = -kappa/(2*sqrt(d0))
     }
-    y[(1+cpt[i]):cpt[i+1],] = rnorm(cpt[i+1] - cpt[i], t(X[,(1+cpt[i]):cpt[i+1]]) %*% beta[,i], sigma)
+    y[(1+cpt[i]):cpt[i+1],] = X[(1+cpt[i]):cpt[i+1],] %*% beta[,i] + err[(1+cpt[i]):cpt[i+1]]
     for (j in (1+cpt[i]):cpt[i+1]){
       betafullmat[,j] = beta[,i] 
     }
@@ -57,13 +126,14 @@ simu.change.regression = function(d0, cpt_true, p, n, sigma, kappa){
 }
 
 
-#' @title Dynamic programming algorithm for regression change points detection through \eqn{l_0} penalty.
+
+#' @title Dynamic programming algorithm for regression change points localisation with \eqn{l_0} penalisation.
 #' @description     Perform dynamic programming algorithm for regression change points detection.
 #' @param y         A \code{numeric} vector of response variable.
-#' @param X         A \code{numeric} matrix of covariates with horizontal axis being time.
-#' @param gamma     A positive \code{numeric} scalar of tuning parameter associated with \eqn{l_0} penalty.
-#' @param lambda    A positive \code{numeric} scalar of tuning parameter for lasso penalty.
-#' @param delta     A positive \code{integer} scalar of minimum spacing.
+#' @param X         A \code{numeric} matrix of covariates with vertical axis being time.
+#' @param gamma     A positive \code{numeric} scalar stands for tuning parameter associated with \eqn{l_0} penalty.
+#' @param lambda    A positive \code{numeric} scalar stands for tuning parameter associated with the lasso penalty.
+#' @param delta     A positive \code{integer} scalar stands for minimum spacing.
 #' @param eps       A \code{numeric} scalar of precision level for convergence of lasso.
 #' @return An object of \code{\link[base]{class}} "DP", which is a \code{list} with the following structure:
 #'  \item{partition}{A vector of the best partition.}
@@ -92,7 +162,7 @@ DP.regression <- function(y, X, gamma, lambda, delta, eps = 0.001) {
 
 #' @title Internal Function: Prediction error in squared \eqn{l_2} norm for the lasso.
 #' @param y         A \code{numeric} vector of response variable.
-#' @param X         A \code{numeric} matrix of covariates with horizontal axis being time.
+#' @param X         A \code{numeric} matrix of covariates with vertical axis being time.
 #' @param s         An \code{integer} scalar of starting index.
 #' @param e         An \code{integer} scalar of ending index.
 #' @param lambda    A \code{numeric} scalar of tuning parameter for lasso penalty.
@@ -111,7 +181,7 @@ error.pred.seg.regression <- function(y, X, s, e, lambda, delta, eps = 0.001) {
 #' @title Internal function: Cross-validation of dynamic programming algorithm for regression change points detection through \eqn{l_0} penalty.
 #' @description     Perform cross-validation of dynamic programming algorithm for regression change points.
 #' @param y         A \code{numeric} vector of response variable.
-#' @param X         A \code{numeric} matrix of covariates with horizontal axis being time.
+#' @param X         A \code{numeric} matrix of covariates with vertical axis being time.
 #' @param gamma     A \code{numeric} scalar of tuning parameter associated with the \eqn{l_0} penalty.
 #' @param lambda    A \code{numeric} scalar of tuning parameter for the lasso penalty.
 #' @param delta     A strictly \code{integer} scalar of minimum spacing.
@@ -123,15 +193,15 @@ error.pred.seg.regression <- function(y, X, s, e, lambda, delta, eps = 0.001) {
 #'  \item{train_error}{A list of vector of training errors in squared \eqn{l_2} norm}
 #' @noRd
 CV.DP.regression = function(y, X, gamma, lambda, delta, eps = 0.001){
-  N = ncol(X)
+  N = nrow(X)
   even_indexes = seq(2, N, 2)
   odd_indexes = seq(1, N, 2)
-  train.X = X[,odd_indexes]
+  train.X = X[odd_indexes,]
   train.y = y[odd_indexes]
-  validation.X = X[,even_indexes]
+  validation.X = X[even_indexes,]
   validation.y = y[even_indexes]
   init_cpt_train = DP.regression(train.y, train.X, gamma, lambda, delta, eps)$cpt
-  init_cpt_train.long = c(0, init_cpt_train, ncol(train.X))
+  init_cpt_train.long = c(0, init_cpt_train, nrow(train.X))
   diff.point = diff(init_cpt_train.long)
   if (length(which(diff.point == 1)) > 0){
     print(paste("gamma =", gamma,",", "lambda =", lambda, ".","Warning: Consecutive points detected. Try a larger gamma."))
@@ -150,7 +220,7 @@ CV.DP.regression = function(y, X, gamma, lambda, delta, eps = 0.001){
         interval[j,] = c(init_cpt_long[j-1]+1, init_cpt_long[j])
       }
     }
-    p = nrow(train.X)
+    p = ncol(train.X)
     trainmat = sapply(1:(len+1), function(index) error.pred.seg.regression(train.y, train.X, interval[index,1], interval[index,2], lambda, delta, eps))
     betamat = matrix(0, nrow = p, ncol = len+1)
     training_loss = matrix(0, nrow = 1, ncol = len+1)
@@ -169,19 +239,19 @@ CV.DP.regression = function(y, X, gamma, lambda, delta, eps = 0.001){
 #' @param lower     A \code{integer} scalar of starting index.
 #' @param upper     A \code{integer} scalar of ending index.
 #' @param y         A \code{numeric} vector of response variable.
-#' @param X         A \code{numeric} matrix of covariates with horizontal axis being time.
+#' @param X         A \code{numeric} matrix of covariates with vertical axis being time.
 #' @return A numeric scalar of testing error in squared l2 norm.
 #' @noRd
-error.test.regression = function(y, X, lower, upper, beta.hat){
-  res = norm(y[lower:upper] - t(X[,lower:upper])%*%beta.hat, type = "2")^2
+error.test.regression = function(y, X, lower, upper, beta_hat){
+  res = norm(y[lower:upper] - X[lower:upper,]%*%beta_hat, type = "2")^2
   return(res)
 } 
 
 
-#' @title Grid search based on cross-validation of dynamic programming for regression change points detection via \eqn{l_0} penalty.
+#' @title Grid search based on cross-validation of dynamic programming for regression change points localisation with \eqn{l_0} penalisation.
 #' @description Perform grid search to select tuning parameters gamma (for \eqn{l_0} penalty of DP) and lambda (for lasso penalty) based on cross-validation.
 #' @param y             A \code{numeric} vector of response variable.
-#' @param X             A \code{numeric} matrix of covariates with horizontal axis being time.
+#' @param X             A \code{numeric} matrix of covariates with vertical axis being time.
 #' @param gamma_set     A \code{numeric} vector of candidate tuning parameters associated with \eqn{l_0} penalty of DP.
 #' @param lambda_set    A \code{numeric} vector of candidate tuning parameters for lasso penalty.
 #' @param delta         A strictly \code{integer} scalar of minimum spacing.
@@ -228,7 +298,7 @@ CV.search.DP.regression = function(y, X, gamma_set, lambda_set, delta, eps = 0.0
 #' @description     Perform local refinement for regression change points detection.
 #' @param cpt_init  An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
 #' @param y         A \code{numeric} vector of response variable.
-#' @param X         A \code{numeric} matrix of covariates with horizontal axis being time..
+#' @param X         A \code{numeric} matrix of covariates with vertical axis being time..
 #' @param zeta      A \code{numeric} scalar of tuning parameter for the group lasso.
 #' @return  A vector of locally refined change points estimation.
 #' @export
@@ -253,7 +323,7 @@ CV.search.DP.regression = function(y, X, gamma_set, lambda_set, delta, eps = 0.0
 #' @references Rinaldo, Wang, Wen, Willett and Yu (2020) <arxiv:2010.10410>
 local.refine.regression = function(cpt_init, y, X, zeta){
   w = 0.9
-  n = ncol(X)
+  n = nrow(X)
   cpt_init_ext = c(0, cpt_init, n)
   cpt_init_numb = length(cpt_init)
   cpt_refined = rep(0, cpt_init_numb+1)
@@ -274,14 +344,14 @@ local.refine.regression = function(cpt_init, y, X, zeta){
 #' @param s_extra   An \code{integer} scalar of extrapolated starting index.
 #' @param e_extra   An \code{integer} scalar of extrapolated ending index.
 #' @param y         A \code{numeric} vector of response variable.
-#' @param X         A \code{numeric} matrix of covariates with horizontal axis being time.
+#' @param X         A \code{numeric} matrix of covariates with vertical axis being time.
 #' @param zeta      A \code{numeric} scalar of tuning parameter for the group lasso.
 #' @noRd
 obj.LR.regression = function(s_extra, e_extra, eta, y, X, zeta){
-  n = ncol(X)
-  p = nrow(X)
+  n = nrow(X)
+  p = ncol(X)
   group = rep(1:p, 2)
-  X_convert = X.glasso.converter.regression(X[,s_extra:e_extra], eta, s_extra)
+  X_convert = X.glasso.converter.regression(X[s_extra:e_extra,], eta, s_extra)
   y_convert = y[s_extra:e_extra]
   lambda_LR = zeta*sqrt(log(max(n, p)))
   auxfit = gglasso(x = X_convert, y = y_convert, group = group, loss="ls",
@@ -296,17 +366,17 @@ obj.LR.regression = function(s_extra, e_extra, eta, y, X, zeta){
 
 #' @title Internal Function: Compute prediction error based on different zeta.
 #' @param y       A \code{numeric} vector of response variable.
-#' @param X       A \code{numeric} matrix of covariates with horizontal axis being time.
+#' @param X       A \code{numeric} matrix of covariates with vertical axis being time.
 #' @param lower   An \code{integer} scalar of starting index.
 #' @param upper   An \code{integer} scalar of ending index.
 #' @param zeta    A \code{numeric} scalar of tuning parameter for group lasso.
 #' @noRd
 distance.CV.LR = function(y, X, lower, upper, zeta){
-  n = ncol(X)
-  p = nrow(X)
+  n = nrow(X)
+  p = ncol(X)
   lambda_LR = zeta*sqrt(log(max(n,p)))
-  fit = glmnet(x = t(X[,lower:upper]), y = y[lower:upper], lambda = lambda_LR)
-  yhat = t(X[,lower:upper]) %*% as.vector(fit$beta)
+  fit = glmnet(x = X[lower:upper,], y = y[lower:upper], lambda = lambda_LR)
+  yhat = X[lower:upper,] %*% as.vector(fit$beta)
   d = norm(y[lower:upper] - yhat, type = "2")
   result = list("MSE" = d^2, "beta" = as.vector(fit$beta))
   return(result)
@@ -331,12 +401,12 @@ distance.CV.LR = function(y, X, lower, upper, zeta){
 #' } 
 #' @noRd
 CV.DP.LR.regression = function(y, X, gamma, lambda, zeta, delta, eps = 0.001){
-  n = ncol(X)
+  n = nrow(X)
   even_indexes = seq(2,n,2)
   odd_indexes = seq(1,n,2)
-  train.X = X[,odd_indexes]
+  train.X = X[odd_indexes,]
   train.y = y[odd_indexes]
-  validation.X = X[,even_indexes]
+  validation.X = X[even_indexes,]
   validation.y = y[even_indexes]
   init_cpt_train = DP.regression(train.y, train.X, gamma, lambda, delta, eps)$cpt
   if(length(init_cpt_train) != 0){
@@ -357,7 +427,7 @@ CV.DP.LR.regression = function(y, X, gamma, lambda, zeta, delta, eps = 0.001){
       interval[j,] = c(init_cp_long[j-1]+1, init_cp_long[j])
     }
   }
-  p = nrow(train.X)
+  p = ncol(train.X)
   trainmat = sapply(1:(len+1), function(index) distance.CV.LR(train.y, train.X, interval[index,1], interval[index,2], zeta))
   betamat = matrix(0, nrow = p, ncol = len+1)
   training_loss = matrix(0, nrow = 1, ncol = len+1)                
@@ -402,7 +472,7 @@ CV.search.DP.LR.gl = function(y, X, gamma.set, lambda.set, zeta, delta, eps = 0.
 #' @title Grid search based on Cross-Validation of all tuning parameters (gamma, lambda and zeta) for regression.
 #' @description Perform grid search based on Cross-Validation of all tuning parameters (gamma, lambda and zeta)
 #' @param y             A \code{numeric} vector of response variable.
-#' @param X             A \code{numeric} matrix of covariates with horizontal axis being time.
+#' @param X             A \code{numeric} matrix of covariates with vertical axis being time.
 #' @param gamma_set     A \code{numeric} vector of candidate tuning parameter associated with the l0 penalty.
 #' @param lambda_set    A \code{numeric} vector of candidate tuning parameter for the lasso penalty.
 #' @param zeta_set      A \code{numeric} vector of candidate tuning parameter for the group lasso.
@@ -464,8 +534,8 @@ CV.search.DP.LR.regression = function(y, X, gamma_set, lambda_set, zeta_set, del
 #' @return A n-by-(2p) matrix
 #' @noRd
 X.glasso.converter.regression = function(X, eta, s_ceil){
-  n = ncol(X)
-  xx1 = xx2 = t(X)
+  n = nrow(X)
+  xx1 = xx2 = X
   t = eta - s_ceil + 1
   xx1[(t+1):n,] = 0
   xx2[1:t,] = 0
@@ -489,14 +559,14 @@ X.glasso.converter.regression = function(X, eta, s_ceil){
 #'  \item{cpt}{A vector of change points estimation.}
 #' @export
 #' @author Haotian Xu
-#' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>
+#' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
 #' @examples
 #' d0 = 10
 #' p = 20
 #' n = 100
 #' cpt_true = c(30, 70)
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-#' temp = DPDU.regression(y = data$y, X = t(data$X), lambda = 1, zeta = 10)
+#' temp = DPDU.regression(y = data$y, X = data$X, lambda = 1, zeta = 10)
 #' cpt_hat = temp$cpt
 #' @export
 DPDU.regression <- function(y, X, lambda, zeta, eps = 0.001) {

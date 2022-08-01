@@ -11,7 +11,7 @@ local.refine.regression(cpt_init, y, X, zeta)
 
 \item{y}{A \code{numeric} vector of response variable.}
 
-\item{X}{A \code{numeric} matrix of covariates with horizontal axis being time..}
+\item{X}{A \code{numeric} matrix of covariates with vertical axis being time..}
 
 \item{zeta}{A \code{numeric} scalar of tuning parameter for the group lasso.}
 }

@@ -2,20 +2,20 @@
 % Please edit documentation in R/HD_regression.R
 \name{DP.regression}
 \alias{DP.regression}
-\title{Dynamic programming algorithm for regression change points detection through \eqn{l_0} penalty.}
+\title{Dynamic programming algorithm for regression change points localisation with \eqn{l_0} penalisation.}
 \usage{
 DP.regression(y, X, gamma, lambda, delta, eps = 0.001)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of response variable.}
 
-\item{X}{A \code{numeric} matrix of covariates with horizontal axis being time.}
+\item{X}{A \code{numeric} matrix of covariates with vertical axis being time.}
 
-\item{gamma}{A positive \code{numeric} scalar of tuning parameter associated with \eqn{l_0} penalty.}
+\item{gamma}{A positive \code{numeric} scalar stands for tuning parameter associated with \eqn{l_0} penalty.}
 
-\item{lambda}{A positive \code{numeric} scalar of tuning parameter for lasso penalty.}
+\item{lambda}{A positive \code{numeric} scalar stands for tuning parameter associated with the lasso penalty.}
 
-\item{delta}{A positive \code{integer} scalar of minimum spacing.}
+\item{delta}{A positive \code{integer} scalar stands for minimum spacing.}
 
 \item{eps}{A \code{numeric} scalar of precision level for convergence of lasso.}
 }

@@ -2,14 +2,14 @@
 % Please edit documentation in R/HD_regression.R
 \name{CV.search.DP.regression}
 \alias{CV.search.DP.regression}
-\title{Grid search based on cross-validation of dynamic programming for regression change points detection via \eqn{l_0} penalty.}
+\title{Grid search based on cross-validation of dynamic programming for regression change points localisation with \eqn{l_0} penalisation.}
 \usage{
 CV.search.DP.regression(y, X, gamma_set, lambda_set, delta, eps = 0.001)
 }
 \arguments{
 \item{y}{A \code{numeric} vector of response variable.}
 
-\item{X}{A \code{numeric} matrix of covariates with horizontal axis being time.}
+\item{X}{A \code{numeric} matrix of covariates with vertical axis being time.}
 
 \item{gamma_set}{A \code{numeric} vector of candidate tuning parameters associated with \eqn{l_0} penalty of DP.}
 

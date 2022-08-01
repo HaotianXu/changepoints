@@ -31,11 +31,11 @@ p = 20
 n = 100
 cpt_true = c(30, 70)
 data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-temp = DPDU.regression(y = data$y, X = t(data$X), lambda = 1, zeta = 10)
+temp = DPDU.regression(y = data$y, X = data$X, lambda = 1, zeta = 10)
 cpt_hat = temp$cpt
 }
 \references{
-Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>
+Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
 }
 \author{
 Haotian Xu
