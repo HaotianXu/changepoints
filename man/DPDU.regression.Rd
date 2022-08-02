@@ -2,7 +2,7 @@
 % Please edit documentation in R/HD_regression.R
 \name{DPDU.regression}
 \alias{DPDU.regression}
-\title{Dynamic programming with dynamic update algorithm for regression change points detection through \eqn{l_0} penalty.}
+\title{Dynamic programming with dynamic update algorithm for regression change points localisation with \eqn{l_0} penalisation.}
 \usage{
 DPDU.regression(y, X, lambda, zeta, eps = 0.001)
 }
@@ -23,7 +23,7 @@ An object of \code{\link[base]{class}} "DP", which is a \code{list} with the fol
  \item{cpt}{A vector of change points estimation.}
 }
 \description{
-Perform DPDU algorithm for regression change points detection.
+Perform DPDU algorithm for regression change points localisation.
 }
 \examples{
 d0 = 10

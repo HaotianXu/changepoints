@@ -25,7 +25,7 @@ An object of \code{\link[base]{class}} "DP", which is a \code{list} with the fol
  \item{cpt}{A vector of change points estimation.}
 }
 \description{
-Perform dynamic programming algorithm for regression change points detection.
+Perform dynamic programming algorithm for regression change points localisation.
 }
 \examples{
 d0 = 10

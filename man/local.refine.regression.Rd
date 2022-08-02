@@ -2,7 +2,7 @@
 % Please edit documentation in R/HD_regression.R
 \name{local.refine.regression}
 \alias{local.refine.regression}
-\title{Local refinement for regression change points detection.}
+\title{Local refinement for regression change points localisation.}
 \usage{
 local.refine.regression(cpt_init, y, X, zeta)
 }
@@ -19,7 +19,7 @@ local.refine.regression(cpt_init, y, X, zeta)
 A vector of locally refined change points estimation.
 }
 \description{
-Perform local refinement for regression change points detection.
+Perform local refinement for regression change points localisation.
 }
 \examples{
 d0 = 10
