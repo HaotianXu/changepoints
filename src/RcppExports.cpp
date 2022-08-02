@@ -258,8 +258,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_lassoDPDU
-Rcpp::List rcpp_lassoDPDU(const arma::mat& Mtilde, const arma::colvec& Vtilde, const arma::vec& Xmeans, const double& Ymean, const arma::vec& weights, int n, double lambda, double eps);
-RcppExport SEXP _changepoints_rcpp_lassoDPDU(SEXP MtildeSEXP, SEXP VtildeSEXP, SEXP XmeansSEXP, SEXP YmeanSEXP, SEXP weightsSEXP, SEXP nSEXP, SEXP lambdaSEXP, SEXP epsSEXP) {
+Rcpp::List rcpp_lassoDPDU(const arma::mat& Mtilde, const arma::colvec& Vtilde, const arma::vec& Xmeans, const double& Ymean, const arma::vec& weights, const arma::colvec& beta_start, int n, double lambda, double eps);
+RcppExport SEXP _changepoints_rcpp_lassoDPDU(SEXP MtildeSEXP, SEXP VtildeSEXP, SEXP XmeansSEXP, SEXP YmeanSEXP, SEXP weightsSEXP, SEXP beta_startSEXP, SEXP nSEXP, SEXP lambdaSEXP, SEXP epsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -268,10 +268,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::vec& >::type Xmeans(XmeansSEXP);
     Rcpp::traits::input_parameter< const double& >::type Ymean(YmeanSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type beta_start(beta_startSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_lassoDPDU(Mtilde, Vtilde, Xmeans, Ymean, weights, n, lambda, eps));
+    rcpp_result_gen = Rcpp::wrap(rcpp_lassoDPDU(Mtilde, Vtilde, Xmeans, Ymean, weights, beta_start, n, lambda, eps));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -374,7 +375,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_changepoints_rcpp_lassoDPDU_standardized_obj", (DL_FUNC) &_changepoints_rcpp_lassoDPDU_standardized_obj, 5},
     {"_changepoints_rcpp_lassoDPDU_standardized", (DL_FUNC) &_changepoints_rcpp_lassoDPDU_standardized, 6},
     {"_changepoints_rcpp_lassoDPDU_standardized_seq", (DL_FUNC) &_changepoints_rcpp_lassoDPDU_standardized_seq, 5},
-    {"_changepoints_rcpp_lassoDPDU", (DL_FUNC) &_changepoints_rcpp_lassoDPDU, 8},
+    {"_changepoints_rcpp_lassoDPDU", (DL_FUNC) &_changepoints_rcpp_lassoDPDU, 9},
     {"_changepoints_rcpp_DPDU_regression", (DL_FUNC) &_changepoints_rcpp_DPDU_regression, 5},
     {"_changepoints_rcpp_soft_threshold", (DL_FUNC) &_changepoints_rcpp_soft_threshold, 2},
     {"_changepoints_rcpp_soft_impute", (DL_FUNC) &_changepoints_rcpp_soft_impute, 5},
