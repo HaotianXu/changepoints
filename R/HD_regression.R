@@ -128,7 +128,7 @@ simu.change.regression = function(d0, cpt_true, p, n, sigma, kappa, cov_type = '
 
 
 #' @title Dynamic programming algorithm for regression change points localisation with \eqn{l_0} penalisation.
-#' @description     Perform dynamic programming algorithm for regression change points detection.
+#' @description     Perform dynamic programming algorithm for regression change points localisation.
 #' @param y         A \code{numeric} vector of response variable.
 #' @param X         A \code{numeric} matrix of covariates with vertical axis being time.
 #' @param gamma     A positive \code{numeric} scalar stands for tuning parameter associated with \eqn{l_0} penalty.
@@ -178,7 +178,7 @@ error.pred.seg.regression <- function(y, X, s, e, lambda, delta, eps = 0.001) {
 
 
 
-#' @title Internal function: Cross-validation of dynamic programming algorithm for regression change points detection through \eqn{l_0} penalty.
+#' @title Internal function: Cross-validation of dynamic programming algorithm for regression change points localisation through \eqn{l_0} penalisation.
 #' @description     Perform cross-validation of dynamic programming algorithm for regression change points.
 #' @param y         A \code{numeric} vector of response variable.
 #' @param X         A \code{numeric} matrix of covariates with vertical axis being time.
@@ -294,8 +294,8 @@ CV.search.DP.regression = function(y, X, gamma_set, lambda_set, delta, eps = 0.0
 
 
 
-#' @title Local refinement for regression change points detection.
-#' @description     Perform local refinement for regression change points detection.
+#' @title Local refinement for regression change points localisation.
+#' @description     Perform local refinement for regression change points localisation.
 #' @param cpt_init  An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
 #' @param y         A \code{numeric} vector of response variable.
 #' @param X         A \code{numeric} matrix of covariates with vertical axis being time..
@@ -547,8 +547,8 @@ X.glasso.converter.regression = function(X, eta, s_ceil){
 
 
 
-#' @title Dynamic programming with dynamic update algorithm for regression change points detection through \eqn{l_0} penalty.
-#' @description     Perform DPDU algorithm for regression change points detection.
+#' @title Dynamic programming with dynamic update algorithm for regression change points localisation with \eqn{l_0} penalisation.
+#' @description     Perform DPDU algorithm for regression change points localisation.
 #' @param y         A \code{numeric} vector of response variable.
 #' @param X         A \code{numeric} matrix of covariates with vertical axis being time.
 #' @param lambda    A positive \code{numeric} scalar of tuning parameter for lasso penalty.
