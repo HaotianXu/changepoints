@@ -99,8 +99,6 @@ Rcpp::List rcpp_DPDU_regression(const arma::vec& y, const arma::mat& X, double l
   arma::vec Vtilde(p,arma::fill::zeros);
   Rcpp::List lassofit;
   arma::vec beta_hat;
-  arma::vec lambda_seq(1,arma::fill::zeros);
-  lambda_seq(0) = lambda;
   arma::colvec beta_start(p,arma::fill::zeros);
   int n = 0;
   for(int i = 1; i < N+1; ++i){
