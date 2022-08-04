@@ -566,7 +566,7 @@ X.glasso.converter.regression = function(X, eta, s_ceil){
 #' n = 100
 #' cpt_true = c(30, 70)
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-#' temp = DPDU.regression(y = data$y, X = data$X, lambda = 1, zeta = 10)
+#' temp = DPDU.regression(y = data$y, X = data$X, lambda = 1, zeta = 20)
 #' cpt_hat = temp$cpt
 #' @export
 DPDU.regression <- function(y, X, lambda, zeta, eps = 0.001) {
@@ -577,3 +577,59 @@ DPDU.regression <- function(y, X, lambda, zeta, eps = 0.001) {
 }
 
 
+
+#' #' @title Internal function: Cross-validation for DPDU.
+#' #' @description     Perform cross-validation of dynamic programming algorithm for regression change points.
+#' #' @param y         A \code{numeric} vector of response variable.
+#' #' @param X         A \code{numeric} matrix of covariates with vertical axis being time.
+#' #' @param lambda    A positive \code{numeric} scalar of tuning parameter for lasso penalty.
+#' #' @param zeta      A positive \code{integer} scalar of tuning parameter associated with \eqn{l_0} penalty (minimum interval size).
+#' #' @param eps       A \code{numeric} scalar of precision level for convergence of lasso.
+#' #' @return  A \code{list} with the following structure:
+#' #'  \item{cpt_hat}{A vector of estimated change points locations (sorted in strictly increasing order)}
+#' #'  \item{K_hat}{A scalar of number of estimated change points}
+#' #'  \item{test_error}{A list of vector of testing errors in squared \eqn{l_2} norm}
+#' #'  \item{train_error}{A list of vector of training errors in squared \eqn{l_2} norm}
+#' #' @noRd
+#' CV.DPDU.regression = function(y, X, lambda, zeta, eps = 0.001){
+#'   N = nrow(X)
+#'   even_indexes = seq(2, N, 2)
+#'   odd_indexes = seq(1, N, 2)
+#'   train.X = X[odd_indexes,]
+#'   train.y = y[odd_indexes]
+#'   validation.X = X[even_indexes,]
+#'   validation.y = y[even_indexes]
+#'   init_cpt_train = DPDU.regression(train.y, train.X, lambda, zeta, eps)$cpt
+#'   init_cpt_train.long = c(0, init_cpt_train, nrow(train.X))
+#'   diff.point = diff(init_cpt_train.long)
+#'   if (length(which(diff.point == 1)) > 0){
+#'     print(paste("lambda =", lambda,",", "zeta =", zeta, ".","Warning: Consecutive points detected. Try a larger zeta"))
+#'     init_cpt = odd_indexes[init_cpt_train]
+#'     len = length(init_cpt)
+#'     result = list(cpt_hat = init_cpt, K_hat = len, test_error = Inf, train_error = Inf)
+#'   }
+#'   else{
+#'     init_cpt = odd_indexes[init_cpt_train]
+#'     len = length(init_cpt)
+#'     init_cpt_long = c(init_cpt_train, floor(N/2))
+#'     interval = matrix(0, nrow = len+1, ncol = 2)
+#'     interval[1,] = c(1, init_cpt_long[1])
+#'     if(len > 0){
+#'       for(j in 2:(1+len)){
+#'         interval[j,] = c(init_cpt_long[j-1]+1, init_cpt_long[j])
+#'       }
+#'     }
+#'     p = ncol(train.X)
+#'     trainmat = sapply(1:(len+1), function(index) error.pred.seg.regression(train.y, train.X, interval[index,1], interval[index,2], lambda, delta, eps))
+#'     betamat = matrix(0, nrow = p, ncol = len+1)
+#'     training_loss = matrix(0, nrow = 1, ncol = len+1)
+#'     for(col in 1:(len+1)){
+#'       betamat[,col] = as.numeric(trainmat[2,col]$beta_hat)
+#'       training_loss[,col] = as.numeric(trainmat[1,col]$MSE)
+#'     }
+#'     validationmat = sapply(1:(len+1), function(index) error.test.regression(validation.y, validation.X, interval[index,1], interval[index,2], betamat[,index]))
+#'     result = list(cpt_hat = init_cpt, K_hat = len, test_error = sum(validationmat), train_error = sum(training_loss))
+#'   }
+#'   return(result)
+#' }
+#' 
