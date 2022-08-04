@@ -98,9 +98,9 @@ Rcpp::List rcpp_DPDU_regression(const arma::vec& y, const arma::mat& X, double l
   arma::mat Mtilde(p,p,arma::fill::zeros);
   arma::vec Vtilde(p,arma::fill::zeros);
   Rcpp::List lassofit;
-  arma::mat beta_mat_temp(p,N,arma::fill::zeros);
-  arma::mat beta_mat_temp2(p,N,arma::fill::zeros);
-  arma::mat beta_mat(p,N,arma::fill::zeros);
+  arma::mat beta_mat_temp(p+1,N,arma::fill::zeros);
+  arma::mat beta_mat_temp2(p+1,N,arma::fill::zeros);
+  arma::mat beta_mat(p+1,N,arma::fill::zeros);
   arma::colvec beta_start(p,arma::fill::zeros);
   int n = 0;
   for(int i = 1; i < N+1; ++i){
@@ -118,7 +118,8 @@ Rcpp::List rcpp_DPDU_regression(const arma::vec& y, const arma::mat& X, double l
       if(n >= zeta){
         lassofit = rcpp_lassoDPDU(Mtilde, Vtilde, Xmeans_new.row(l-1).t(), Ymean_new(l-1), weights, beta_start, n, lambda*sqrt(std::max(log(std::max(N,p)), (n-1.0)))*sqrt(log(std::max(N,p)))/(n), eps);
         beta_start = Rcpp::as<arma::vec>(lassofit["lasso_fit"]);
-        beta_mat_temp.col(l-1) = Rcpp::as<arma::vec>(lassofit["beta_hat"]);
+        beta_mat_temp(0,l-1) = Rcpp::as<double>(lassofit["beta0"]);
+        beta_mat_temp(arma::span(1,p),l-1) = Rcpp::as<arma::vec>(lassofit["beta_hat"]);
         b = bestvalue(l-1) + zeta + Rcpp::as<double>(lassofit["loss"]);
       }else{
         b = 0;
