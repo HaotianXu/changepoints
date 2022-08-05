@@ -9,6 +9,8 @@ local.refine.DPDU.regression(cpt_init, beta_hat, y, X, w = 0.9)
 \arguments{
 \item{cpt_init}{An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
 
+\item{beta_hat}{A \code{numeric} (px(K_hat+1))matrix of estimated regression coefficients.}
+
 \item{y}{A \code{numeric} vector of response variable.}
 
 \item{X}{A \code{numeric} matrix of covariates with vertical axis being time..}

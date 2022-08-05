@@ -19,10 +19,11 @@ CV.search.DPDU.regression(y, X, lambda_set, zeta_set, eps = 0.001)
 }
 \value{
 A \code{list} with the following structure:
- \item{cpt_hat}{A list of vector of estimated change points}
- \item{K_hat}{A list of scalar of number of estimated change points}
- \item{test_error}{A list of vector of testing errors (each row corresponding to each gamma, and each column corresponding to each lambda)}
- \item{train_error}{A list of vector of training errors}
+ \item{cpt_hat}{A list of vectors of estimated change points}
+ \item{K_hat}{A list of scalars of number of estimated change points}
+ \item{test_error}{A matrix of testing errors (each row corresponding to each gamma, and each column corresponding to each lambda)}
+ \item{train_error}{A matrix of training errors}
+ \item{beta_hat}{A list of matrices of estimated regression coefficients}
 }
 \description{
 Perform grid search to select tuning parameters gamma (for \eqn{l_0} penalty of DP) and lambda (for lasso penalty) based on cross-validation.

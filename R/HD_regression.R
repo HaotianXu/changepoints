@@ -631,10 +631,11 @@ CV.DPDU.regression = function(y, X, lambda, zeta, eps = 0.001){
 #' @param zeta_set      An \code{integer} vector of tuning parameter associated with \eqn{l_0} penalty (minimum interval size).
 #' @param eps           A \code{numeric} scalar of precision level for convergence of lasso.
 #' @return  A \code{list} with the following structure:
-#'  \item{cpt_hat}{A list of vector of estimated change points}
-#'  \item{K_hat}{A list of scalar of number of estimated change points}
-#'  \item{test_error}{A list of vector of testing errors (each row corresponding to each gamma, and each column corresponding to each lambda)}
-#'  \item{train_error}{A list of vector of training errors}
+#'  \item{cpt_hat}{A list of vectors of estimated change points}
+#'  \item{K_hat}{A list of scalars of number of estimated change points}
+#'  \item{test_error}{A matrix of testing errors (each row corresponding to each gamma, and each column corresponding to each lambda)}
+#'  \item{train_error}{A matrix of training errors}
+#'  \item{beta_hat}{A list of matrices of estimated regression coefficients}
 #' @export
 #' @author Haotian Xu
 #' @examples
@@ -670,6 +671,7 @@ CV.search.DPDU.regression = function(y, X, lambda_set, zeta_set, eps = 0.001){
 #' @title Local refinement for DPDU regression change points localisation.
 #' @description     Perform local refinement for regression change points localisation.
 #' @param cpt_init  An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
+#' @param beta_hat  A \code{numeric} (px(K_hat+1))matrix of estimated regression coefficients.
 #' @param y         A \code{numeric} vector of response variable.
 #' @param X         A \code{numeric} matrix of covariates with vertical axis being time..
 #' @param w         A \code{numeric} scalar in (0,1) representing the weight for interval truncation.
