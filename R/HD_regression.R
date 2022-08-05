@@ -618,7 +618,7 @@ CV.DPDU.regression = function(y, X, lambda, zeta, eps = 0.001){
     test_error = test_error + lassoDPDU_error(validation.y[(init_test_cpt_long[i]+1):init_test_cpt_long[i+1]], cbind(rep(1, nrow(validation.X)), validation.X)[(init_test_cpt_long[i]+1):init_test_cpt_long[i+1],], init_train_beta[,i])
   }
   init_cpt = odd_indexes[init_train_cpt]
-  result = list(cpt_hat = init_cpt, K_hat = len-1, test_error = test_error, train_error = train_error)
+  result = list(cpt_hat = init_cpt, K_hat = len-1, test_error = test_error, train_error = train_error, beta_hat = init_train_beta)
   return(result)
 }
 
@@ -638,10 +638,10 @@ CV.DPDU.regression = function(y, X, lambda, zeta, eps = 0.001){
 #' @export
 #' @author Haotian Xu
 #' @examples
-#' d0 = 10
-#' p = 20
-#' n = 100
-#' cpt_true = c(30, 70)
+#' d0 = 5
+#' p = 30
+#' n = 200
+#' cpt_true = 100
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 #' lambda_set = c(0.01, 0.1, 1, 2)
 #' zeta_set = c(10, 15, 20)
@@ -652,14 +652,62 @@ CV.DPDU.regression = function(y, X, lambda, zeta, eps = 0.001){
 #' lambda_set[min_idx[2]]
 #' zeta_set[min_idx[1]]
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
+#' beta_hat = matrix(unlist(temp$beta_hat[min_idx[1], min_idx[2]]), ncol = length(cpt_init)+1)
 #' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
 CV.search.DPDU.regression = function(y, X, lambda_set, zeta_set, eps = 0.001){
   output = sapply(1:length(lambda_set), function(i) sapply(1:length(zeta_set), 
                                                            function(j) CV.DPDU.regression(y, X, lambda_set[i], zeta_set[j])))
-  cpt_hat = output[seq(1,4*length(zeta_set),4),]## estimated change points
-  K_hat = output[seq(2,4*length(zeta_set),4),]## number of estimated change points
-  test_error = output[seq(3,4*length(zeta_set),4),]## validation loss
-  train_error = output[seq(4,4*length(zeta_set),4),]## training loss                                                      
-  result = list(cpt_hat = cpt_hat, K_hat = K_hat, test_error = test_error, train_error = train_error)
+  cpt_hat = output[seq(1,5*length(zeta_set),5),]## estimated change points
+  K_hat = output[seq(2,5*length(zeta_set),5),]## number of estimated change points
+  test_error = output[seq(3,5*length(zeta_set),5),]## validation loss
+  train_error = output[seq(4,5*length(zeta_set),5),]## training loss
+  beta_hat = output[seq(5,5*length(zeta_set),5),]
+  result = list(cpt_hat = cpt_hat, K_hat = K_hat, test_error = test_error, train_error = train_error, beta_hat = beta_hat)
   return(result)
 }
+
+
+#' @title Local refinement for DPDU regression change points localisation.
+#' @description     Perform local refinement for regression change points localisation.
+#' @param cpt_init  An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
+#' @param y         A \code{numeric} vector of response variable.
+#' @param X         A \code{numeric} matrix of covariates with vertical axis being time..
+#' @param w         A \code{numeric} scalar in (0,1) representing the weight for interval truncation.
+#' @return  A vector of locally refined change points estimation.
+#' @export
+#' @author Haotian Xu
+#' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
+#' @examples
+#' d0 = 5
+#' p = 30
+#' n = 200
+#' cpt_true = 100
+#' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
+#' lambda_set = c(0.01, 0.1, 1, 2)
+#' zeta_set = c(10, 15, 20)
+#' temp = CV.search.DPDU.regression(y = data$y, X = data$X, lambda_set, zeta_set)
+#' temp$test_error # test error result
+#' # find the indices of lambda_set and zeta_set which minimizes the test error
+#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
+#' lambda_set[min_idx[2]]
+#' zeta_set[min_idx[1]]
+#' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
+#' beta_hat = matrix(unlist(temp$beta_hat[min_idx[1], min_idx[2]]), ncol = length(cpt_init)+1)
+#' cpt_refined = local.refine.DPDU.regression(cpt_init, beta_hat, data$y, data$X, w = 0.9)
+#' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
+local.refine.DPDU.regression = function(cpt_init, beta_hat, y, X, w = 0.9){
+  n = nrow(X)
+  cpt_init_long = c(0, cpt_init, n)
+  cpt_init_numb = length(cpt_init)
+  cpt_refined = rep(0, cpt_init_numb+1)
+  for (k in 1:cpt_init_numb){
+    s = w*cpt_init_long[k] + (1-w)*cpt_init_long[k+1]
+    e = (1-w)*cpt_init_long[k+1] + w*cpt_init_long[k+2]
+    lower = ceiling(s) + 2
+    upper = floor(e) - 2
+    b = sapply(lower:upper, function(eta)(lassoDPDU_error(y[ceiling(s):eta], cbind(rep(1, n), X)[ceiling(s):eta,], beta_hat[,k]) + lassoDPDU_error(y[(eta+1):floor(e)], cbind(rep(1, n), X)[(eta+1):floor(e),], beta_hat[,k+1])))
+    cpt_refined[k+1] = ceiling(s) + which.min(b)
+  }
+  return(cpt_refined[-1])
+}
+

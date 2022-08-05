@@ -28,10 +28,10 @@ A \code{list} with the following structure:
 Perform grid search to select tuning parameters gamma (for \eqn{l_0} penalty of DP) and lambda (for lasso penalty) based on cross-validation.
 }
 \examples{
-d0 = 10
-p = 20
-n = 100
-cpt_true = c(30, 70)
+d0 = 5
+p = 30
+n = 200
+cpt_true = 100
 data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 lambda_set = c(0.01, 0.1, 1, 2)
 zeta_set = c(10, 15, 20)
@@ -42,6 +42,7 @@ min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error)))
 lambda_set[min_idx[2]]
 zeta_set[min_idx[1]]
 cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
+beta_hat = matrix(unlist(temp$beta_hat[min_idx[1], min_idx[2]]), ncol = length(cpt_init)+1)
 }
 \references{
 Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
