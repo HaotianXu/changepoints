@@ -152,6 +152,12 @@ Rcpp::List rcpp_DPDU_regression(const arma::vec& y, const arma::mat& X, double l
 
 
 
+// [[Rcpp::export]]
+double rcpp_lassoDPDU_error(const arma::vec& y, const arma::mat& X, const arma::colvec& beta_hat){
+  double error = accu(square(y - X * beta_hat));
+  return error;
+}
+
 
 
 

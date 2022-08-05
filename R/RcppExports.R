@@ -77,6 +77,10 @@ rcpp_DPDU_regression <- function(y, X, lambda, zeta, eps) {
     .Call('_changepoints_rcpp_DPDU_regression', PACKAGE = 'changepoints', y, X, lambda, zeta, eps)
 }
 
+rcpp_lassoDPDU_error <- function(y, X, beta_hat) {
+    .Call('_changepoints_rcpp_lassoDPDU_error', PACKAGE = 'changepoints', y, X, beta_hat)
+}
+
 rcpp_soft_threshold <- function(x_mat, lambda) {
     .Call('_changepoints_rcpp_soft_threshold', PACKAGE = 'changepoints', x_mat, lambda)
 }

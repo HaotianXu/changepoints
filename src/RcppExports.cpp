@@ -291,6 +291,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_lassoDPDU_error
+double rcpp_lassoDPDU_error(const arma::vec& y, const arma::mat& X, const arma::colvec& beta_hat);
+RcppExport SEXP _changepoints_rcpp_lassoDPDU_error(SEXP ySEXP, SEXP XSEXP, SEXP beta_hatSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type beta_hat(beta_hatSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_lassoDPDU_error(y, X, beta_hat));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_soft_threshold
 Rcpp::List rcpp_soft_threshold(arma::mat& x_mat, double lambda);
 RcppExport SEXP _changepoints_rcpp_soft_threshold(SEXP x_matSEXP, SEXP lambdaSEXP) {
@@ -377,6 +390,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_changepoints_rcpp_lassoDPDU_standardized_seq", (DL_FUNC) &_changepoints_rcpp_lassoDPDU_standardized_seq, 5},
     {"_changepoints_rcpp_lassoDPDU", (DL_FUNC) &_changepoints_rcpp_lassoDPDU, 9},
     {"_changepoints_rcpp_DPDU_regression", (DL_FUNC) &_changepoints_rcpp_DPDU_regression, 5},
+    {"_changepoints_rcpp_lassoDPDU_error", (DL_FUNC) &_changepoints_rcpp_lassoDPDU_error, 3},
     {"_changepoints_rcpp_soft_threshold", (DL_FUNC) &_changepoints_rcpp_soft_threshold, 2},
     {"_changepoints_rcpp_soft_impute", (DL_FUNC) &_changepoints_rcpp_soft_impute, 5},
     {"_changepoints_rcpp_lambda", (DL_FUNC) &_changepoints_rcpp_lambda, 8},
