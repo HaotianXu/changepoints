@@ -17,10 +17,10 @@ LRV.regression(cpt_init, beta_hat, y, X, w = 0.9, pair_numb)
 
 \item{w}{A \code{numeric} scalar in (0,1) representing the weight for interval truncation.}
 
-\item{pair_numb}{A \code{integer} scalar corresponding to R in the paper.}
+\item{pair_numb}{An \code{integer} scalar corresponding to R in the paper.}
 }
 \value{
-A vector of locally refined change points estimation.
+A vector of long-run variance estimators associated with all local refined intervals.
 }
 \description{
 Estimating long-run variance for regression settings with change points.
@@ -41,7 +41,8 @@ lambda_set[min_idx[2]]
 zeta_set[min_idx[1]]
 cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 beta_hat = matrix(unlist(temp$beta_hat[min_idx[1], min_idx[2]]), ncol = length(cpt_init)+1)
-pair_numb = 14
+interval_refine = trim_interval(n, cpt_init)
+pair_numb = ceiling(sqrt(min(floor(interval_refine[,2]) - ceiling(interval_refine[,1])))) # choose R
 LRV_est = LRV.regression(cpt_init, beta_hat, data$y, data$X, w = 0.9, pair_numb)
 }
 \references{

@@ -715,6 +715,30 @@ local.refine.DPDU.regression = function(cpt_init, beta_hat, y, X, w = 0.9){
 
 
 
+#' @title Interval trimming based on initial change point localisation.
+#' @description     Performing the interval trimming for local refinement.
+#' @param n         An \code{integer} scalar corresponding to the sample size.
+#' @param cpt_init  An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
+#' @param w         A \code{numeric} scalar in (0,1) representing the weight for interval truncation.
+#' @return  A matrix with each row be a trimmed interval.
+#' @export
+#' @author Haotian Xu
+#' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
+trim_interval = function(n, cpt_init, w = 0.9){
+  cpt_init_long = c(0, cpt_init, n)
+  cpt_init_numb = length(cpt_init)
+  interval_mat = matrix(NA, nrow = cpt_init_numb, ncol = 2)
+  for (k in 1:cpt_init_numb){
+    interval_mat[k,1] = w*cpt_init_long[k] + (1-w)*cpt_init_long[k+1]
+    interval_mat[k,2] = (1-w)*cpt_init_long[k+1] + w*cpt_init_long[k+2]
+  }
+  return(interval_mat)
+}
+
+
+
+
+
 #' @title Long-run variance estimation for regression settings with change points.
 #' @description     Estimating long-run variance for regression settings with change points.
 #' @param cpt_init  An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
@@ -722,8 +746,8 @@ local.refine.DPDU.regression = function(cpt_init, beta_hat, y, X, w = 0.9){
 #' @param y         A \code{numeric} vector of response variable.
 #' @param X         A \code{numeric} matrix of covariates with vertical axis being time.
 #' @param w         A \code{numeric} scalar in (0,1) representing the weight for interval truncation.
-#' @param pair_numb A \code{integer} scalar corresponding to R in the paper.
-#' @return  A vector of locally refined change points estimation.
+#' @param pair_numb An \code{integer} scalar corresponding to R in the paper.
+#' @return  A vector of long-run variance estimators associated with all local refined intervals.
 #' @export
 #' @author Haotian Xu
 #' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
@@ -743,7 +767,8 @@ local.refine.DPDU.regression = function(cpt_init, beta_hat, y, X, w = 0.9){
 #' zeta_set[min_idx[1]]
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 #' beta_hat = matrix(unlist(temp$beta_hat[min_idx[1], min_idx[2]]), ncol = length(cpt_init)+1)
-#' pair_numb = 14
+#' interval_refine = trim_interval(n, cpt_init)
+#' pair_numb = ceiling(sqrt(min(floor(interval_refine[,2]) - ceiling(interval_refine[,1])))) # choose R
 #' LRV_est = LRV.regression(cpt_init, beta_hat, data$y, data$X, w = 0.9, pair_numb)
 #' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
 LRV.regression = function(cpt_init, beta_hat, y, X, w = 0.9, pair_numb){
