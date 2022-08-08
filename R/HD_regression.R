@@ -713,3 +713,57 @@ local.refine.DPDU.regression = function(cpt_init, beta_hat, y, X, w = 0.9){
   return(cpt_refined[-1])
 }
 
+
+
+#' @title Long-run variance estimation for regression settings with change points.
+#' @description     Estimating long-run variance for regression settings with change points.
+#' @param cpt_init  An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
+#' @param beta_hat  A \code{numeric} (px(K_hat+1))matrix of estimated regression coefficients.
+#' @param y         A \code{numeric} vector of response variable.
+#' @param X         A \code{numeric} matrix of covariates with vertical axis being time.
+#' @param w         A \code{numeric} scalar in (0,1) representing the weight for interval truncation.
+#' @param pair_numb A \code{integer} scalar corresponding to R in the paper.
+#' @return  A vector of locally refined change points estimation.
+#' @export
+#' @author Haotian Xu
+#' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
+#' @examples
+#' d0 = 5
+#' p = 30
+#' n = 200
+#' cpt_true = 100
+#' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
+#' lambda_set = c(0.01, 0.1, 1, 2)
+#' zeta_set = c(10, 15, 20)
+#' temp = CV.search.DPDU.regression(y = data$y, X = data$X, lambda_set, zeta_set)
+#' temp$test_error # test error result
+#' # find the indices of lambda_set and zeta_set which minimizes the test error
+#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
+#' lambda_set[min_idx[2]]
+#' zeta_set[min_idx[1]]
+#' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
+#' beta_hat = matrix(unlist(temp$beta_hat[min_idx[1], min_idx[2]]), ncol = length(cpt_init)+1)
+#' pair_numb = 14
+#' LRV_est = LRV.regression(cpt_init, beta_hat, data$y, data$X, w = 0.9, pair_numb)
+#' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
+LRV.regression = function(cpt_init, beta_hat, y, X, w = 0.9, pair_numb){
+  n = nrow(X)
+  cpt_init_long = c(0, cpt_init, n)
+  cpt_init_numb = length(cpt_init)
+  X_full = cbind(rep(1, n), X)
+  lrv_hat = rep(NA, cpt_init_numb)
+  for (k in 1:cpt_init_numb){
+    kappa2_hat = sum((beta_hat[,k] - beta_hat[,k+1])^2)
+    s = w*cpt_init_long[k] + (1-w)*cpt_init_long[k+1]
+    e = (1-w)*cpt_init_long[k+1] + w*cpt_init_long[k+2]
+    z_vec = rep(NA, floor(e)-ceiling(s)+1)
+    for (t in ceiling(s):floor(e)){
+      z_vec[t-ceiling(s)+1] = as.numeric(2*y[t] - crossprod(X_full[t,], beta_hat[,k]+beta_hat[,k+1]))*crossprod(X_full[t,], beta_hat[,k+1]-beta_hat[,k])
+    }
+    block_size = floor((floor(e)-ceiling(s)+1)/(2*pair_numb))
+    z_mat = matrix(z_vec[1:(block_size*2*pair_numb)], nrow = block_size)
+    z_mat_colsum = apply(z_mat, 2, sum)
+    lrv_hat[k] = mean((z_mat_colsum[2*(1:pair_numb)-1] - z_mat_colsum[2*(1:pair_numb)])^2/(2*block_size))/kappa2_hat
+  }
+  return(lrv_hat)
+}
