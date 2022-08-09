@@ -572,11 +572,15 @@ X.glasso.converter.regression = function(X, eta, s_ceil){
 DPDU.regression <- function(y, X, lambda, zeta, eps = 0.001) {
   DPDU_result = .Call('_changepoints_rcpp_DPDU_regression', PACKAGE = 'changepoints', y, X, lambda, zeta, eps)
   cpt_est = part2local(DPDU_result$partition)
-  if((length(cpt_est) >= 1) & (min(cpt_est) < zeta)){
-    cpt_est = cpt_est[-1]
+  if(length(cpt_est) >= 1){
+    if(min(cpt_est) < zeta){
+      cpt_est = cpt_est[-1]
+    }
   }
-  if((length(cpt_est) >= 1) & (length(y) - max(cpt_est) < zeta)){
-    cpt_est = cpt_est[-length(cpt_est)]
+  if(length(cpt_est) >= 1){
+    if(length(y) - max(cpt_est) < zeta){
+      cpt_est = cpt_est[-1]
+    }
   }
   result = append(DPDU_result, list(cpt = cpt_est))
   class(result) = "DP"
@@ -614,18 +618,27 @@ CV.DPDU.regression = function(y, X, lambda, zeta, eps = 0.001){
   validation.y = y[even_indexes]
   init_train = DPDU.regression(train.y, train.X, lambda, zeta, eps)
   init_train_cpt = init_train$cpt
-  init_train_cpt_long = c(0, init_train_cpt, nrow(train.X))
-  init_train_beta = init_train$beta_mat[,c(init_train_cpt, nrow(train.X))]
-  len = length(init_train_cpt_long)-1
-  train_error = 0
-  test_error = 0
-  init_test_cpt_long = c(0, init_train_cpt, nrow(validation.X))
-  for(i in 1:len){
-    train_error = train_error + lassoDPDU_error(train.y[(init_train_cpt_long[i]+1):init_train_cpt_long[i+1]], cbind(rep(1, nrow(train.X)), train.X)[(init_train_cpt_long[i]+1):init_train_cpt_long[i+1],], init_train_beta[,i])
-    test_error = test_error + lassoDPDU_error(validation.y[(init_test_cpt_long[i]+1):init_test_cpt_long[i+1]], cbind(rep(1, nrow(validation.X)), validation.X)[(init_test_cpt_long[i]+1):init_test_cpt_long[i+1],], init_train_beta[,i])
+  if(length(init_train_cpt) >= 1){
+    init_train_cpt_long = c(0, init_train_cpt, nrow(train.X))
+    init_train_beta = init_train$beta_mat[,c(init_train_cpt, nrow(train.X))]
+    len = length(init_train_cpt_long)-1
+    train_error = 0
+    test_error = 0
+    init_test_cpt_long = c(0, init_train_cpt, nrow(validation.X))
+    for(i in 1:len){
+      train_error = train_error + lassoDPDU_error(train.y[(init_train_cpt_long[i]+1):init_train_cpt_long[i+1]], cbind(rep(1, nrow(train.X)), train.X)[(init_train_cpt_long[i]+1):init_train_cpt_long[i+1],], init_train_beta[,i])
+      test_error = test_error + lassoDPDU_error(validation.y[(init_test_cpt_long[i]+1):init_test_cpt_long[i+1]], cbind(rep(1, nrow(validation.X)), validation.X)[(init_test_cpt_long[i]+1):init_test_cpt_long[i+1],], init_train_beta[,i])
+    }
+    init_cpt = odd_indexes[init_train_cpt]
+    K_hat = len-1
+  }else{
+    init_cpt = init_train_cpt
+    K_hat = 0
+    init_train_beta = init_train$beta_mat[,1]
+    train_error = lassoDPDU_error(train.y, cbind(rep(1, nrow(train.X)), train.X), init_train_beta)
+    test_error = lassoDPDU_error(validation.y, cbind(rep(1, nrow(validation.X)), validation.X), init_train_beta)
   }
-  init_cpt = odd_indexes[init_train_cpt]
-  result = list(cpt_hat = init_cpt, K_hat = len-1, test_error = test_error, train_error = train_error, beta_hat = init_train_beta)
+  result = list(cpt_hat = init_cpt, K_hat, test_error = test_error, train_error = train_error, beta_hat = init_train_beta)
   return(result)
 }
 

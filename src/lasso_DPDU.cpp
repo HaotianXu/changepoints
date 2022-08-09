@@ -145,7 +145,6 @@ Rcpp::List rcpp_DPDU_regression(const arma::vec& y, const arma::mat& X, double l
     L = partition(R);
   }
   return Rcpp::List::create(Rcpp::Named("beta_mat")=beta_mat,
-                            Rcpp::Named("beta_mat_temp2")=beta_mat_temp2,
                             Rcpp::Named("partition")=partition.subvec(1,N));
 }
 
