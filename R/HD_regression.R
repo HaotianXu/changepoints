@@ -572,10 +572,10 @@ X.glasso.converter.regression = function(X, eta, s_ceil){
 DPDU.regression <- function(y, X, lambda, zeta, eps = 0.001) {
   DPDU_result = .Call('_changepoints_rcpp_DPDU_regression', PACKAGE = 'changepoints', y, X, lambda, zeta, eps)
   cpt_est = part2local(DPDU_result$partition)
-  if(min(cpt_est) < zeta){
+  if((length(cpt_est) >= 1) & (min(cpt_est) < zeta)){
     cpt_est = cpt_est[-1]
   }
-  if(length(y) - max(cpt_est) < zeta){
+  if((length(cpt_est) >= 1) & (length(y) - max(cpt_est) < zeta)){
     cpt_est = cpt_est[-length(cpt_est)]
   }
   result = append(DPDU_result, list(cpt = cpt_est))
