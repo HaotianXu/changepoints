@@ -774,8 +774,8 @@ trim_interval = function(n, cpt_init, w = 0.9){
 #' @examples
 #' d0 = 5
 #' p = 30
-#' n = 300
-#' cpt_true = c(100, 200)
+#' n = 200
+#' cpt_true = c(70, 140)
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 #' lambda_set = c(0.01, 0.1, 1, 2)
 #' zeta_set = c(10, 15, 20)
@@ -788,7 +788,8 @@ trim_interval = function(n, cpt_init, w = 0.9){
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 #' beta_hat = matrix(unlist(temp$beta_hat[min_idx[1], min_idx[2]]), ncol = length(cpt_init)+1)
 #' interval_refine = trim_interval(n, cpt_init)
-#' block_size = ceiling(sqrt(min(floor(interval_refine[,2]) - ceiling(interval_refine[,1])))/4) # choose S
+#' # choose S
+#' block_size = ceiling(sqrt(min(floor(interval_refine[,2]) - ceiling(interval_refine[,1])))/4)
 #' LRV_est = LRV.regression(cpt_init, beta_hat, data$y, data$X, w = 0.9, pair_numb)
 #' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
 LRV.regression = function(cpt_init, beta_hat, y, X, w = 0.9, block_size){
