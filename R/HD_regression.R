@@ -790,7 +790,7 @@ trim_interval = function(n, cpt_init, w = 0.9){
 #' interval_refine = trim_interval(n, cpt_init)
 #' # choose S
 #' block_size = ceiling(sqrt(min(floor(interval_refine[,2]) - ceiling(interval_refine[,1])))/4)
-#' LRV_est = LRV.regression(cpt_init, beta_hat, data$y, data$X, w = 0.9, pair_numb)
+#' LRV_est = LRV.regression(cpt_init, beta_hat, data$y, data$X, w = 0.9, block_size)
 #' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
 LRV.regression = function(cpt_init, beta_hat, y, X, w = 0.9, block_size){
   n = nrow(X)
