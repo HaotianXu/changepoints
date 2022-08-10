@@ -761,12 +761,12 @@ trim_interval = function(n, cpt_init, w = 0.9){
 
 #' @title Long-run variance estimation for regression settings with change points.
 #' @description     Estimating long-run variance for regression settings with change points.
-#' @param cpt_init  An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
-#' @param beta_hat  A \code{numeric} (px(K_hat+1))matrix of estimated regression coefficients.
-#' @param y         A \code{numeric} vector of response variable.
-#' @param X         A \code{numeric} matrix of covariates with vertical axis being time.
-#' @param w         A \code{numeric} scalar in (0,1) representing the weight for interval truncation.
-#' @param pair_numb An \code{integer} scalar corresponding to R in the paper.
+#' @param cpt_init   An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
+#' @param beta_hat   A \code{numeric} (px(K_hat+1))matrix of estimated regression coefficients.
+#' @param y          A \code{numeric} vector of response variable.
+#' @param X          A \code{numeric} matrix of covariates with vertical axis being time.
+#' @param w          A \code{numeric} scalar in (0,1) representing the weight for interval truncation.
+#' @param block_size An \code{integer} scalar corresponding to the block size S in the paper.
 #' @return  A vector of long-run variance estimators associated with all local refined intervals.
 #' @export
 #' @author Haotian Xu
@@ -774,8 +774,8 @@ trim_interval = function(n, cpt_init, w = 0.9){
 #' @examples
 #' d0 = 5
 #' p = 30
-#' n = 200
-#' cpt_true = 100
+#' n = 300
+#' cpt_true = c(100, 200)
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 #' lambda_set = c(0.01, 0.1, 1, 2)
 #' zeta_set = c(10, 15, 20)
@@ -788,10 +788,10 @@ trim_interval = function(n, cpt_init, w = 0.9){
 #' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 #' beta_hat = matrix(unlist(temp$beta_hat[min_idx[1], min_idx[2]]), ncol = length(cpt_init)+1)
 #' interval_refine = trim_interval(n, cpt_init)
-#' pair_numb = ceiling(sqrt(min(floor(interval_refine[,2]) - ceiling(interval_refine[,1])))) # choose R
+#' block_size = ceiling(sqrt(min(floor(interval_refine[,2]) - ceiling(interval_refine[,1])))/4) # choose S
 #' LRV_est = LRV.regression(cpt_init, beta_hat, data$y, data$X, w = 0.9, pair_numb)
 #' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
-LRV.regression = function(cpt_init, beta_hat, y, X, w = 0.9, pair_numb){
+LRV.regression = function(cpt_init, beta_hat, y, X, w = 0.9, block_size){
   n = nrow(X)
   cpt_init_long = c(0, cpt_init, n)
   cpt_init_numb = length(cpt_init)
@@ -805,10 +805,12 @@ LRV.regression = function(cpt_init, beta_hat, y, X, w = 0.9, pair_numb){
     for (t in ceiling(s):floor(e)){
       z_vec[t-ceiling(s)+1] = as.numeric(2*y[t] - crossprod(X_full[t,], beta_hat[,k]+beta_hat[,k+1]))*crossprod(X_full[t,], beta_hat[,k+1]-beta_hat[,k])
     }
-    block_size = floor((floor(e)-ceiling(s)+1)/(2*pair_numb))
-    z_mat = matrix(z_vec[1:(block_size*2*pair_numb)], nrow = block_size)
-    z_mat_colsum = apply(z_mat, 2, sum)
-    lrv_hat[k] = mean((z_mat_colsum[2*(1:pair_numb)-1] - z_mat_colsum[2*(1:pair_numb)])^2/(2*block_size))/kappa2_hat
+    pair_numb = floor((floor(e)-ceiling(s)+1)/(2*block_size))
+    z_mat1 = matrix(z_vec[1:(block_size*pair_numb*2)], nrow = block_size)
+    z_mat1_colsum = apply(z_mat1, 2, sum)
+    z_mat2 = matrix(rev(z_vec)[1:(block_size*pair_numb*2)], nrow = block_size)
+    z_mat2_colsum = apply(z_mat2, 2, sum)
+    lrv_hat[k] = (mean((z_mat1_colsum[2*(1:pair_numb)-1] - z_mat1_colsum[2*(1:pair_numb)])^2/(2*block_size)) + mean((z_mat2_colsum[2*(1:pair_numb)-1] - z_mat2_colsum[2*(1:pair_numb)])^2/(2*block_size)))/(2*kappa2_hat)
   }
   return(lrv_hat)
 }

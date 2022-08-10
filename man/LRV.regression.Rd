@@ -4,7 +4,7 @@
 \alias{LRV.regression}
 \title{Long-run variance estimation for regression settings with change points.}
 \usage{
-LRV.regression(cpt_init, beta_hat, y, X, w = 0.9, pair_numb)
+LRV.regression(cpt_init, beta_hat, y, X, w = 0.9, block_size)
 }
 \arguments{
 \item{cpt_init}{An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).}
@@ -17,7 +17,7 @@ LRV.regression(cpt_init, beta_hat, y, X, w = 0.9, pair_numb)
 
 \item{w}{A \code{numeric} scalar in (0,1) representing the weight for interval truncation.}
 
-\item{pair_numb}{An \code{integer} scalar corresponding to R in the paper.}
+\item{block_size}{An \code{integer} scalar corresponding to the block size S in the paper.}
 }
 \value{
 A vector of long-run variance estimators associated with all local refined intervals.
@@ -28,8 +28,8 @@ Estimating long-run variance for regression settings with change points.
 \examples{
 d0 = 5
 p = 30
-n = 200
-cpt_true = 100
+n = 300
+cpt_true = c(100, 200)
 data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 lambda_set = c(0.01, 0.1, 1, 2)
 zeta_set = c(10, 15, 20)
@@ -42,7 +42,7 @@ zeta_set[min_idx[1]]
 cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 beta_hat = matrix(unlist(temp$beta_hat[min_idx[1], min_idx[2]]), ncol = length(cpt_init)+1)
 interval_refine = trim_interval(n, cpt_init)
-pair_numb = ceiling(sqrt(min(floor(interval_refine[,2]) - ceiling(interval_refine[,1])))) # choose R
+block_size = ceiling(sqrt(min(floor(interval_refine[,2]) - ceiling(interval_refine[,1])))/4) # choose S
 LRV_est = LRV.regression(cpt_init, beta_hat, data$y, data$X, w = 0.9, pair_numb)
 }
 \references{
