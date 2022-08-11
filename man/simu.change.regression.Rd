@@ -31,9 +31,9 @@ simu.change.regression(
 
 \item{cov_type}{A \code{character} string stands for the type of covariance matrix of covariates. 'I': Identity; 'T': Toeplitz; 'E': Equal-correlation.}
 
-\item{mod_X}{A \code{character} string stands for the time series model followed by the covariates. 'IID': IID multivariate Gaussian; 'AR': Multivariate AR1 with rho = 0.5; Multivariate MA1 theta = 0.5.}
+\item{mod_X}{A \code{character} string stands for the time series model followed by the covariates. 'IID': IID multivariate Gaussian; 'AR': Multivariate AR1 with rho = 0.3; Multivariate MA1 theta = 0.3.}
 
-\item{mod_e}{A \code{character} string stands for the time series model followed by the errors 'IID': IID univariate Gaussian; 'AR': Univariate AR1 with rho = 0.5; Univariate MA1 theta = 0.5.}
+\item{mod_e}{A \code{character} string stands for the time series model followed by the errors 'IID': IID univariate Gaussian; 'AR': Univariate AR1 with rho = 0.3; Univariate MA1 theta = 0.3.}
 }
 \value{
 A \code{list} with the following structure:

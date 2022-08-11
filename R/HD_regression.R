@@ -35,8 +35,8 @@ simu_ma_data <- function(ma1_theta, n, Cov_X){
 #' @param sigma      A \code{numeric} scalar stands for error standard deviation.
 #' @param kappa      A \code{numeric} scalar stands for the minimum jump size of coefficient vector in \eqn{l_2} norm.
 #' @param cov_type   A \code{character} string stands for the type of covariance matrix of covariates. 'I': Identity; 'T': Toeplitz; 'E': Equal-correlation.
-#' @param mod_X      A \code{character} string stands for the time series model followed by the covariates. 'IID': IID multivariate Gaussian; 'AR': Multivariate AR1 with rho = 0.5; Multivariate MA1 theta = 0.5.
-#' @param mod_e      A \code{character} string stands for the time series model followed by the errors 'IID': IID univariate Gaussian; 'AR': Univariate AR1 with rho = 0.5; Univariate MA1 theta = 0.5.
+#' @param mod_X      A \code{character} string stands for the time series model followed by the covariates. 'IID': IID multivariate Gaussian; 'AR': Multivariate AR1 with rho = 0.3; Multivariate MA1 theta = 0.3.
+#' @param mod_e      A \code{character} string stands for the time series model followed by the errors 'IID': IID univariate Gaussian; 'AR': Univariate AR1 with rho = 0.3; Univariate MA1 theta = 0.3.
 #' @return A \code{list} with the following structure:
 #'  \item{cpt_true}{A vector of true changepoints (sorted in strictly increasing order).}
 #'  \item{X}{An n-by-p design matrix.}
@@ -81,28 +81,29 @@ simu.change.regression = function(d0, cpt_true, p, n, sigma, kappa, cov_type = '
     cov_X <- matrix(NA, nrow = p, ncol = p)
     for(i in 1:p){
       for(j in 1:p){
-        cov_X[i,j] = 0.6^(abs(i-j))
+        cov_X[i,j] = 0.5^(abs(i-j))
       }
     }
   }else if(cov_type == 'E'){
     cov_X <- matrix(0.3,p,p)
     diag(cov_X) <- 1
   }
+  cov_X <- cov_X
   ### time series model of X
   if(mod_X == "IID"){
     X = mvrnorm(n = n, mu = rep(0,p), Sigma = cov_X)
   }else if(mod_X == "AR"){
-    X = simu_ar_data(ar1_rho = 0.5, n = n, cov_X)
+    X = simu_ar_data(ar1_rho = 0.3, n = n, cov_X)
   }else if(mod_X == "MA"){
-    X = simu_ma_data(ma1_theta = 0.5, n = n, cov_X)
+    X = simu_ma_data(ma1_theta = 0.3, n = n, cov_X)
   }
   ### time series model of errors
   if(mod_e == "IID"){
-    err = rnorm(n, sigma)
+    err = rnorm(n, mean = 0, sd = sigma)
   }else if(mod_X == "AR"){
-    err = as.numeric(arima.sim(list(order=c(1,0,0), ar=.5), n = n, sd = sqrt(0.75)*sigma))
+    err = as.numeric(arima.sim(list(order=c(1,0,0), ar=0.3), n = n, sd = sqrt(0.91)*sigma))
   }else if(mod_X == "MA"){
-    err = as.numeric(arima.sim(list(order=c(0,0,1), ma=.5), n = n, sd = sigma/sqrt(1.25)))
+    err = as.numeric(arima.sim(list(order=c(0,0,1), ma=0.3), n = n, sd = sigma/sqrt(1.09)))
   }
   y = matrix(0, n, 1)
   nonzero.element.loc = c(1:d0)
@@ -773,11 +774,11 @@ trim_interval = function(n, cpt_init, w = 0.9){
 #' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
 #' @examples
 #' d0 = 5
-#' p = 30
+#' p = 10
 #' n = 200
 #' cpt_true = c(70, 140)
-#' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-#' lambda_set = c(0.01, 0.1, 1, 2)
+#' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9, cov_type = "T", mod_X = "MA", mod_e = "AR")
+#' lambda_set = c(0.1, 0.5, 1, 2)
 #' zeta_set = c(10, 15, 20)
 #' temp = CV.search.DPDU.regression(y = data$y, X = data$X, lambda_set, zeta_set)
 #' temp$test_error # test error result
@@ -789,7 +790,7 @@ trim_interval = function(n, cpt_init, w = 0.9){
 #' beta_hat = matrix(unlist(temp$beta_hat[min_idx[1], min_idx[2]]), ncol = length(cpt_init)+1)
 #' interval_refine = trim_interval(n, cpt_init)
 #' # choose S
-#' block_size = ceiling(sqrt(min(floor(interval_refine[,2]) - ceiling(interval_refine[,1])))/4)
+#' block_size = ceiling(sqrt(min(floor(interval_refine[,2]) - ceiling(interval_refine[,1])))/2)
 #' LRV_est = LRV.regression(cpt_init, beta_hat, data$y, data$X, w = 0.9, block_size)
 #' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
 LRV.regression = function(cpt_init, beta_hat, y, X, w = 0.9, block_size){

@@ -27,11 +27,11 @@ Estimating long-run variance for regression settings with change points.
 }
 \examples{
 d0 = 5
-p = 30
+p = 10
 n = 200
 cpt_true = c(70, 140)
-data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-lambda_set = c(0.01, 0.1, 1, 2)
+data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9, cov_type = "T", mod_X = "MA", mod_e = "AR")
+lambda_set = c(0.1, 0.5, 1, 2)
 zeta_set = c(10, 15, 20)
 temp = CV.search.DPDU.regression(y = data$y, X = data$X, lambda_set, zeta_set)
 temp$test_error # test error result
@@ -43,7 +43,7 @@ cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
 beta_hat = matrix(unlist(temp$beta_hat[min_idx[1], min_idx[2]]), ncol = length(cpt_init)+1)
 interval_refine = trim_interval(n, cpt_init)
 # choose S
-block_size = ceiling(sqrt(min(floor(interval_refine[,2]) - ceiling(interval_refine[,1])))/4)
+block_size = ceiling(sqrt(min(floor(interval_refine[,2]) - ceiling(interval_refine[,1])))/2)
 LRV_est = LRV.regression(cpt_init, beta_hat, data$y, data$X, w = 0.9, block_size)
 }
 \references{
