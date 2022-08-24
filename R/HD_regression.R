@@ -866,7 +866,7 @@ simu.2BM_Drift = function(n, drift, LRV){
 #' beta_hat = matrix(unlist(temp$beta_hat[min_idx[1], min_idx[2]]), ncol = length(cpt_init)+1)
 #' cpt_LR = local.refine.DPDU.regression(cpt_init, beta_hat, data$y, data$X, w = 0.9)
 #' alpha_vec = c(0.01, 0.05, 0.1)
-#' CI.regression(cpt_init, cpt_LR, beta_hat, y, X, w = 0.9, B = 1000, M = n, alpha_vec)
+#' CI.regression(cpt_init, cpt_LR, beta_hat, data$y, data$X, w = 0.9, B = 1000, M = n, alpha_vec)
 #' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
 CI.regression = function(cpt_init, cpt_LR, beta_hat, y, X, w = 0.9, B = 1000, M, alpha_vec, rounding = TRUE){
   if(length(cpt_init) != length(cpt_LR)){
