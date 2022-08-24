@@ -816,3 +816,83 @@ LRV.regression = function(cpt_init, beta_hat, y, X, w = 0.9, block_size){
   }
   return(lrv_hat)
 }
+
+
+#' @title Internal Function: simulate a two-sided Brownian motion with drift.
+#' @param  n         An \code{integer} scalar representing the length of one side.
+#' @param  drift     A \code{numeric} scalar of drift coefficient.
+#' @param  LRV    A \code{integer} scalar of LRV.
+#' @return A (2n+1) vector
+#' @noRd
+simu.2BM_Drift = function(n, drift, LRV){
+  z_vec = rnorm(2*n)
+  w_vec = c(rev(cumsum(z_vec[n:1])/sqrt(1:n)), 0, cumsum(z_vec[(n+1):(2*n)])/sqrt(1:n))
+  v_vec = drift*abs(seq(-n, n)) + sqrt(LRV)*w_vec
+  return(v_vec)
+}
+
+
+#' @title Confidence interval construction of change points for regression settings with change points.
+#' @description     Construct element-wise confidence interval for change points.
+#' @param cpt_init   An \code{integer} vector of initial changepoints estimation (sorted in strictly increasing order).
+#' @param cpt_LR     An \code{integer} vector of refined changepoints estimation (sorted in strictly increasing order).
+#' @param beta_hat   A \code{numeric} (px(K_hat+1))matrix of estimated regression coefficients.
+#' @param y          A \code{numeric} vector of response variable.
+#' @param X          A \code{numeric} matrix of covariates with vertical axis being time.
+#' @param w          A \code{numeric} scalar in (0,1) representing the weight for interval truncation.
+#' @param B          An \code{integer} scalar corresponding to the number of simulated two-sided Brownian motion with drift.
+#' @param M          An \code{integer} scalar corresponding to the length for each side of the limiting distribution, i.e. the two-sided Brownian motion with drift.
+#' @param alpha_vec  An \code{numeric} vector in (0,1) representing the vector of significance levels.
+#' @param rounding   A \code{boolean} scalar representing if the confidence intervals need to be rounded into integer intervals.
+#' @return  An length(cpt_init)-2-length(alpha_vec) array of confidence intervals.
+#' @export
+#' @author Haotian Xu
+#' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
+#' @examples
+#' d0 = 5
+#' p = 10
+#' n = 200
+#' cpt_true = c(70, 140)
+#' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9, cov_type = "T", mod_X = "MA", mod_e = "AR")
+#' lambda_set = c(0.1, 0.5, 1, 2)
+#' zeta_set = c(10, 15, 20)
+#' temp = CV.search.DPDU.regression(y = data$y, X = data$X, lambda_set, zeta_set)
+#' temp$test_error # test error result
+#' # find the indices of lambda_set and zeta_set which minimizes the test error
+#' min_idx = as.vector(arrayInd(which.min(temp$test_error), dim(temp$test_error))) 
+#' lambda_set[min_idx[2]]
+#' zeta_set[min_idx[1]]
+#' cpt_init = unlist(temp$cpt_hat[min_idx[1], min_idx[2]])
+#' beta_hat = matrix(unlist(temp$beta_hat[min_idx[1], min_idx[2]]), ncol = length(cpt_init)+1)
+#' cpt_LR = local.refine.DPDU.regression(cpt_init, beta_hat, data$y, data$X, w = 0.9)
+#' alpha_vec = c(0.01, 0.05, 0.1)
+#' CI.regression(cpt_init, cpt_LR, beta_hat, y, X, w = 0.9, B = 1000, M = n, alpha_vec)
+#' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
+CI.regression = function(cpt_init, cpt_LR, beta_hat, y, X, w = 0.9, B = 1000, M, alpha_vec, rounding = TRUE){
+  if(length(cpt_init) != length(cpt_LR)){
+    stop("The initial and the refined change point estimators should have the same length.")
+  }
+  n = length(y)
+  CI_array = array(NA, c(length(cpt_init), 2, length(alpha_vec)))
+  interval_refine_mat = trim_interval(n = n, cpt_init, w = w)
+  block_size = ceiling((min(floor(interval_refine_mat[,2]) - ceiling(interval_refine_mat[,1])))^(2/5)/2) # choose S
+  LRV_hat = LRV.regression(cpt_init, beta_hat, y, X, w = w, block_size)
+  kappa2_hat = apply(beta_hat[,-dim(beta_hat)[2]] - beta_hat[,-1], MARGIN = 2, crossprod)
+  drift_hat = diag(t(beta_hat[,-dim(beta_hat)[2]] - beta_hat[,-1]) %*% (t(cbind(rep(1,n), X))%*%cbind(rep(1,n), X)) %*% (beta_hat[,-dim(beta_hat)[2]] - beta_hat[,-1]) / (n*kappa2_hat))
+  for(i in 1:length(cpt_init)){
+    u_vec = rep(NA, B)
+    for(b in 1:B){
+      set.seed(12345+b+10000*i)
+      u_vec[b] = seq(-M, M)[which.min(simu.2BM_Drift(M, drift_hat[i], LRV_hat[i]))]
+    }
+    for(j in 1:length(alpha_vec)){
+      alpha = alpha_vec[j]
+      CI_array[i,,j] = quantile(u_vec, probs = c(alpha/2, 1-alpha/2))/kappa2_hat[i] + cpt_LR[i]
+      if(rounding == TRUE){
+        CI_array[i,1,j] = floor(CI_array[i,1,j])
+        CI_array[i,2,j] = ceiling(CI_array[i,2,j])
+      }
+    }
+  }
+  return(CI_array)
+}
