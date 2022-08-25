@@ -160,9 +160,7 @@ local.refine.univar = function(cpt_init, y){
 #' BS_result = thresholdBS(temp, tau = 4)
 #' BS_result
 #' print(BS_result$BS_tree, "value")
-#' plot(BS_result$BS_tree)
 #' print(BS_result$BS_tree_trimmed, "value")
-#' plot(BS_result$BS_tree_trimmed)
 #' cpt_hat = sort(BS_result$cpt_hat[,1]) # the threshold tau is specified to be 4
 #' Hausdorff.dist(cpt_hat, cpt_true)
 #' cpt_LR = local.refine.univar(cpt_hat, y)

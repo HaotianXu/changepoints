@@ -777,7 +777,7 @@ trim_interval = function(n, cpt_init, w = 0.9){
 #' p = 10
 #' n = 200
 #' cpt_true = c(70, 140)
-#' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9, cov_type = "T", mod_X = "MA", mod_e = "AR")
+#' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 #' lambda_set = c(0.1, 0.5, 1, 2)
 #' zeta_set = c(10, 15, 20)
 #' temp = CV.search.DPDU.regression(y = data$y, X = data$X, lambda_set, zeta_set)
@@ -853,7 +853,7 @@ simu.2BM_Drift = function(n, drift, LRV){
 #' p = 10
 #' n = 200
 #' cpt_true = c(70, 140)
-#' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9, cov_type = "T", mod_X = "MA", mod_e = "AR")
+#' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
 #' lambda_set = c(0.1, 0.5, 1, 2)
 #' zeta_set = c(10, 15, 20)
 #' temp = CV.search.DPDU.regression(y = data$y, X = data$X, lambda_set, zeta_set)

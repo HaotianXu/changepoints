@@ -46,7 +46,7 @@ Rcpp::List rcpp_soft_impute(const Rcpp::List& data_incomplete_list, const Rcpp::
       diff_miss_mat += (one_mat - Rcpp::as<arma::mat>(eta_list[i])) % diff_mat;
     }
     diff_miss_mat /= obs_num;
-    if((arma::norm(diff_miss_mat, 2) < lambda/3) & (abs(diff_mat).max() < rho)){
+    if((arma::norm(diff_miss_mat, 2) < lambda/3) && (abs(diff_mat).max() < rho)){
       FLAG = 1;
     }
     MOld_mat = MNew_mat;

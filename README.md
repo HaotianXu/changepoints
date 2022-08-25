@@ -1,39 +1,43 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# A collection of change-point detection methods.
+# A collection of change-point localisation methods.
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/HaotianXu/changepoints/workflows/R-CMD-check/badge.svg)](https://github.com/HaotianXu/changepoints/actions)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2022--08--01-green.svg)](https://github.com/HaotianXu/changepoints)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2022--08--25-green.svg)](https://github.com/HaotianXu/changepoints)
 [![license](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 <!-- badges: end -->
 
-Performs a series of offline and/or online change-point detection
+Performs a series of offline and/or online change-point localisation
 algorithms for
 
 1.  univariate mean
-    -   [Wang, Yu and Rinaldo (2020)](https://arxiv.org/abs/1810.09498)
+    -   [Wang, Yu and Rinaldo
+        (2020)](https://doi.org/10.1214/20-EJS1710)
     -   [Yu, Padilla, Wang and Rinaldo
         (2020)](https://arxiv.org/abs/2006.03283)
 2.  univariate polynomials
-    -   [Yu and Chatterjee (2020)](https://arxiv.org/abs/2007.09910)
+    -   [Yu, Chatterjee and Xu
+        (2021)](https://doi.org/10.1214/21-EJS1963)
 3.  univariate and multivariate nonparametric settings
     -   [Padilla, Yu, Wang and Rinaldo
-        (2021)](https://arxiv.org/abs/1905.10019)
+        (2021)](https://doi.org/10.1214/21-EJS1809)
     -   [Padilla, Yu, Wang and Rinaldo
-        (2019)](https://arxiv.org/abs/1910.13289)
+        (2021)](https://doi.org/10.1109/TIT.2021.3130330)
 4.  high-dimensional covariances
-    -   [Wang, Yu and Rinaldo (2021)](https://arxiv.org/abs/1712.09912)
+    -   [Wang, Yu and Rinaldo
+        (2021)](https://doi.org/10.3150/20-BEJ1249)
 5.  high-dimensional networks with and without missing values
-    -   [Wang, Yu and Rinaldo (2018)](https://arxiv.org/abs/1809.09602)
+    -   [Wang, Yu and Rinaldo
+        (2021)](https://doi.org/10.1214/20-AOS1953)
     -   [Yu, Padilla, Wang and Rinaldo
         (2021)](https://arxiv.org/abs/2101.05477)
     -   [Dubey, Xu and Yu (2021)](https://arxiv.org/abs/2110.06450)
 6.  high-dimensional linear regression models
     -   [Rinaldo, Wang, Wen, Willett and Yu
-        (2020)](https://arxiv.org/abs/2010.10410)
+        (2021)](https://proceedings.mlr.press/v130/rinaldo21a.html)
     -   [Xu, Wang, Zhao, and Yu
         (2022)](https://arxiv.org/abs/2207.12453)
 7.  high-dimensional vector autoregressive models
@@ -45,7 +49,8 @@ algorithms for
     -   [Padilla, Yu and Priebe
         (2019)](https://arxiv.org/abs/1911.07494)
 10. robust univariate mean against adversarial attacks
-    -   [Li and Yu (2021)](https://arxiv.org/abs/2105.10417)
+    -   [Li and Yu
+        (2021)](https://proceedings.neurips.cc/paper/2021/hash/c1e39d912d21c91dce811d6da9929ae8-Abstract.html)
 
 ## Installation
 
@@ -65,8 +70,7 @@ devtools::install_github("HaotianXu/changepoints")
 ## Example
 
 This is an example for offline univariate mean change point detection by
-![l_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;l_0 "l_0")
-penalization:
+$l_0$ penalization:
 
 ``` r
 library(changepoints)

@@ -1,4 +1,2 @@
 
-* This is a new release.
-
-* Remove "inst/examples/..." which is unnecessary and may use user's home filespace. 
+* This is the first submission of version 1.1.0
