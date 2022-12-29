@@ -29,6 +29,14 @@ rcpp_basis_poly <- function(n, s, e, r) {
     .Call('_changepoints_rcpp_basis_poly', PACKAGE = 'changepoints', n, s, e, r)
 }
 
+dmvnrm_arma_fast <- function(x, mean, sigma) {
+    .Call('_changepoints_dmvnrm_arma_fast', PACKAGE = 'changepoints', x, mean, sigma)
+}
+
+rcpp_dmvnorm_mixt <- function(evalpoints, mus, sigmas, props) {
+    .Call('_changepoints_rcpp_dmvnorm_mixt', PACKAGE = 'changepoints', evalpoints, mus, sigmas, props)
+}
+
 rcpp_huber_mean <- function(x, tau) {
     .Call('_changepoints_rcpp_huber_mean', PACKAGE = 'changepoints', x, tau)
 }

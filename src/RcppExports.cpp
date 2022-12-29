@@ -118,6 +118,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// dmvnrm_arma_fast
+arma::vec dmvnrm_arma_fast(arma::mat const& x, arma::rowvec const& mean, arma::mat const& sigma);
+RcppExport SEXP _changepoints_dmvnrm_arma_fast(SEXP xSEXP, SEXP meanSEXP, SEXP sigmaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat const& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::rowvec const& >::type mean(meanSEXP);
+    Rcpp::traits::input_parameter< arma::mat const& >::type sigma(sigmaSEXP);
+    rcpp_result_gen = Rcpp::wrap(dmvnrm_arma_fast(x, mean, sigma));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_dmvnorm_mixt
+arma::vec rcpp_dmvnorm_mixt(arma::mat const& evalpoints, arma::mat const& mus, arma::mat const& sigmas, arma::rowvec const& props);
+RcppExport SEXP _changepoints_rcpp_dmvnorm_mixt(SEXP evalpointsSEXP, SEXP musSEXP, SEXP sigmasSEXP, SEXP propsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat const& >::type evalpoints(evalpointsSEXP);
+    Rcpp::traits::input_parameter< arma::mat const& >::type mus(musSEXP);
+    Rcpp::traits::input_parameter< arma::mat const& >::type sigmas(sigmasSEXP);
+    Rcpp::traits::input_parameter< arma::rowvec const& >::type props(propsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_dmvnorm_mixt(evalpoints, mus, sigmas, props));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_huber_mean
 double rcpp_huber_mean(const arma::vec& x, double tau);
 RcppExport SEXP _changepoints_rcpp_huber_mean(SEXP xSEXP, SEXP tauSEXP) {
@@ -378,6 +405,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_changepoints_rcpp_DP_regression", (DL_FUNC) &_changepoints_rcpp_DP_regression, 6},
     {"_changepoints_rcpp_DP_univar", (DL_FUNC) &_changepoints_rcpp_DP_univar, 3},
     {"_changepoints_rcpp_basis_poly", (DL_FUNC) &_changepoints_rcpp_basis_poly, 4},
+    {"_changepoints_dmvnrm_arma_fast", (DL_FUNC) &_changepoints_dmvnrm_arma_fast, 3},
+    {"_changepoints_rcpp_dmvnorm_mixt", (DL_FUNC) &_changepoints_rcpp_dmvnorm_mixt, 4},
     {"_changepoints_rcpp_huber_mean", (DL_FUNC) &_changepoints_rcpp_huber_mean, 2},
     {"_changepoints_rcpp_soft_threshold_scalar", (DL_FUNC) &_changepoints_rcpp_soft_threshold_scalar, 2},
     {"_changepoints_rcpp_lasso_standardized_obj", (DL_FUNC) &_changepoints_rcpp_lasso_standardized_obj, 4},
