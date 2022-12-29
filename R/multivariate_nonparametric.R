@@ -12,10 +12,10 @@ CUSUM.KS.multivariate = function(Y, W, s, e, t, h){
   n_se = e - s + 1
   n_te = e - t
   aux = Y[,s:t]
-  temp1 = ks::kde(t(aux), gridsize = 30, eval.points = t(W), H = h*diag(p))
+  temp1 = kde.eval(t(aux), eval.points = t(W), H = h*diag(p))
   aux = Y[,(t+1):e]
-  temp2 = ks::kde(t(aux), gridsize = 30, eval.points = t(W), H = h*diag(p))
-  result = sqrt(n_st * n_te / n_se) * max(abs(temp1$estimate - temp2$estimate))
+  temp2 = kde.eval(t(aux), eval.points = t(W), H = h*diag(p))
+  result = sqrt(n_st * n_te / n_se) * max(abs(temp1 - temp2))
   return(result)
 }
 
