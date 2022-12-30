@@ -178,6 +178,7 @@ WBS.multi.nonpar.L2 = function(Y, s, e, Alpha, Beta, h, delta, level = 0){
 #' @param h_init    A \code{numeric} scalar of bandwidth for initial estimator.
 #' @param r         An \code{integer} scalar of smoothness parameter of the underlying Holder space.
 #' @param w         A \code{numeric} scalar in (0,1) representing the weight for interval truncation.
+#' @param c_kappa   A \code{numeric} scalar to be multiplied by kappa estimator as the bandwidth in the local refinment.
 #' @return  A vector of locally refined change points estimation.
 #' @export
 #' @author Haotian Xu
@@ -207,7 +208,7 @@ WBS.multi.nonpar.L2 = function(Y, s, e, Alpha, Beta, h, delta, level = 0){
 #' temp = WBS.multi.nonpar.L2(Y, 1, ncol(Y), intervals$Alpha, intervals$Beta, h, delta = 15)
 #' cpt_init = tuneBSmultinonpar(temp, Y)
 #' local.refine.multi.nonpar.L2(cpt_init, Y, h, r = 2, w = 0.9)
-local.refine.multi.nonpar.L2 = function(cpt_init, Y, h_init, r = 2, w = 0.9){
+local.refine.multi.nonpar.L2 = function(cpt_init, Y, h_init, r = 2, w = 0.9, c_kappa = 100){
   p = dim(Y)[1]
   n = dim(Y)[2]
   cpt_init_long = c(0, cpt_init, n)
@@ -222,7 +223,7 @@ local.refine.multi.nonpar.L2 = function(cpt_init, Y, h_init, r = 2, w = 0.9){
     integrateFCT = function(x){(kde.eval(t(aux1), eval.points = x, H = h_init*diag(p)) - kde.eval(t(aux2), eval.points = x, H = h_init*diag(p)))^2}
     temp_integrate = cubature::cubintegrate(integrateFCT, lower = minmax_mat[1,], upper = minmax_mat[2,], method = "suave", maxEval = 1000)$integral
     kappa_hat[k] = sqrt(temp_integrate)/sqrt((cpt_init_long[k+2]-cpt_init_long[k+1])*(cpt_init_long[k+1]-cpt_init_long[k])/(cpt_init_long[k+2]-cpt_init_long[k]))
-    h_refine[k] = 100*(kappa_hat[k])^(1/r)
+    h_refine[k] = c_kappa*(kappa_hat[k])^(1/r)
     s = w*cpt_init_long[k] + (1-w)*cpt_init_long[k+1]
     e = (1-w)*cpt_init_long[k+1] + w*cpt_init_long[k+2]
     lower = ceiling(s) + 2

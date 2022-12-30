@@ -19,13 +19,13 @@ Imports:
     glmnet,
     ks,
     MASS,
-    data.tree,
     Rcpp,
     cubature
 Suggests:
     knitr,
     abind,
     DiagrammeR,
+    data.tree,
     rmarkdown
 LinkingTo: Rcpp, RcppArmadillo
 License: GPL (>= 3)

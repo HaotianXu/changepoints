@@ -4,7 +4,14 @@
 \alias{local.refine.multi.nonpar.L2}
 \title{Local refinement for multivariate nonparametric change points localisation based on L2 distance.}
 \usage{
-local.refine.multi.nonpar.L2(cpt_init, Y, h_init, r = 2, w = 0.9)
+local.refine.multi.nonpar.L2(
+  cpt_init,
+  Y,
+  h_init,
+  r = 2,
+  w = 0.9,
+  c_kappa = 100
+)
 }
 \arguments{
 \item{cpt_init}{An \code{integer} vector of initial change points estimation (sorted in strictly increasing order).}
@@ -16,6 +23,8 @@ local.refine.multi.nonpar.L2(cpt_init, Y, h_init, r = 2, w = 0.9)
 \item{r}{An \code{integer} scalar of smoothness parameter of the underlying Holder space.}
 
 \item{w}{A \code{numeric} scalar in (0,1) representing the weight for interval truncation.}
+
+\item{c_kappa}{A \code{numeric} scalar to be multiplied by kappa estimator as the bandwidth in the local refinment.}
 }
 \value{
 A vector of locally refined change points estimation.
