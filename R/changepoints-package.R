@@ -4,7 +4,7 @@
 #'
 #' @docType package
 #' @aliases changepoints-package
-#' @import stats gglasso glmnet ks MASS data.tree Rcpp
+#' @import stats gglasso MASS data.tree Rcpp cubature
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @useDynLib changepoints
 #' @name changepoints
