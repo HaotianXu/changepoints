@@ -7,10 +7,10 @@
 local.refine.multi.nonpar.L2(
   cpt_init,
   Y,
-  h_init,
+  kappa_hat,
   r = 2,
   w = 0.9,
-  c_kappa = 100
+  c_kappa = 10
 )
 }
 \arguments{
@@ -18,7 +18,7 @@ local.refine.multi.nonpar.L2(
 
 \item{Y}{A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.}
 
-\item{h_init}{A \code{numeric} scalar of bandwidth for initial estimator.}
+\item{kappa_hat}{A \code{numeric} vector of jump sizes estimator.}
 
 \item{r}{An \code{integer} scalar of smoothness parameter of the underlying Holder space.}
 
@@ -52,12 +52,13 @@ for(t in 1:n){
      Y[,t] = MASS::mvrnorm(n = 1, mu1, Sigma1)
   }
 }## close for generate data
-M = 50
+M = 100
 intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y)) #Random intervals
 h = 2*(1/n)^{1/(2*r+p)} # bandwith
 temp = WBS.multi.nonpar.L2(Y, 1, ncol(Y), intervals$Alpha, intervals$Beta, h, delta = 15)
 cpt_init = tuneBSmultinonpar(temp, Y)
-local.refine.multi.nonpar.L2(cpt_init, Y, h, r = 2, w = 0.9)
+kappa_hat = kappa.multi.nonpar.L2(cpt_init, Y, h_kappa = 0.01)
+local.refine.multi.nonpar.L2(cpt_init, Y, kappa_hat, r = 2, w = 0.9, c_kappa = 2)
 }
 \author{
 Haotian Xu

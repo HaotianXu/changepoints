@@ -175,7 +175,7 @@ WBS.multi.nonpar.L2 = function(Y, s, e, Alpha, Beta, h, delta, level = 0){
 #' @description     Perform local refinement for multivariate nonparametric change points localisation based on L2 distance.
 #' @param cpt_init  An \code{integer} vector of initial change points estimation (sorted in strictly increasing order).
 #' @param Y         A \code{numeric} matrix of observations with with horizontal axis being time, and vertical axis being dimension.
-#' @param h_init    A \code{numeric} scalar of bandwidth for initial estimator.
+#' @param kappa_hat A \code{numeric} vector of jump sizes estimator.
 #' @param r         An \code{integer} scalar of smoothness parameter of the underlying Holder space.
 #' @param w         A \code{numeric} scalar in (0,1) representing the weight for interval truncation.
 #' @param c_kappa   A \code{numeric} scalar to be multiplied by kappa estimator as the bandwidth in the local refinment.
@@ -202,27 +202,27 @@ WBS.multi.nonpar.L2 = function(Y, s, e, Alpha, Beta, h, delta, level = 0){
 #'      Y[,t] = MASS::mvrnorm(n = 1, mu1, Sigma1)
 #'   }
 #' }## close for generate data
-#' M = 50
+#' M = 100
 #' intervals = WBS.intervals(M = M, lower = 1, upper = ncol(Y)) #Random intervals
 #' h = 2*(1/n)^{1/(2*r+p)} # bandwith
 #' temp = WBS.multi.nonpar.L2(Y, 1, ncol(Y), intervals$Alpha, intervals$Beta, h, delta = 15)
 #' cpt_init = tuneBSmultinonpar(temp, Y)
-#' local.refine.multi.nonpar.L2(cpt_init, Y, h, r = 2, w = 0.9)
-local.refine.multi.nonpar.L2 = function(cpt_init, Y, h_init, r = 2, w = 0.9, c_kappa = 100){
+#' kappa_hat = kappa.multi.nonpar.L2(cpt_init, Y, h_kappa = 0.01)
+#' local.refine.multi.nonpar.L2(cpt_init, Y, kappa_hat, r = 2, w = 0.9, c_kappa = 2)
+local.refine.multi.nonpar.L2 = function(cpt_init, Y, kappa_hat, r = 2, w = 0.9, c_kappa = 10){
   p = dim(Y)[1]
   n = dim(Y)[2]
   cpt_init_long = c(0, cpt_init, n)
   cpt_init_numb = length(cpt_init)
   cpt_refined = rep(0, cpt_init_numb+1)
-  kappa_hat = rep(NA, cpt_init_numb)
   h_refine = rep(NA, cpt_init_numb)
   minmax_mat = apply(Y, MARGIN = 1, function(x) c(min(x), max(x)))
   for (k in 1:cpt_init_numb){
-    aux1 = Y[,(cpt_init_long[k]+1):(cpt_init_long[k+1])]
-    aux2 = Y[,(cpt_init_long[k+1]+1):(cpt_init_long[k+2])]
-    integrateFCT = function(x){(kde.eval(t(aux1), eval.points = x, H = h_init*diag(p)) - kde.eval(t(aux2), eval.points = x, H = h_init*diag(p)))^2}
-    temp_integrate = cubature::cubintegrate(integrateFCT, lower = minmax_mat[1,], upper = minmax_mat[2,], method = "suave", maxEval = 1000)$integral
-    kappa_hat[k] = sqrt(temp_integrate)/sqrt((cpt_init_long[k+2]-cpt_init_long[k+1])*(cpt_init_long[k+1]-cpt_init_long[k])/(cpt_init_long[k+2]-cpt_init_long[k]))
+    #aux1 = Y[,(cpt_init_long[k]+1):(cpt_init_long[k+1])]
+    #aux2 = Y[,(cpt_init_long[k+1]+1):(cpt_init_long[k+2])]
+    #integrateFCT = function(x){(kde.eval(t(aux1), eval.points = x, H = h_init*diag(p)) - kde.eval(t(aux2), eval.points = x, H = h_init*diag(p)))^2}
+    #temp_integrate = cubature::cubintegrate(integrateFCT, lower = minmax_mat[1,], upper = minmax_mat[2,], method = "suave", maxEval = 1000)$integral
+    #kappa_hat[k] = sqrt(temp_integrate)/sqrt((cpt_init_long[k+2]-cpt_init_long[k+1])*(cpt_init_long[k+1]-cpt_init_long[k])/(cpt_init_long[k+2]-cpt_init_long[k]))
     h_refine[k] = c_kappa*(kappa_hat[k])^(1/r)
     s = w*cpt_init_long[k] + (1-w)*cpt_init_long[k+1]
     e = (1-w)*cpt_init_long[k+1] + w*cpt_init_long[k+2]
@@ -231,5 +231,54 @@ local.refine.multi.nonpar.L2 = function(cpt_init, Y, h_init, r = 2, w = 0.9, c_k
     b = sapply(lower:upper, function(eta)(error.L2.multivariate(Y, ceiling(s), eta, h_refine[k]) + error.L2.multivariate(Y, (eta+1), floor(e), h_refine[k])))
     cpt_refined[k+1] = ceiling(s) + which.min(b)
   }
-  return(list(cpt_refined = cpt_refined[-1]+1, h_refine = h_refine))
+  return(list(cpt_refined = cpt_refined[-1]+1, kappa_hat = kappa_hat, h_refine = h_refine))
+}
+
+
+
+#' @export
+jumpsize.multinonpar.L2 = function(cpt_init, Y, h_kappa = 0.01){
+  p = dim(Y)[1]
+  n = dim(Y)[2]
+  cpt_init_long = c(0, cpt_init, n)
+  cpt_init_numb = length(cpt_init)
+  kappa_hat = rep(NA, cpt_init_numb)
+  minmax_mat = apply(Y, MARGIN = 1, function(x) c(min(x), max(x)))
+  for (k in 1:cpt_init_numb){
+    aux1 = Y[,(cpt_init_long[k]+1):(cpt_init_long[k+1])]
+    aux2 = Y[,(cpt_init_long[k+1]+1):(cpt_init_long[k+2])]
+    integrateFCT = function(x){(kde.eval(t(aux1), eval.points = x, H = h_kappa*diag(p)) - kde.eval(t(aux2), eval.points = x, H = h_kappa*diag(p)))^2}
+    temp_integrate = cubature::cubintegrate(integrateFCT, lower = minmax_mat[1,], upper = minmax_mat[2,], method = "suave", maxEval = 1000)$integral
+    kappa_hat[k] = sqrt(temp_integrate)
+  }
+  return(kappa_hat)
+}
+
+
+#' @export
+LRV.multinonpar.L2 = function(cpt_init, kappa_hat, Y, r = 2, w = 0.9, c_lrv, block_size){
+  n = ncol(Y)
+  p = nrow(Y)
+  cpt_init_long = c(0, cpt_init, n)
+  cpt_init_numb = length(cpt_init)
+  lrv_hat = rep(NA, cpt_init_numb)
+  minmax_mat = apply(Y, MARGIN = 1, function(x) c(min(x), max(x)))
+  volume = prod(minmax_mat[2,] - minmax_mat[1,])
+  for (k in 1:cpt_init_numb){
+    kappahat = kappa_hat[k]
+    h2 = c_lrv[k]*kappahat^(1/r)
+    s = w*cpt_init_long[k] + (1-w)*cpt_init_long[k+1]
+    e = (1-w)*cpt_init_long[k+1] + w*cpt_init_long[k+2]
+    mean1 = kde.eval(t(Y[,s:cpt_init_long[k+1]]), eval.points = t(Y), H = h2*diag(p))
+    mean2 = kde.eval(t(Y[,(cpt_init_long[k+1]+1):e]), eval.points = t(Y), H = h2*diag(p))
+    z_vec = kappahat^(p/(2*r)-1)*volume*apply(cbind(sapply(1:(cpt_init_long[k+1]-s+1), function(i){(kde.eval(t(Y[,s+i-1]), eval.points = t(Y), H = h2*diag(p)) - mean1)*(mean1 - mean2)}),
+                                                    sapply((cpt_init_long[k+1]-s+2):(e-s+1), function(i){(kde.eval(t(Y[,s+i-1]), eval.points = t(Y), H = h2*diag(p)) - mean2)*(mean1 - mean2)})), MARGIN = 2, mean)
+    numb = floor((floor(e)-ceiling(s)+1)/(block_size))
+    z_mat1 = matrix(z_vec[1:(block_size*numb)], nrow = block_size)
+    z_mat1_colsum = apply(z_mat1, 2, sum)
+    z_mat2 = matrix(rev(z_vec)[1:(block_size*numb)], nrow = block_size)
+    z_mat2_colsum = apply(z_mat2, 2, sum)
+    lrv_hat[k] = (mean((z_mat1_colsum)^2/block_size) + mean((z_mat2_colsum)^2/block_size))/2
+  }
+  return(lrv_hat)
 }

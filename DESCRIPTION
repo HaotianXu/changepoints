@@ -16,16 +16,14 @@ Depends: R (>= 3.5.0)
 Imports:
     stats,
     gglasso,
-    glmnet,
-    ks,
     MASS,
     Rcpp,
+    data.tree,
     cubature
 Suggests:
     knitr,
     abind,
     DiagrammeR,
-    data.tree,
     rmarkdown
 LinkingTo: Rcpp, RcppArmadillo
 License: GPL (>= 3)
