@@ -237,7 +237,7 @@ local.refine.multi.nonpar.L2 = function(cpt_init, Y, kappa_hat, r = 2, w = 0.9, 
 
 
 #' @export
-jumpsize.multinonpar.L2 = function(cpt_init, Y, h_kappa = 0.01){
+jumpsize.multinonpar.L2 = function(cpt_init, Y, h_kappa = 0.01, c_fac){
   p = dim(Y)[1]
   n = dim(Y)[2]
   cpt_init_long = c(0, cpt_init, n)
@@ -249,7 +249,7 @@ jumpsize.multinonpar.L2 = function(cpt_init, Y, h_kappa = 0.01){
     aux2 = Y[,(cpt_init_long[k+1]+1):(cpt_init_long[k+2])]
     integrateFCT = function(x){(kde.eval(t(aux1), eval.points = x, H = h_kappa*diag(p)) - kde.eval(t(aux2), eval.points = x, H = h_kappa*diag(p)))^2}
     temp_integrate = cubature::cubintegrate(integrateFCT, lower = minmax_mat[1,], upper = minmax_mat[2,], method = "suave", maxEval = 1000)$integral
-    kappa_hat[k] = sqrt(temp_integrate)
+    kappa_hat[k] = c_fac*sqrt(temp_integrate)
   }
   return(kappa_hat)
 }
