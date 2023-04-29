@@ -89,6 +89,30 @@ rcpp_lassoDPDU_error <- function(y, X, beta_hat) {
     .Call('_changepoints_rcpp_lassoDPDU_error', PACKAGE = 'changepoints', y, X, beta_hat)
 }
 
+epanker <- function(x, mean, bw) {
+    .Call('_changepoints_epanker', PACKAGE = 'changepoints', x, mean, bw)
+}
+
+rcpp_epanker_mixt <- function(evalpoints, mus, bw, props) {
+    .Call('_changepoints_rcpp_epanker_mixt', PACKAGE = 'changepoints', evalpoints, mus, bw, props)
+}
+
+biweiker <- function(x, mean, bw) {
+    .Call('_changepoints_biweiker', PACKAGE = 'changepoints', x, mean, bw)
+}
+
+rcpp_biweiker_mixt <- function(evalpoints, mus, bw, props) {
+    .Call('_changepoints_rcpp_biweiker_mixt', PACKAGE = 'changepoints', evalpoints, mus, bw, props)
+}
+
+triweiker <- function(x, mean, bw) {
+    .Call('_changepoints_triweiker', PACKAGE = 'changepoints', x, mean, bw)
+}
+
+rcpp_triweiker_mixt <- function(evalpoints, mus, bw, props) {
+    .Call('_changepoints_rcpp_triweiker_mixt', PACKAGE = 'changepoints', evalpoints, mus, bw, props)
+}
+
 rcpp_soft_threshold <- function(x_mat, lambda) {
     .Call('_changepoints_rcpp_soft_threshold', PACKAGE = 'changepoints', x_mat, lambda)
 }

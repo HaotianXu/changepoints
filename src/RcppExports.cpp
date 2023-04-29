@@ -331,6 +331,87 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// epanker
+arma::vec epanker(arma::mat const& x, arma::rowvec const& mean, double const& bw);
+RcppExport SEXP _changepoints_epanker(SEXP xSEXP, SEXP meanSEXP, SEXP bwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat const& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::rowvec const& >::type mean(meanSEXP);
+    Rcpp::traits::input_parameter< double const& >::type bw(bwSEXP);
+    rcpp_result_gen = Rcpp::wrap(epanker(x, mean, bw));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_epanker_mixt
+arma::vec rcpp_epanker_mixt(arma::mat const& evalpoints, arma::mat const& mus, double const& bw, arma::rowvec const& props);
+RcppExport SEXP _changepoints_rcpp_epanker_mixt(SEXP evalpointsSEXP, SEXP musSEXP, SEXP bwSEXP, SEXP propsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat const& >::type evalpoints(evalpointsSEXP);
+    Rcpp::traits::input_parameter< arma::mat const& >::type mus(musSEXP);
+    Rcpp::traits::input_parameter< double const& >::type bw(bwSEXP);
+    Rcpp::traits::input_parameter< arma::rowvec const& >::type props(propsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_epanker_mixt(evalpoints, mus, bw, props));
+    return rcpp_result_gen;
+END_RCPP
+}
+// biweiker
+arma::vec biweiker(arma::mat const& x, arma::rowvec const& mean, double const& bw);
+RcppExport SEXP _changepoints_biweiker(SEXP xSEXP, SEXP meanSEXP, SEXP bwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat const& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::rowvec const& >::type mean(meanSEXP);
+    Rcpp::traits::input_parameter< double const& >::type bw(bwSEXP);
+    rcpp_result_gen = Rcpp::wrap(biweiker(x, mean, bw));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_biweiker_mixt
+arma::vec rcpp_biweiker_mixt(arma::mat const& evalpoints, arma::mat const& mus, double const& bw, arma::rowvec const& props);
+RcppExport SEXP _changepoints_rcpp_biweiker_mixt(SEXP evalpointsSEXP, SEXP musSEXP, SEXP bwSEXP, SEXP propsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat const& >::type evalpoints(evalpointsSEXP);
+    Rcpp::traits::input_parameter< arma::mat const& >::type mus(musSEXP);
+    Rcpp::traits::input_parameter< double const& >::type bw(bwSEXP);
+    Rcpp::traits::input_parameter< arma::rowvec const& >::type props(propsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_biweiker_mixt(evalpoints, mus, bw, props));
+    return rcpp_result_gen;
+END_RCPP
+}
+// triweiker
+arma::vec triweiker(arma::mat const& x, arma::rowvec const& mean, double const& bw);
+RcppExport SEXP _changepoints_triweiker(SEXP xSEXP, SEXP meanSEXP, SEXP bwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat const& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::rowvec const& >::type mean(meanSEXP);
+    Rcpp::traits::input_parameter< double const& >::type bw(bwSEXP);
+    rcpp_result_gen = Rcpp::wrap(triweiker(x, mean, bw));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_triweiker_mixt
+arma::vec rcpp_triweiker_mixt(arma::mat const& evalpoints, arma::mat const& mus, double const& bw, arma::rowvec const& props);
+RcppExport SEXP _changepoints_rcpp_triweiker_mixt(SEXP evalpointsSEXP, SEXP musSEXP, SEXP bwSEXP, SEXP propsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat const& >::type evalpoints(evalpointsSEXP);
+    Rcpp::traits::input_parameter< arma::mat const& >::type mus(musSEXP);
+    Rcpp::traits::input_parameter< double const& >::type bw(bwSEXP);
+    Rcpp::traits::input_parameter< arma::rowvec const& >::type props(propsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_triweiker_mixt(evalpoints, mus, bw, props));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_soft_threshold
 Rcpp::List rcpp_soft_threshold(arma::mat& x_mat, double lambda);
 RcppExport SEXP _changepoints_rcpp_soft_threshold(SEXP x_matSEXP, SEXP lambdaSEXP) {
@@ -420,6 +501,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_changepoints_rcpp_lassoDPDU", (DL_FUNC) &_changepoints_rcpp_lassoDPDU, 9},
     {"_changepoints_rcpp_DPDU_regression", (DL_FUNC) &_changepoints_rcpp_DPDU_regression, 5},
     {"_changepoints_rcpp_lassoDPDU_error", (DL_FUNC) &_changepoints_rcpp_lassoDPDU_error, 3},
+    {"_changepoints_epanker", (DL_FUNC) &_changepoints_epanker, 3},
+    {"_changepoints_rcpp_epanker_mixt", (DL_FUNC) &_changepoints_rcpp_epanker_mixt, 4},
+    {"_changepoints_biweiker", (DL_FUNC) &_changepoints_biweiker, 3},
+    {"_changepoints_rcpp_biweiker_mixt", (DL_FUNC) &_changepoints_rcpp_biweiker_mixt, 4},
+    {"_changepoints_triweiker", (DL_FUNC) &_changepoints_triweiker, 3},
+    {"_changepoints_rcpp_triweiker_mixt", (DL_FUNC) &_changepoints_rcpp_triweiker_mixt, 4},
     {"_changepoints_rcpp_soft_threshold", (DL_FUNC) &_changepoints_rcpp_soft_threshold, 2},
     {"_changepoints_rcpp_soft_impute", (DL_FUNC) &_changepoints_rcpp_soft_impute, 5},
     {"_changepoints_rcpp_lambda", (DL_FUNC) &_changepoints_rcpp_lambda, 8},
