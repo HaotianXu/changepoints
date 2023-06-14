@@ -331,6 +331,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_DPDU2_regression
+Rcpp::List rcpp_DPDU2_regression(const arma::vec& y, const arma::mat& X, double lambda, int zeta, double eps);
+RcppExport SEXP _changepoints_rcpp_DPDU2_regression(SEXP ySEXP, SEXP XSEXP, SEXP lambdaSEXP, SEXP zetaSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< int >::type zeta(zetaSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_DPDU2_regression(y, X, lambda, zeta, eps));
+    return rcpp_result_gen;
+END_RCPP
+}
 // epanker
 arma::vec epanker(arma::mat const& x, arma::rowvec const& mean, double const& bw);
 RcppExport SEXP _changepoints_epanker(SEXP xSEXP, SEXP meanSEXP, SEXP bwSEXP) {
@@ -501,6 +516,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_changepoints_rcpp_lassoDPDU", (DL_FUNC) &_changepoints_rcpp_lassoDPDU, 9},
     {"_changepoints_rcpp_DPDU_regression", (DL_FUNC) &_changepoints_rcpp_DPDU_regression, 5},
     {"_changepoints_rcpp_lassoDPDU_error", (DL_FUNC) &_changepoints_rcpp_lassoDPDU_error, 3},
+    {"_changepoints_rcpp_DPDU2_regression", (DL_FUNC) &_changepoints_rcpp_DPDU2_regression, 5},
     {"_changepoints_epanker", (DL_FUNC) &_changepoints_epanker, 3},
     {"_changepoints_rcpp_epanker_mixt", (DL_FUNC) &_changepoints_rcpp_epanker_mixt, 4},
     {"_changepoints_biweiker", (DL_FUNC) &_changepoints_biweiker, 3},

@@ -34,7 +34,7 @@ p = 30
 n = 200
 cpt_true = 100
 data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-lambda_set = c(0.01, 0.1, 1, 2)
+lambda_set = c(0.3, 0.5, 1, 2)
 zeta_set = c(10, 15, 20)
 temp = CV.search.DPDU.regression(y = data$y, X = data$X, lambda_set, zeta_set)
 temp$test_error # test error result

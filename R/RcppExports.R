@@ -89,6 +89,10 @@ rcpp_lassoDPDU_error <- function(y, X, beta_hat) {
     .Call('_changepoints_rcpp_lassoDPDU_error', PACKAGE = 'changepoints', y, X, beta_hat)
 }
 
+rcpp_DPDU2_regression <- function(y, X, lambda, zeta, eps) {
+    .Call('_changepoints_rcpp_DPDU2_regression', PACKAGE = 'changepoints', y, X, lambda, zeta, eps)
+}
+
 epanker <- function(x, mean, bw) {
     .Call('_changepoints_epanker', PACKAGE = 'changepoints', x, mean, bw)
 }

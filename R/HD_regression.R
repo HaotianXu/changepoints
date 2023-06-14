@@ -548,7 +548,7 @@ X.glasso.converter.regression = function(X, eta, s_ceil){
 
 
 
-#' @title Dynamic programming with dynamic update algorithm for regression change points localisation with \eqn{l_0} penalisation.
+#' @title Dynamic programming with dynamic update algorithm for regression change points localisation with \eqn{l_0} penalisation (earlier version).
 #' @description     Perform DPDU algorithm for regression change points localisation.
 #' @param y         A \code{numeric} vector of response variable.
 #' @param X         A \code{numeric} matrix of covariates with vertical axis being time.
@@ -589,6 +589,49 @@ DPDU.regression <- function(y, X, lambda, zeta, eps = 0.001) {
 }
 
 
+
+#' @title Dynamic programming with dynamic update algorithm for regression change points localisation with \eqn{l_0} penalisation (current version).
+#' @description     Perform DPDU algorithm for regression change points localisation.
+#' @param y         A \code{numeric} vector of response variable.
+#' @param X         A \code{numeric} matrix of covariates with vertical axis being time.
+#' @param lambda    A positive \code{numeric} scalar of tuning parameter for lasso penalty.
+#' @param zeta      A positive \code{integer} scalar of tuning parameter associated with \eqn{l_0} penalty (minimum interval size).
+#' @param eps       A \code{numeric} scalar of precision level for convergence of lasso.
+#' @return An object of \code{\link[base]{class}} "DP", which is a \code{list} with the following structure:
+#'  \item{partition}{A vector of the best partition.}
+#'  \item{cpt}{A vector of change points estimation.}
+#' @export
+#' @author Haotian Xu
+#' @references Xu, Wang, Zhao and Yu (2022) <arXiv:2207.12453>.
+#' @examples
+#' d0 = 10
+#' p = 20
+#' n = 100
+#' cpt_true = c(30, 70)
+#' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
+#' temp = DPDU2.regression(y = data$y, X = data$X, lambda = 1, zeta = 20)
+#' cpt_hat = temp$cpt
+#' @export
+DPDU2.regression <- function(y, X, lambda, zeta, eps = 0.001) {
+  DPDU_result = .Call('_changepoints_rcpp_DPDU2_regression', PACKAGE = 'changepoints', y, X, lambda, zeta, eps)
+  cpt_est = part2local(DPDU_result$partition)
+  if(length(cpt_est) >= 1){
+    if(min(cpt_est) < zeta){
+      cpt_est = cpt_est[-1]
+    }
+  }
+  if(length(cpt_est) >= 1){
+    if(length(y) - max(cpt_est) < zeta){
+      cpt_est = cpt_est[-1]
+    }
+  }
+  result = append(DPDU_result, list(cpt = cpt_est))
+  class(result) = "DP"
+  return(result)
+}
+
+
+
 #' @noRd
 lassoDPDU_error <- function(y, X, beta_hat) {
   .Call('_changepoints_rcpp_lassoDPDU_error', PACKAGE = 'changepoints', y, X, beta_hat)
@@ -617,7 +660,7 @@ CV.DPDU.regression = function(y, X, lambda, zeta, eps = 0.001){
   train.y = y[odd_indexes]
   validation.X = X[even_indexes,]
   validation.y = y[even_indexes]
-  init_train = DPDU.regression(train.y, train.X, lambda, zeta, eps)
+  init_train = DPDU2.regression(train.y, train.X, lambda, zeta, eps)
   init_train_cpt = init_train$cpt
   if(length(init_train_cpt) >= 1){
     init_train_cpt_long = c(0, init_train_cpt, nrow(train.X))
@@ -665,7 +708,7 @@ CV.DPDU.regression = function(y, X, lambda, zeta, eps = 0.001){
 #' n = 200
 #' cpt_true = 100
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-#' lambda_set = c(0.01, 0.1, 1, 2)
+#' lambda_set = c(0.3, 0.5, 1, 2)
 #' zeta_set = c(10, 15, 20)
 #' temp = CV.search.DPDU.regression(y = data$y, X = data$X, lambda_set, zeta_set)
 #' temp$test_error # test error result
@@ -706,7 +749,7 @@ CV.search.DPDU.regression = function(y, X, lambda_set, zeta_set, eps = 0.001){
 #' n = 200
 #' cpt_true = 100
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-#' lambda_set = c(0.01, 0.1, 1, 2)
+#' lambda_set = c(0.3, 0.5, 1, 2)
 #' zeta_set = c(10, 15, 20)
 #' temp = CV.search.DPDU.regression(y = data$y, X = data$X, lambda_set, zeta_set)
 #' temp$test_error # test error result
@@ -778,7 +821,7 @@ trim_interval = function(n, cpt_init, w = 0.9){
 #' n = 200
 #' cpt_true = c(70, 140)
 #' data = simu.change.regression(d0, cpt_true, p, n, sigma = 1, kappa = 9)
-#' lambda_set = c(0.1, 0.5, 1, 2)
+#' lambda_set = c(0.3, 0.5, 1, 2)
 #' zeta_set = c(10, 15, 20)
 #' temp = CV.search.DPDU.regression(y = data$y, X = data$X, lambda_set, zeta_set)
 #' temp$test_error # test error result

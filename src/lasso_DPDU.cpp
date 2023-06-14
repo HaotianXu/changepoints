@@ -158,72 +158,76 @@ double rcpp_lassoDPDU_error(const arma::vec& y, const arma::mat& X, const arma::
 }
 
 
-// // [[Rcpp::export]]
-// Rcpp::List rcpp_DPDU_regression_2(const arma::vec& y, const arma::mat& X, double lambda, int zeta, double eps){
-//   int N = y.n_elem;
-//   int p = X.n_cols;
-//   double b = 0;
-//   arma::vec bestvalue = arma::zeros<arma::vec>(N+1);
-//   arma::vec partition = arma::zeros<arma::vec>(N+1);
-//   bestvalue(0) = -zeta;
-//   arma::mat M_new(p,p,arma::fill::zeros);
-//   arma::rowvec V_new(p,arma::fill::zeros);
-//   double Ymean_new = 0;
-//   arma::rowvec Xmeans_new(p,arma::fill::zeros);
-//   arma::mat Mcentered(p,p,arma::fill::zeros);
-//   arma::vec weights(p,arma::fill::zeros);
-//   arma::mat Mtilde(p,p,arma::fill::zeros);
-//   arma::vec Vtilde(p,arma::fill::zeros);
-//   Rcpp::List lassofit;
-//   arma::mat beta_mat_temp(p+1,N,arma::fill::zeros);
-//   arma::mat beta_mat_temp2(p+1,N,arma::fill::zeros);
-//   arma::mat beta_mat(p+1,N,arma::fill::zeros);
-//   arma::colvec beta_start(p,arma::fill::zeros);
-//   int n = 0;
-//   for(int i = 1; i < N+1; ++i){
-//     bestvalue(i) = R_PosInf;
-//     arma::mat M_old(p,p,arma::fill::zeros);
-//     arma::rowvec V_old(p,arma::fill::zeros);
-//     double Ymean_old = 0;
-//     arma::rowvec Xmeans_old(p,arma::fill::zeros);
-//     for(int l = i; l > 0; --l){
-//       //Rcpp::Rcout << "loss diff" << std::endl << l << std::endl;
-//       n = i-l+1;
-//       Ymean_new = (Ymean_old*(n-1) + y(l-1))/n;
-//       Xmeans_new = (Xmeans_old*(n-1) + X.row(l-1))/n;
-//       M_new = M_old + X.row(l-1).t()*X.row(l-1);
-//       V_new = V_old + y(l-1)*X.row(l-1);
-//       Mcentered = M_new - n*(Xmeans_new.t()*Xmeans_new);
-//       weights = sqrt(Mcentered.diag()/n);
-//       Mtilde = diagmat(1/weights)*Mcentered*diagmat(1/weights);
-//       Vtilde = (V_new - n*Ymean_new*Xmeans_new).t()/weights;
-//       if(n >= zeta){
-//         lassofit = rcpp_lassoDPDU(Mtilde, Vtilde, Xmeans_new.t(), Ymean_new, weights, beta_start, n, lambda*sqrt(std::max(log(std::max(N,p)), (n-1.0)))*sqrt(log(std::max(N,p)))/(n), eps);
-//         beta_start = Rcpp::as<arma::vec>(lassofit["lasso_fit"]);
-//         beta_mat_temp(0,l-1) = Rcpp::as<double>(lassofit["beta0"]);
-//         beta_mat_temp(arma::span(1,p),l-1) = Rcpp::as<arma::vec>(lassofit["beta_hat"]);
-//         b = bestvalue(l-1) + zeta + Rcpp::as<double>(lassofit["loss"]);
-//       }else{
-//         b = bestvalue(l-1) + zeta;
-//       }
-//       if (b <= bestvalue(i)){
-//         bestvalue(i) = b;
-//         partition(i) = l-1;
-//         beta_mat_temp2.col(i-1) = beta_mat_temp.col(l-1);
-//       }
-//     }
-//   }
-//   int R = N;
-//   int L = partition(R);
-//   while(R > 0){
-//     for(int t = L; t < R; ++t){
-//       beta_mat.col(t) = beta_mat_temp2.col(R-1);
-//     }
-//     R = L;
-//     L = partition(R);
-//   }
-//   return Rcpp::List::create(Rcpp::Named("beta_mat")=beta_mat,
-//                             Rcpp::Named("partition")=partition.subvec(1,N));
-// }
-// 
-// 
+// [[Rcpp::export]]
+Rcpp::List rcpp_DPDU2_regression(const arma::vec& y, const arma::mat& X, double lambda, int zeta, double eps){
+  int N = y.n_elem;
+  int p = X.n_cols;
+  double b = 0;
+  arma::vec bestvalue = arma::zeros<arma::vec>(N+1);
+  arma::vec partition = arma::zeros<arma::vec>(N+1);
+  bestvalue(0) = -zeta;
+  arma::mat M_new(p,p,arma::fill::zeros);
+  arma::rowvec V_new(p,arma::fill::zeros);
+  double Ymean_new = 0;
+  arma::rowvec Xmeans_new(p,arma::fill::zeros);
+  arma::mat Mcentered(p,p,arma::fill::zeros);
+  arma::vec weights(p,arma::fill::zeros);
+  arma::mat Mtilde(p,p,arma::fill::zeros);
+  arma::vec Vtilde(p,arma::fill::zeros);
+  Rcpp::List lassofit;
+  arma::mat beta_mat_temp(p+1,N,arma::fill::zeros);
+  arma::mat beta_mat_temp2(p+1,N,arma::fill::zeros);
+  arma::mat beta_mat(p+1,N,arma::fill::zeros);
+  arma::colvec beta_start(p,arma::fill::zeros);
+  int n = 0;
+  for(int i = 1; i < N+1; ++i){
+    bestvalue(i) = R_PosInf;
+    arma::mat M_old(p,p,arma::fill::zeros);
+    arma::rowvec V_old(p,arma::fill::zeros);
+    double Ymean_old = 0;
+    arma::rowvec Xmeans_old(p,arma::fill::zeros);
+    for(int l = i; l > 0; --l){
+      //Rcpp::Rcout << "loss diff" << std::endl << l << std::endl;
+      n = i-l+1;
+      Ymean_new = (Ymean_old*(n-1) + y(l-1))/n;
+      Xmeans_new = (Xmeans_old*(n-1) + X.row(l-1))/n;
+      M_new = M_old + X.row(l-1).t()*X.row(l-1);
+      V_new = V_old + y(l-1)*X.row(l-1);
+      Mcentered = M_new - n*(Xmeans_new.t()*Xmeans_new);
+      weights = sqrt(Mcentered.diag()/n);
+      Mtilde = diagmat(1/weights)*Mcentered*diagmat(1/weights);
+      Vtilde = (V_new - n*Ymean_new*Xmeans_new).t()/weights;
+      if(n >= zeta){
+        lassofit = rcpp_lassoDPDU(Mtilde, Vtilde, Xmeans_new.t(), Ymean_new, weights, beta_start, n, lambda*sqrt(std::max(log(std::max(N,p)), (n-1.0)))*sqrt(log(std::max(N,p)))/(n), eps);
+        beta_start = Rcpp::as<arma::vec>(lassofit["lasso_fit"]);
+        beta_mat_temp(0,l-1) = Rcpp::as<double>(lassofit["beta0"]);
+        beta_mat_temp(arma::span(1,p),l-1) = Rcpp::as<arma::vec>(lassofit["beta_hat"]);
+        b = bestvalue(l-1) + zeta + Rcpp::as<double>(lassofit["loss"]);
+      }else{
+        b = bestvalue(l-1) + zeta;
+      }
+      if (b <= bestvalue(i)){
+        bestvalue(i) = b;
+        partition(i) = l-1;
+        beta_mat_temp2.col(i-1) = beta_mat_temp.col(l-1);
+      }
+      M_old = M_new;
+      V_old = V_new;
+      Ymean_old = Ymean_new;
+      Xmeans_old = Xmeans_new;
+    }
+  }
+  int R = N;
+  int L = partition(R);
+  while(R > 0){
+    for(int t = L; t < R; ++t){
+      beta_mat.col(t) = beta_mat_temp2.col(R-1);
+    }
+    R = L;
+    L = partition(R);
+  }
+  return Rcpp::List::create(Rcpp::Named("beta_mat")=beta_mat,
+                            Rcpp::Named("partition")=partition.subvec(1,N));
+}
+
+
