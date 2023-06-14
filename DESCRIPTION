@@ -16,6 +16,7 @@ Depends: R (>= 3.5.0)
 Imports:
     stats,
     gglasso,
+    glmnet,
     MASS,
     Rcpp,
     data.tree,
@@ -23,7 +24,6 @@ Imports:
 Suggests:
     knitr,
     abind,
-    DiagrammeR,
     rmarkdown
 LinkingTo: Rcpp, RcppArmadillo
 License: GPL (>= 3)

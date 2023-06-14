@@ -376,7 +376,7 @@ distance.CV.LR = function(y, X, lower, upper, zeta){
   n = nrow(X)
   p = ncol(X)
   lambda_LR = zeta*sqrt(log(max(n,p)))
-  fit = glmnet(x = X[lower:upper,], y = y[lower:upper], lambda = lambda_LR)
+  fit = glmnet::glmnet(x = X[lower:upper,], y = y[lower:upper], lambda = lambda_LR)
   yhat = X[lower:upper,] %*% as.vector(fit$beta)
   d = norm(y[lower:upper] - yhat, type = "2")
   result = list("MSE" = d^2, "beta" = as.vector(fit$beta))

@@ -158,7 +158,7 @@ error.seg.SEPP = function(s, e, DATA, lambda, delta, delta2, intercept, threshol
   DATA.x[which(DATA.x > threshold)] = threshold
   if(n.temp - 1 > delta & n.temp - 1 < delta2){
     for(m in 1:M){
-      pen <- glmnet(y = DATA[m, (s+1):e]/exp(intercept), x = t(DATA.x[, s:(e-1)]),
+      pen <- glmnet::glmnet(y = DATA[m, (s+1):e]/exp(intercept), x = t(DATA.x[, s:(e-1)]),
                        lambda = lambda*(n.temp)^(1/2), family = c("poisson"), intercept = F)
       estimate[m,] = as.vector(pen$beta)
       d[m] = sum(abs(sapply((s+1):e, function(x) exp(intercept + estimate[m,] %*% DATA.x[,x-1]) - DATA[m,x] * (intercept + estimate[m,] %*% DATA.x[,x-1]))))
