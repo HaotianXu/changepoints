@@ -634,6 +634,9 @@ DPDU2.regression <- function(y, X, lambda, zeta, eps = 0.001) {
 
 #' @noRd
 lassoDPDU_error <- function(y, X, beta_hat) {
+  if(length(y)==1){
+    X = matrix(X, nrow = 1)
+  }
   .Call('_changepoints_rcpp_lassoDPDU_error', PACKAGE = 'changepoints', y, X, beta_hat)
 }
 
